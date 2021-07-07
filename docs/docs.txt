@@ -1,0 +1,18 @@
+Bundle structure
+
+-- AnApp.woa
+---- AnApp
+---- AnApp.cmd
+------ Contents
+------ Frameworks
+-------- Framework1.framework
+---------- WebServerResources
+-------- Framework2.framework
+---------- WebServerResources
+------ Info.plist
+------ MacOS
+------ Resources
+-------- Java
+------ UNIX
+------ WebServerResources
+------ Windows
