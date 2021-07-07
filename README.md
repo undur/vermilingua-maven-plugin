@@ -16,24 +16,28 @@ A pure maven plugin for building Wonder applications and frameworks, "pure maven
 ## Bundle structure
 
 ```java
-AnApp.woa
-	AnApp
-	AnApp.cmd
+AppName.woa
+	AppName
+	AppName.cmd
 	Contents
 		Frameworks
 			SomeFramework.framework
   				WebServerResources
 		Info.plist
 		MacOS
-			[...]
+			AppName
+			MacOSClassPath.txt
+			MacOSXServerClassPath.txt
 		Resources
 			Java
 				AnApp.jar
 				some/other/dependency/2.0.0/dependency-2.0.0.jar
 		UNIX
-			[...]
+			UNIXClassPath.txt
 		WebServerResources
 		Windows
-			[...]
+			CLSSPATH.TXT
+			AppName.cmd
+			SUBPATHS.cmd
 ```
 
