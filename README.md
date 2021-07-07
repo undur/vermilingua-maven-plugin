@@ -27,9 +27,9 @@ AnApp.woa
 		MacOS
 			[...]
 		Resources
-		Java
-			AnApp.jar
-			some/other/dependency/2.0.0/dependency-2.0.0.jar
+			Java
+				AnApp.jar
+				some/other/dependency/2.0.0/dependency-2.0.0.jar
 		UNIX
 			[...]
 		WebServerResources
