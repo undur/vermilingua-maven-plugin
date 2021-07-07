@@ -22,14 +22,14 @@ AnApp.woa
 	Contents
 		Frameworks
 			SomeFramework.framework
-  			WebServerResources
+  				WebServerResources
 		Info.plist
 		MacOS
-  			[...]
+			[...]
 		Resources
 		Java
-  		AnApp.jar
-  		some/other/dependency/2.0.0/dependency-2.0.0.jar
+			AnApp.jar
+			some/other/dependency/2.0.0/dependency-2.0.0.jar
 		UNIX
 			[...]
 		WebServerResources
