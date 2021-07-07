@@ -14,6 +14,9 @@ A pure maven plugin for building Wonder applications and frameworks, "pure maven
 * Generate  ClassPath.txt files *(do we really need platform dependent ones?)*
 * Generate `Info.plist`
 * Generate run scripts
+* Post processing
+  * Flatten components
+  * Flatten resources
 
 ## Bundle structure
 
