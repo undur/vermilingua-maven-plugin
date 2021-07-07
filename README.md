@@ -25,15 +25,15 @@ AnApp.woa
   			WebServerResources
 		Info.plist
 		MacOS
-  		*Silly stuff*
+  			[...]
 		Resources
 		Java
   		AnApp.jar
   		some/other/dependency/2.0.0/dependency-2.0.0.jar
 		UNIX
-  		*Silly stuff*
+			[...]
 		WebServerResources
 		Windows
-  		*Silly stuff*
+			[...]
 ```
 
