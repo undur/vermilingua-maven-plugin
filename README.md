@@ -5,16 +5,16 @@ A pure maven plugin for building Wonder applications and frameworks, "pure maven
 ## The build process 
 
 * Generate the woa's directory structure
-* Copy the compiled jar to `Contents/Resources/Java/App.jar`
+* Copy the compiled jar to `Contents/Resources/Java/app.jar`
 * Copy dependency jars to `Contents/Resources/Java/`. Structure mimics that of a maven repo
 * Copy app resources to `Contents/Resources/`
 * Copy app components to `Contents/Resources/`
 * Copy app webserver-resources to `Contents/WebServerResources`
 * Process dependency jars to find those containing `WebServerResources`. Copy those from the jars to generate the content of `Contents/Frameworks/.../WebServerResources/` for each framework
-* Generate  ClassPath.txt files *(do we really need platform dependent ones?)*
+* Generate launch scripts for MacOS/UNIX/Windows
+* Generate the Classpath files
 * Generate `Info.plist`
-* Generate run scripts
-* Post processing
+* Post processing *TODO*
   * Flatten components
   * Flatten resources
 
