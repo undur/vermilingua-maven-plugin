@@ -101,6 +101,8 @@ public class PackageMojo extends AbstractMojo {
 		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath // Hugi 2021-07-08
 
+		// FIXME: Generate Info.plist // Hugi 2021-07-08
+
 		// Create the executable script for UNIX
 		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
 		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
