@@ -66,9 +66,7 @@ public class PackageMojo extends AbstractMojo {
 			getLog().debug( "Copying artifact: " + artifact );
 
 			final Path artifactPathInRepository = artifact.getFile().toPath();
-
 			final Path artifactFolderPath = folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
-
 			final Path targetPath = artifactFolderPath.resolve( artifact.getFile().getName() );
 
 			stringsForClasspath.add( targetPath.toString() );
