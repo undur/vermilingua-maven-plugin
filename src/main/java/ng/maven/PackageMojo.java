@@ -105,12 +105,28 @@ public class PackageMojo extends AbstractMojo {
 		catch( final IOException e ) {
 			e.printStackTrace();
 		}
+
+		//		addBaseLaunchScript();
 	}
+
+	//	private void addBaseLaunchScript() {
+	//		try( InputStream stream = PackageMojo.class.getResourceAsStream( "scripts/launch-script.template" )) {
+	//			final ByteArrayOutputStream o = new ByteArrayOutputStream();
+	//			stream.transferTo( o );
+	//			final String s = new String( o.toByteArray(), StandardCharsets.UTF_8 );
+	//			System.out.println( s );
+	//		}
+	//		catch( final IOException e ) {
+	//			throw new RuntimeException( e );
+	//		}
+	//	}
 
 	/**
 	 * Our in-memory representation of the WOA bundle
 	 */
 	public static class WOA {
+
+		private final String _applicationName;
 
 		private final Path _woaPath;
 
@@ -121,12 +137,14 @@ public class PackageMojo extends AbstractMojo {
 			Objects.requireNonNull( containingDirectory );
 			Objects.requireNonNull( applicationName );
 			final Path woaPath = containingDirectory.resolve( applicationName + ".woa" );
-			return new WOA( woaPath );
+			return new WOA( woaPath, applicationName );
 		}
 
-		private WOA( final Path woaPath ) {
+		private WOA( final Path woaPath, final String applicationName ) {
 			Objects.requireNonNull( woaPath );
+			Objects.requireNonNull( applicationName );
 			_woaPath = folder( woaPath );
+			_applicationName = applicationName;
 		}
 
 		public Path woaPath() {
@@ -143,6 +161,10 @@ public class PackageMojo extends AbstractMojo {
 
 		public Path javaPath() {
 			return folder( resourcesPath().resolve( "Java" ) );
+		}
+
+		public Path baseLaunchScriptPath() {
+			return woaPath().resolve( _applicationName );
 		}
 
 		/**
