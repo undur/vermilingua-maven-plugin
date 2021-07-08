@@ -48,7 +48,7 @@ public class PackageMojo extends AbstractMojo {
 
 		// Copy in the main jar
 		try {
-			Files.copy( artifactPath, woa.javaPath().resolve( project.getArtifact().getArtifactId() + ".jar" ) );
+			Files.copy( artifactPath, woa.javaPath().resolve( project.getArtifact().getArtifactId().toLowerCase() + ".jar" ) );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
