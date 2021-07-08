@@ -44,8 +44,11 @@ public class PackageMojo extends AbstractMojo {
 		// This is the jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = project.getArtifact().getFile().toPath();
 
+		// The name of the application, gotten from the artifactId
+		final String applicationName = project.getArtifactId();
+
 		// This is the WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
-		final WOA woa = WOA.getAtPath( buildPath, project.getArtifactId() );
+		final WOA woa = WOA.getAtPath( buildPath, applicationName );
 
 		// This will be the eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
@@ -90,8 +93,16 @@ public class PackageMojo extends AbstractMojo {
 		Util.writeStringToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		Util.writeStringToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath
-		Util.writeStringToPath( Util.template( "launch-script" ), woa.baseLaunchScriptPath() );
-		Util.makeExecutable( woa.baseLaunchScriptPath() );
+
+		// Create the executable script for UNIX
+		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
+		Util.writeStringToPath( Util.template( "launch-script" ), unixLaunchScriptPath );
+		Util.makeExecutable( unixLaunchScriptPath );
+
+		// Create the executable script for Windows
+		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName );
+		Util.writeStringToPath( Util.template( "launch-script-cmd" ), windowsLaunchScriptPath );
+		Util.makeExecutable( windowsLaunchScriptPath );
 	}
 
 	/**
@@ -150,10 +161,6 @@ public class PackageMojo extends AbstractMojo {
 
 		public Path javaPath() {
 			return Util.folder( resourcesPath().resolve( "Java" ) );
-		}
-
-		public Path baseLaunchScriptPath() {
-			return woaPath().resolve( _applicationName );
 		}
 	}
 }
