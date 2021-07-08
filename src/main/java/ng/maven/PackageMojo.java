@@ -39,26 +39,11 @@ public class PackageMojo extends AbstractMojo {
 		// This is the destination for our build
 		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
 
-		final Path woaPath = buildPath.resolve( applicationName() + ".woa" );
-		final Path contentsPath = woaPath.resolve( "Contents" );
-		final Path resourcesPath = contentsPath.resolve( "Resources" );
-		final Path javaPath = resourcesPath.resolve( "Java" );
-
-		try {
-			Files.createDirectory( woaPath );
-			Files.createDirectory( contentsPath );
-			Files.createDirectory( resourcesPath );
-			Files.createDirectory( javaPath );
-		}
-		catch( final IOException e ) {
-			throw new RuntimeException( e );
-		}
-
 		//
 		// Copy in the main jar
 		//
 		try {
-			Files.copy( project.getArtifact().getFile().toPath(), javaPath.resolve( project.getArtifact().getArtifactId() + ".jar" ) );
+			Files.copy( project.getArtifact().getFile().toPath(), woa.javaPath().resolve( project.getArtifact().getArtifactId() + ".jar" ) );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
@@ -73,11 +58,11 @@ public class PackageMojo extends AbstractMojo {
 		final List<String> stringsForClasspath = new ArrayList<>();
 
 		for( final Artifact artifact : artifacts ) {
-			getLog().info( "Copying artifact: " + artifact );
+			getLog().debug( "Copying artifact: " + artifact );
 
 			final Path artifactPathInRepository = artifact.getFile().toPath();
 
-			final Path artifactFolderPath = javaPath.resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getVersion() );
+			final Path artifactFolderPath = woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getVersion() );
 
 			try {
 				if( !Files.exists( artifactFolderPath ) ) {
@@ -89,7 +74,6 @@ public class PackageMojo extends AbstractMojo {
 			}
 
 			final Path targetPath = artifactFolderPath.resolve( artifact.getFile().getName() );
-			System.out.println( "targetPath: " + targetPath );
 
 			stringsForClasspath.add( targetPath.toString() );
 
@@ -109,7 +93,7 @@ public class PackageMojo extends AbstractMojo {
 		final StringBuilder b = new StringBuilder();
 		b.append( "java -cp " + cpString + " ng.testapp.Application" );
 		try {
-			final Path executablePath = woaPath.resolve( project.getArtifactId() );
+			final Path executablePath = woa.woaPath().resolve( project.getArtifactId() );
 			Files.write( executablePath, b.toString().getBytes() );
 			final Set<PosixFilePermission> perms = new HashSet<>();
 			perms.add( PosixFilePermission.OWNER_READ );
