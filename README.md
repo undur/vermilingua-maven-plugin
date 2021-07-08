@@ -72,4 +72,6 @@ AppName.woa
 			AppName.cmd
 			SUBPATHS.cmd
 ```
-
+## Development process
+	
+<img src="https://www.hugi.io/github/img/science-dog.jpg" width="400">
