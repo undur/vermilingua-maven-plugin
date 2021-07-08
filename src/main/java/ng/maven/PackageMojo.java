@@ -20,8 +20,20 @@ import org.apache.maven.project.MavenProject;
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class PackageMojo extends AbstractMojo {
 
+	/**
+	 * The maven project. This gets injected by Maven during the build
+	 */
 	@Parameter(property = "project", required = true, readonly = true)
 	MavenProject project;
+
+	/**
+	 * Allows the user to specify an alternative folder name for the resources folder
+	 * I.e. "resources" (for compatibility with older behaviour).
+	 *
+	 * CHECKME: I'd prefer not to include this and just standardize on the new/correct bundle layout with a separate "woresources" folder
+	 */
+	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = "woresources")
+	String woresourcesFolderName;
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -69,7 +81,7 @@ public class PackageMojo extends AbstractMojo {
 
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
 		// FIXME: Flatten components
-		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should be woresources, here for compatibility
+		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/" + woresourcesFolderName, woa.resourcesPath().toString() ); // FIXME: This should be woresources, here for compatibility
 		// FIXME: Flatten resources (?)
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
