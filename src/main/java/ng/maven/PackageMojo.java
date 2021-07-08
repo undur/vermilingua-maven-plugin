@@ -1,6 +1,9 @@
 package ng.maven;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -106,20 +109,45 @@ public class PackageMojo extends AbstractMojo {
 			e.printStackTrace();
 		}
 
-		//		addBaseLaunchScript();
+		try {
+			Files.write( woa.baseLaunchScriptPath(), baseLaunchScript().getBytes( StandardCharsets.UTF_8 ) );
+		}
+		catch( final IOException e ) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
-	//	private void addBaseLaunchScript() {
-	//		try( InputStream stream = PackageMojo.class.getResourceAsStream( "scripts/launch-script.template" )) {
-	//			final ByteArrayOutputStream o = new ByteArrayOutputStream();
-	//			stream.transferTo( o );
-	//			final String s = new String( o.toByteArray(), StandardCharsets.UTF_8 );
-	//			System.out.println( s );
-	//		}
-	//		catch( final IOException e ) {
-	//			throw new RuntimeException( e );
-	//		}
-	//	}
+	private String baseLaunchScript() {
+		return template( "launch-script" );
+	}
+
+	private static String template( final String name ) {
+		try( InputStream stream = PackageMojo.class.getResourceAsStream( "/scripts/" + name + ".template" )) {
+			return new String( b( stream ), StandardCharsets.UTF_8 );
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	private static byte[] b( InputStream is ) {
+		try {
+			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+			int nRead;
+			final byte[] data = new byte[16384];
+
+			while( (nRead = is.read( data, 0, data.length )) != -1 ) {
+				buffer.write( data, 0, nRead );
+			}
+
+			return buffer.toByteArray();
+		}
+		catch( final Exception e ) {
+			throw new RuntimeException( e );
+		}
+	}
 
 	/**
 	 * Our in-memory representation of the WOA bundle
