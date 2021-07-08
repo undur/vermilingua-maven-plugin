@@ -20,7 +20,13 @@ import java.util.jar.JarFile;
 
 public class Util {
 
+	/**
+	 * Copy the file at [sourcePath] to a new file specified by [destinationPath]
+	 */
 	public static void copyFile( final Path sourcePath, final Path destinationPath ) {
+		Objects.requireNonNull( sourcePath );
+		Objects.requireNonNull( destinationPath );
+
 		try {
 			Files.copy( sourcePath, destinationPath );
 		}
@@ -30,7 +36,7 @@ public class Util {
 	}
 
 	/**
-	 * FIXME: Change to accept Paths as parameters
+	 * FIXME: Change to accept Paths as parameters // Hugi 2021-07-08
 	 */
 	public static void copyContentsOfDirectoryToDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) {
 		try {
@@ -38,7 +44,7 @@ public class Util {
 					.forEach( source -> {
 						final Path destination = Paths.get( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
 						try {
-							if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack
+							if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack // Hugi 2021-07-08
 								Files.copy( source, destination );
 							}
 						}
@@ -52,46 +58,14 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Writes [string] to a file specified by [path]
+	 */
 	public static void writeStringToPath( final String string, final Path path ) {
 		try {
 			Files.write( path, string.getBytes( StandardCharsets.UTF_8 ) );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
-		}
-	}
-
-	public static void makeExecutable( final Path path ) {
-		Objects.requireNonNull( path );
-
-		try {
-			final Set<PosixFilePermission> perms = new HashSet<>();
-			perms.add( PosixFilePermission.OWNER_READ );
-			perms.add( PosixFilePermission.OWNER_WRITE );
-			perms.add( PosixFilePermission.OWNER_EXECUTE );
-			perms.add( PosixFilePermission.GROUP_READ );
-			perms.add( PosixFilePermission.OTHERS_READ );
-			Files.setPosixFilePermissions( path, perms );
-		}
-		catch( final IOException e ) {
-			e.printStackTrace();
-		}
-	}
-
-	public static byte[] byteArrayFromInputStream( InputStream is ) {
-		try {
-			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-			int nRead;
-			final byte[] data = new byte[16384];
-
-			while( (nRead = is.read( data, 0, data.length )) != -1 ) {
-				buffer.write( data, 0, nRead );
-			}
-
-			return buffer.toByteArray();
-		}
-		catch( final Exception e ) {
 			throw new RuntimeException( e );
 		}
 	}
@@ -105,32 +79,20 @@ public class Util {
 		}
 	}
 
-	/**
-	 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
-	 */
-	public static Path folder( final Path path ) {
-		if( Files.exists( path ) ) {
-			if( !Files.isDirectory( path ) ) {
-				throw new IllegalArgumentException( "Given folder path exists but is not a folder" );
-			}
-		}
-		else {
-			try {
-				Files.createDirectories( path );
-			}
-			catch( final IOException e ) {
-				throw new RuntimeException( e );
-			}
-		}
+	public static void makeUserExecutable( final Path path ) {
+		Objects.requireNonNull( path );
 
-		return path;
-	}
-
-	public static void copy( final InputStream source, final OutputStream target ) throws IOException {
-		final byte[] buf = new byte[8192];
-		int length;
-		while( (length = source.read( buf )) > 0 ) {
-			target.write( buf, 0, length );
+		try {
+			final Set<PosixFilePermission> perms = new HashSet<>();
+			perms.add( PosixFilePermission.OWNER_READ );
+			perms.add( PosixFilePermission.OWNER_WRITE );
+			perms.add( PosixFilePermission.OWNER_EXECUTE );
+			perms.add( PosixFilePermission.GROUP_READ );
+			perms.add( PosixFilePermission.OTHERS_READ );
+			Files.setPosixFilePermissions( path, perms );
+		}
+		catch( final IOException e ) {
+			e.printStackTrace();
 		}
 	}
 
@@ -192,6 +154,53 @@ public class Util {
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
+		}
+	}
+
+	/**
+	 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
+	 */
+	public static Path folder( final Path path ) {
+		if( Files.exists( path ) ) {
+			if( !Files.isDirectory( path ) ) {
+				throw new IllegalArgumentException( "Given folder path exists but is not a folder" );
+			}
+		}
+		else {
+			try {
+				Files.createDirectories( path );
+			}
+			catch( final IOException e ) {
+				throw new RuntimeException( e );
+			}
+		}
+
+		return path;
+	}
+
+	private static byte[] byteArrayFromInputStream( InputStream is ) {
+		try {
+			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+			int nRead;
+			final byte[] data = new byte[16384];
+
+			while( (nRead = is.read( data, 0, data.length )) != -1 ) {
+				buffer.write( data, 0, nRead );
+			}
+
+			return buffer.toByteArray();
+		}
+		catch( final Exception e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	private static void copy( final InputStream source, final OutputStream target ) throws IOException {
+		final byte[] buf = new byte[8192];
+		int length;
+		while( (length = source.read( buf )) > 0 ) {
+			target.write( buf, 0, length );
 		}
 	}
 }

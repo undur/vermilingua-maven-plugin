@@ -30,7 +30,7 @@ public class PackageMojo extends AbstractMojo {
 	 * Allows the user to specify an alternative folder name for the resources folder
 	 * I.e. "resources" (for compatibility with older behaviour).
 	 *
-	 * CHECKME: I'd prefer not to include this and just standardize on the new/correct bundle layout with a separate "woresources" folder
+	 * CHECKME: I'd prefer not to include this and just standardize on the new/correct bundle layout with a separate "woresources" folder  // Hugi 2021-07-08
 	 */
 	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = "woresources")
 	String woresourcesFolderName;
@@ -51,6 +51,7 @@ public class PackageMojo extends AbstractMojo {
 		final WOA woa = WOA.getAtPath( buildPath, applicationName );
 
 		// This will be the eventual name of the app's JAR file. Lowercase app name with .jar appended.
+		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unneccesary // Hugi 2021-07-08
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
@@ -59,10 +60,10 @@ public class PackageMojo extends AbstractMojo {
 		// Start working on that list of jar paths for the classpath
 		final List<String> classpathStrings = new ArrayList<>();
 
-		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that
+		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that // Hugi 2021-07-08
 		classpathStrings.add( "Contents/Resources/Java/" );
 
-		// CHECKME: Not a fan of using hardcoded folder names
+		// CHECKME: Not a fan of using hardcoded folder names // Hugi 2021-07-08
 		classpathStrings.add( "Contents/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
@@ -83,26 +84,26 @@ public class PackageMojo extends AbstractMojo {
 		}
 
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
-		// FIXME: Flatten components
+		// FIXME: Flatten components  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/" + woresourcesFolderName, woa.resourcesPath().toString() ); // FIXME: This should be woresources, here for compatibility
-		// FIXME: Flatten resources (?)
+		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
 		Util.writeStringToPath( Util.template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
 
 		Util.writeStringToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		Util.writeStringToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
-		// FIXME: Add Windows classpath
+		// FIXME: Add Windows classpath  // Hugi 2021-07-08
 
 		// Create the executable script for UNIX
 		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
 		Util.writeStringToPath( Util.template( "launch-script" ), unixLaunchScriptPath );
-		Util.makeExecutable( unixLaunchScriptPath );
+		Util.makeUserExecutable( unixLaunchScriptPath );
 
 		// Create the executable script for Windows
-		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName );
+		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName + ".cmd" );
 		Util.writeStringToPath( Util.template( "launch-script-cmd" ), windowsLaunchScriptPath );
-		Util.makeExecutable( windowsLaunchScriptPath );
+		Util.makeUserExecutable( windowsLaunchScriptPath );
 	}
 
 	/**
