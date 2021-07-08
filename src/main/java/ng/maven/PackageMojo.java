@@ -90,12 +90,10 @@ public class PackageMojo extends AbstractMojo {
 
 		stringsForClasspath.add( 0, "Contents/Resources/Java/ng-testapp.jar" );
 
-		writeToPath( baseLaunchScript(), woa.baseLaunchScriptPath() );
+		writeToPath( template( "launch-script" ), woa.baseLaunchScriptPath() );
 		makeExecutable( woa.baseLaunchScriptPath() );
-	}
 
-	private String baseLaunchScript() {
-		return template( "launch-script" );
+		writeToPath( template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 	}
 
 	private static void writeToPath( final String string, final Path path ) {
@@ -183,6 +181,18 @@ public class PackageMojo extends AbstractMojo {
 
 		public Path contentsPath() {
 			return folder( woaPath().resolve( "Contents" ) );
+		}
+
+		public Path macosPath() {
+			return folder( contentsPath().resolve( "MacOS" ) );
+		}
+
+		public Path unixPath() {
+			return folder( woaPath().resolve( "UNIX" ) );
+		}
+
+		public Path windowsPath() {
+			return folder( woaPath().resolve( "Windows" ) );
 		}
 
 		public Path resourcesPath() {
