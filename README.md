@@ -23,12 +23,11 @@ The `<woresourcesFolderName>` configuration parameter is to keep compatibility w
 
 ## Differences from wolifecycle-maven-plugin
 
-*  The default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
-* There's no deployment/install target, no split install. Should be easy enough to create
-* In a similar vein, there's no generation of compressed artifacts, just a generation of the woa
+* Currently only supports building applications, not frameworks (`woapplication` packaging, not `woframework`)
+* No generation of split install artifacts nor compressed artifacts, just generates a WOA.
 * Patternsets are not supported, primarily because I don't use them myself
 * `flattenComponents` and `flattenResources` have not yet been implemented
-* Currently only supports building Applications, not frameworks (`woapplication` packaging, not `woframework`)
+* And finally, as mentioned before; the default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
 
 ## The build process 
 
