@@ -30,7 +30,7 @@ public class PackageMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		// This is the 'target' directory
+		// This sill usually be maven's 'target' directory
 		final Path buildPath = Paths.get( project.getBuild().getDirectory() );
 
 		// This is the jar file resulting from the compilation of our application project (App.jar)
@@ -39,45 +39,42 @@ public class PackageMojo extends AbstractMojo {
 		// This is the WOA bundle, the destination for our build
 		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
 
-		// This is the name of the JAR file generated for the application. Lowercase application name with .jar appended.
+		// This will be the eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
-		// Copy the main jar to the woa
+		// Copy the app jar to the woa
 		Util.copyFile( artifactPath, woa.javaPath().resolve( appJarFilename ) );
 
-		// Start working on that list of paths to add to classpath
-		final List<String> stringsForClasspath = new ArrayList<>();
+		// Start working on that list of jar paths for the classpath
+		final List<String> classpathStrings = new ArrayList<>();
 
-		// FIXME: Not a fan of don't like to using hardcoded strings to represent directory locations
-		stringsForClasspath.add( "Contents/Resources/Java/" + appJarFilename );
+		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that
+		classpathStrings.add( "Contents/Resources/Java/" );
 
-		// Copy in the dependency jars
-		@SuppressWarnings("unchecked")
-		final Set<Artifact> artifacts = project.getArtifacts();
+		// CHECKME: Not a fan of using hardcoded folder names
+		classpathStrings.add( "Contents/Resources/Java/" + appJarFilename );
 
-		for( final Artifact artifact : artifacts ) {
-			getLog().debug( "Copying artifact: " + artifact );
-
-			final Path artifactPathInRepository = artifact.getFile().toPath();
-			final Path artifactFolderPath = Util.folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
-			final Path targetPath = artifactFolderPath.resolve( artifact.getFile().getName() );
-
-			stringsForClasspath.add( targetPath.toString() );
-
-			Util.copyFile( artifactPathInRepository, targetPath );
+		// Copy the app's resolved dependencies (direct and transient) to the WOA
+		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
+			final Path artifactPathInMavenRepository = artifact.getFile().toPath();
+			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
+			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( artifact.getFile().getName() );
+			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA );
+			classpathStrings.add( artifactPathInWOA.toString() );
 		}
 
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
-		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should eventually be woresources
+		// FIXME: Flatten components
+		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should be woresources, here for compatibility
+		// FIXME: Flatten resources (?)
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
-
-		Util.writeStringToPath( Util.template( "launch-script" ), woa.baseLaunchScriptPath() );
-		Util.makeExecutable( woa.baseLaunchScriptPath() );
 
 		Util.writeStringToPath( Util.template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
 		Util.writeStringToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		Util.writeStringToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath
+		Util.writeStringToPath( Util.template( "launch-script" ), woa.baseLaunchScriptPath() );
+		Util.makeExecutable( woa.baseLaunchScriptPath() );
 	}
 
 	/**
