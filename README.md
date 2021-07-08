@@ -27,7 +27,7 @@ The `<woresourcesFolderName>` configuration parameter is to keep compatibility w
 * There's no deployment/install target, no split install. Should be easy enough to create
 * In a similar vein, there's no generation of compressed artifacts, just a generation of the woa
 * `flattenComponents` and `flattenResources` have not yet been implemented
-* Currentlu only supports building `woapplication` (`woframework` coming soon)
+* Currently only supports building Applications, not frameworks (`woapplication` packaging, not `woframework`)
 
 ## The build process 
 
