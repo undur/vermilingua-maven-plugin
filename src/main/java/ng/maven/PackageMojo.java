@@ -59,6 +59,12 @@ public class PackageMojo extends AbstractMojo {
 			classpathStrings.add( artifactPathInWOA.toString() );
 		}
 
+		// Copy WebServerResources from framework jars to the WOA
+		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
+			final Path destination = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
+			Util.copyWebServerResourcesFromJarToPath( artifact.getFile(), destination );
+		}
+
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
 		// FIXME: Flatten components
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should be woresources, here for compatibility
