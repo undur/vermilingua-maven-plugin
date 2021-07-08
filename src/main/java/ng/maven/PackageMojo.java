@@ -46,7 +46,10 @@ public class PackageMojo extends AbstractMojo {
 		// This is the WOA bundle, the destination for our build
 		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
 
-		// Copy in the main jar
+		// Start working on that list of paths to add to classpath
+		final List<String> stringsForClasspath = new ArrayList<>();
+
+		// Copy the main jar to the woa
 		try {
 			Files.copy( artifactPath, woa.javaPath().resolve( project.getArtifact().getArtifactId().toLowerCase() + ".jar" ) );
 		}
@@ -54,11 +57,12 @@ public class PackageMojo extends AbstractMojo {
 			throw new RuntimeException( e );
 		}
 
+		// FIXME: I don't like to use strings to represent locations in the tree
+		stringsForClasspath.add( "Contents/Resources/Java/" + project.getArtifact().getArtifactId().toLowerCase() + ".jar" );
+
 		// Copy in the dependency jars
 		@SuppressWarnings("unchecked")
 		final Set<Artifact> artifacts = project.getArtifacts();
-
-		final List<String> stringsForClasspath = new ArrayList<>();
 
 		for( final Artifact artifact : artifacts ) {
 			getLog().debug( "Copying artifact: " + artifact );
@@ -82,8 +86,6 @@ public class PackageMojo extends AbstractMojo {
 		copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
 		copyDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should eventually be woresources
 		copyDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
-
-		stringsForClasspath.add( 0, "Contents/Resources/Java/ng-testapp.jar" );
 
 		writeToPath( template( "launch-script" ), woa.baseLaunchScriptPath() );
 		makeExecutable( woa.baseLaunchScriptPath() );
