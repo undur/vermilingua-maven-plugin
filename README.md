@@ -2,6 +2,24 @@
 
 A pure maven plugin for building Wonder applications and frameworks, "pure maven" meaning it doesn't use the woproject ant tasks. In theory, this should give us more flexibility when it comes to performing changes/modifications to the plugin and the build process.
 
+## Usage
+
+* Clone this repository and run `mvn install` on it to install the plugin
+* Replace the wolifecycle-maven-plugin <plugin> element in your pom.xml with
+
+```
+<plugin>
+	<groupId>is.rebbi</groupId>
+	<artifactId>vermilingua-maven-plugin</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<extensions>true</extensions>
+	<configuration>
+		<woresourcesFolderName>resources</woresourcesFolderName>
+	</configuration>
+</plugin>
+```
+The `<woresourcesFolderName>` configuration parameter is to keep compatibility with current projects. This plugin defaults to use the folder `src/main/woresources` for wo bundle resources rather than the `src/main/resources` folder.
+	
 ## The build process 
 
 * Generate the woa's directory structure
