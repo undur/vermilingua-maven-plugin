@@ -96,8 +96,9 @@ public class PackageMojo extends AbstractMojo {
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
 		final String standardClassPathString = Util.readTemplate( "classpath" );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
-		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.macosPath().resolve( "MacOSXServerClassPath.txt" ) );
-		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
+		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSXServerClassPath.txt" ) );
+		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
+
 		// FIXME: Add Windows classpath // Hugi 2021-07-08
 
 		// FIXME: Generate Info.plist // Hugi 2021-07-08
