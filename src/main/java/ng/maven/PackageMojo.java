@@ -50,12 +50,7 @@ public class PackageMojo extends AbstractMojo {
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
 		// Copy the main jar to the woa
-		try {
-			Files.copy( artifactPath, woa.javaPath().resolve( appJarFilename ) );
-		}
-		catch( final IOException e ) {
-			throw new RuntimeException( e );
-		}
+		copyFile( artifactPath, woa.javaPath().resolve( appJarFilename ) );
 
 		// Start working on that list of paths to add to classpath
 		final List<String> stringsForClasspath = new ArrayList<>();
@@ -78,12 +73,7 @@ public class PackageMojo extends AbstractMojo {
 
 			stringsForClasspath.add( targetPath.toString() );
 
-			try {
-				Files.copy( artifactPathInRepository, targetPath );
-			}
-			catch( final IOException e ) {
-				throw new RuntimeException( e );
-			}
+			copyFile( artifactPathInRepository, targetPath );
 		}
 
 		copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
@@ -97,6 +87,15 @@ public class PackageMojo extends AbstractMojo {
 		writeToPath( template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		writeToPath( template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath
+	}
+
+	private static void copyFile( final Path sourcePath, final Path destinationPath ) {
+		try {
+			Files.copy( sourcePath, destinationPath );
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
 	/**
