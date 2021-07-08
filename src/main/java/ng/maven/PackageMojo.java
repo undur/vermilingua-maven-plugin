@@ -27,8 +27,7 @@ public class PackageMojo extends AbstractMojo {
 	MavenProject project;
 
 	/**
-	 * Allows the user to specify an alternative folder name for the resources folder
-	 * I.e. "resources" (for compatibility with older behaviour).
+	 * Allows the user to specify an alternative name for the WO bundle resources folder (probably "resources")
 	 *
 	 * CHECKME: I'd prefer not to include this and just standardize on the new/correct bundle layout with a separate "woresources" folder  // Hugi 2021-07-08
 	 */
@@ -104,24 +103,26 @@ public class PackageMojo extends AbstractMojo {
 		// FIXME: Generate Info.plist // Hugi 2021-07-08
 
 		// Create the executable script for UNIX
-		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
 		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
+		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
 		Util.writeStringToPath( unixLaunchScriptString, unixLaunchScriptPath );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
 		// CHECKME: For some reason, Contents/MacOS contains an exact copy of the launch script from the WOA root // Hugi 2021-07-08
-		Util.writeStringToPath( unixLaunchScriptString, woa.macosPath().resolve( applicationName ) );
-		Util.makeUserExecutable( unixLaunchScriptPath );
+		final Path redundantMacOSLaunchScriptString = woa.macosPath().resolve( applicationName );
+		Util.writeStringToPath( unixLaunchScriptString, redundantMacOSLaunchScriptString );
+		Util.makeUserExecutable( redundantMacOSLaunchScriptString );
 
 		// Create the executable script for Windows
-		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName + ".cmd" );
 		final String windowsLaunchScriptString = Util.readTemplate( "launch-script-cmd" );
+		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName + ".cmd" );
 		Util.writeStringToPath( windowsLaunchScriptString, windowsLaunchScriptPath );
 		Util.makeUserExecutable( windowsLaunchScriptPath );
 
-		// CHECKME: And of course Contents/Windows directory contains an exact copy of the launch script from the WOA root // Hugi 2021-07-08
-		Util.writeStringToPath( windowsLaunchScriptString, woa.windowsPath().resolve( applicationName ) );
-		Util.makeUserExecutable( windowsLaunchScriptPath );
+		// CHECKME: And of course Contents/Windows contains an exact copy of the Windows script from the WOA root // Hugi 2021-07-08
+		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName );
+		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
+		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
 	}
 
 	/**
