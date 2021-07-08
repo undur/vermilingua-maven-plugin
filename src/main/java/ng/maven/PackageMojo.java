@@ -60,10 +60,10 @@ public class PackageMojo extends AbstractMojo {
 		final List<String> classpathStrings = new ArrayList<>();
 
 		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that for now, check later // Hugi 2021-07-08
-		classpathStrings.add( "Contents/Resources/Java/" );
+		classpathStrings.add( "APPROOT/Resources/Java/" );
 
 		// CHECKME: Not a fan of using hardcoded folder names // Hugi 2021-07-08
-		classpathStrings.add( "Contents/Resources/Java/" + appJarFilename );
+		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
 		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
@@ -73,7 +73,7 @@ public class PackageMojo extends AbstractMojo {
 			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA );
 
 			// Add the jar to the classpath
-			classpathStrings.add( artifactPathInWOA.toString() );
+			classpathStrings.add( "APPROOT/" + woa.contentsPath().relativize( artifactPathInWOA ) );
 		}
 
 		// Copy WebServerResources from framework jars to the WOA
@@ -124,6 +124,10 @@ public class PackageMojo extends AbstractMojo {
 		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName );
 		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
 		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
+
+		for( final String string : classpathStrings ) {
+			System.out.println( string );
+		}
 	}
 
 	/**
