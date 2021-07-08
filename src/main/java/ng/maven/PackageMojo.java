@@ -51,7 +51,7 @@ public class PackageMojo extends AbstractMojo {
 		final WOA woa = WOA.create( buildPath, applicationName );
 
 		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
-		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unneccesary // Hugi 2021-07-08
+		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unnecessary // Hugi 2021-07-08
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
