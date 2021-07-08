@@ -35,7 +35,7 @@ AppName.woa
 			MacOSXServerClassPath.txt
 		Resources
 			Java
-				AnApp.jar
+				appname.jar
 				some/other/dependency/2.0.0/dependency-2.0.0.jar
 		UNIX
 			UNIXClassPath.txt
