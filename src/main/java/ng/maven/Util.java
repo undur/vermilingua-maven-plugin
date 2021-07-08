@@ -134,6 +134,33 @@ public class Util {
 		}
 	}
 
+	public static boolean shouldCopyWebServerResources( final File sourceJarFile ) {
+		Objects.requireNonNull( sourceJarFile );
+
+		try( final JarFile jarFile = new JarFile( sourceJarFile )) {
+			final Enumeration<JarEntry> entries = jarFile.entries();
+
+			int i = 0;
+
+			while( entries.hasMoreElements() ) {
+				final JarEntry entry = entries.nextElement();
+
+				if( entry.getName().startsWith( "WebServerResources/" ) ) {
+					i++;
+
+					if( i > 1 ) {
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
 	/**
 	 * Yeah, two arguments, one is a path, the other one a file. So shoot me.
 	 *

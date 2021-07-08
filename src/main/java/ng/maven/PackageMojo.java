@@ -61,8 +61,10 @@ public class PackageMojo extends AbstractMojo {
 
 		// Copy WebServerResources from framework jars to the WOA
 		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
-			final Path destination = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
-			Util.copyWebServerResourcesFromJarToPath( artifact.getFile(), destination );
+			if( Util.shouldCopyWebServerResources( artifact.getFile() ) ) {
+				final Path destinationPath = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
+				Util.copyWebServerResourcesFromJarToPath( artifact.getFile(), destinationPath );
+			}
 		}
 
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
