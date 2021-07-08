@@ -18,8 +18,17 @@ A pure maven plugin for building Wonder applications and frameworks, "pure maven
 	</configuration>
 </plugin>
 ```
+
 The `<woresourcesFolderName>` configuration parameter is to keep compatibility with current projects. This plugin defaults to use the folder `src/main/woresources` for wo bundle resources rather than the `src/main/resources` folder.
-	
+
+## Differences from wolifecycle-maven-plugin
+
+*  The default location for wo bundle resources is src/main/woresources rather than src/main/resources (which is now reserved for java classpath resources As God Intended).
+* There's no deployment/install target, no split install. Should be easy enough to create
+* In a similar vein, there's no generation of compressed artifacts, just a generation of the woa
+* `flattenComponents` and `flattenResources` have not yet been implemented
+* Currentlu only supports building `woapplication` (`woframework` coming soon)
+
 ## The build process 
 
 * Generate the woa's directory structure
