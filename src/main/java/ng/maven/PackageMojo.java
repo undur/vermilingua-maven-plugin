@@ -88,12 +88,38 @@ public class PackageMojo extends AbstractMojo {
 			}
 		}
 
+		try {
+			copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
+			copyDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() );
+		}
+		catch( final IOException e ) {
+			e.printStackTrace();
+		}
+
 		stringsForClasspath.add( 0, "Contents/Resources/Java/ng-testapp.jar" );
 
 		writeToPath( template( "launch-script" ), woa.baseLaunchScriptPath() );
 		makeExecutable( woa.baseLaunchScriptPath() );
 
 		writeToPath( template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+	}
+
+	/**
+	 * FIXME: Change to accept Paths as parameters
+	 */
+	private static void copyDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) throws IOException {
+		Files.walk( Paths.get( sourceDirectoryLocation ) )
+				.forEach( source -> {
+					final Path destination = Paths.get( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
+					try {
+						if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack
+							Files.copy( source, destination );
+						}
+					}
+					catch( final IOException e ) {
+						e.printStackTrace();
+					}
+				} );
 	}
 
 	private static void writeToPath( final String string, final Path path ) {
