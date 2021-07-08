@@ -89,37 +89,39 @@ public class PackageMojo extends AbstractMojo {
 		}
 
 		stringsForClasspath.add( 0, "Contents/Resources/Java/ng-testapp.jar" );
-		final String cpString = String.join( ":", stringsForClasspath );
 
-		// Create the executable
-		final StringBuilder b = new StringBuilder();
-		b.append( "java -cp " + cpString + " ng.testapp.Application" );
+		writeToPath( baseLaunchScript(), woa.baseLaunchScriptPath() );
+		makeExecutable( woa.baseLaunchScriptPath() );
+	}
+
+	private String baseLaunchScript() {
+		return template( "launch-script" );
+	}
+
+	private static void writeToPath( final String string, final Path path ) {
 		try {
-			final Path executablePath = woa.woaPath().resolve( project.getArtifactId() );
-			Files.write( executablePath, b.toString().getBytes() );
+			Files.write( path, string.getBytes( StandardCharsets.UTF_8 ) );
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	private static void makeExecutable( final Path path ) {
+		Objects.requireNonNull( path );
+
+		try {
 			final Set<PosixFilePermission> perms = new HashSet<>();
 			perms.add( PosixFilePermission.OWNER_READ );
 			perms.add( PosixFilePermission.OWNER_WRITE );
 			perms.add( PosixFilePermission.OWNER_EXECUTE );
 			perms.add( PosixFilePermission.GROUP_READ );
 			perms.add( PosixFilePermission.OTHERS_READ );
-			Files.setPosixFilePermissions( executablePath, perms );
+			Files.setPosixFilePermissions( path, perms );
 		}
 		catch( final IOException e ) {
 			e.printStackTrace();
 		}
-
-		try {
-			Files.write( woa.baseLaunchScriptPath(), baseLaunchScript().getBytes( StandardCharsets.UTF_8 ) );
-		}
-		catch( final IOException e ) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	private String baseLaunchScript() {
-		return template( "launch-script" );
 	}
 
 	private static String template( final String name ) {
