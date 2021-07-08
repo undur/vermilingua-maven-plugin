@@ -8,6 +8,7 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -34,6 +35,10 @@ public class PackageMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
 		final Path buildPath = Paths.get( project.getBuild().getDirectory() );
+
+		// This is the destination for our build
+		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
+
 		final Path woaPath = buildPath.resolve( applicationName() + ".woa" );
 		final Path contentsPath = woaPath.resolve( "Contents" );
 		final Path resourcesPath = contentsPath.resolve( "Resources" );
@@ -104,18 +109,75 @@ public class PackageMojo extends AbstractMojo {
 		final StringBuilder b = new StringBuilder();
 		b.append( "java -cp " + cpString + " ng.testapp.Application" );
 		try {
-			final Path executable = woaPath.resolve( project.getArtifactId() );
-			Files.write( executable, b.toString().getBytes() );
+			final Path executablePath = woaPath.resolve( project.getArtifactId() );
+			Files.write( executablePath, b.toString().getBytes() );
 			final Set<PosixFilePermission> perms = new HashSet<>();
 			perms.add( PosixFilePermission.OWNER_READ );
 			perms.add( PosixFilePermission.OWNER_WRITE );
 			perms.add( PosixFilePermission.OWNER_EXECUTE );
 			perms.add( PosixFilePermission.GROUP_READ );
 			perms.add( PosixFilePermission.OTHERS_READ );
-			Files.setPosixFilePermissions( executable, perms );
+			Files.setPosixFilePermissions( executablePath, perms );
 		}
 		catch( final IOException e ) {
 			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Our in-memory representation of the WOA bundle
+	 */
+	public static class WOA {
+
+		private final Path _woaPath;
+
+		/**
+		 * @return A WOA bundle wth [applicationName], initialized in [containingDirectory]
+		 */
+		public static WOA getAtPath( final Path containingDirectory, final String applicationName ) {
+			Objects.requireNonNull( containingDirectory );
+			Objects.requireNonNull( applicationName );
+			final Path woaPath = containingDirectory.resolve( applicationName + ".woa" );
+			return new WOA( woaPath );
+		}
+
+		private WOA( final Path woaPath ) {
+			Objects.requireNonNull( woaPath );
+			_woaPath = folder( woaPath );
+		}
+
+		public Path woaPath() {
+			return _woaPath;
+		}
+
+		public Path contentsPath() {
+			return folder( woaPath().resolve( "Contents" ) );
+		}
+
+		public Path resourcesPath() {
+			return folder( contentsPath().resolve( "Resources" ) );
+		}
+
+		public Path javaPath() {
+			return folder( resourcesPath().resolve( "Java" ) );
+		}
+
+		private static Path folder( final Path path ) {
+			if( Files.exists( path ) ) {
+				if( !Files.isDirectory( path ) ) {
+					throw new IllegalArgumentException( "Given folder path exists but is not a folder" );
+				}
+			}
+			else {
+				try {
+					Files.createDirectory( path );
+				}
+				catch( final IOException e ) {
+					throw new RuntimeException( e );
+				}
+			}
+
+			return path;
 		}
 	}
 }
