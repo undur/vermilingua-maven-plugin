@@ -38,29 +38,29 @@ public class PackageMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		// This sill usually be maven's 'target' directory
+		// Usually Maven's standard 'target' directory
 		final Path buildPath = Paths.get( project.getBuild().getDirectory() );
 
-		// This is the jar file resulting from the compilation of our application project (App.jar)
+		// The jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = project.getArtifact().getFile().toPath();
 
 		// The name of the application, gotten from the artifactId
 		final String applicationName = project.getArtifactId();
 
-		// This is the WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
+		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
 		final WOA woa = WOA.getAtPath( buildPath, applicationName );
 
-		// This will be the eventual name of the app's JAR file. Lowercase app name with .jar appended.
+		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unneccesary // Hugi 2021-07-08
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
 		Util.copyFile( artifactPath, woa.javaPath().resolve( appJarFilename ) );
 
-		// Start working on that list of jar paths for the classpath
+		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
 
-		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that // Hugi 2021-07-08
+		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that for now, check later // Hugi 2021-07-08
 		classpathStrings.add( "Contents/Resources/Java/" );
 
 		// CHECKME: Not a fan of using hardcoded folder names // Hugi 2021-07-08
