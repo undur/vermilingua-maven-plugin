@@ -63,7 +63,7 @@ public class Util {
 
 	public static void makeExecutable( final Path path ) {
 		Objects.requireNonNull( path );
-	
+
 		try {
 			final Set<PosixFilePermission> perms = new HashSet<>();
 			perms.add( PosixFilePermission.OWNER_READ );
@@ -81,14 +81,14 @@ public class Util {
 	public static byte[] byteArrayFromInputStream( InputStream is ) {
 		try {
 			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-	
+
 			int nRead;
 			final byte[] data = new byte[16384];
-	
+
 			while( (nRead = is.read( data, 0, data.length )) != -1 ) {
 				buffer.write( data, 0, nRead );
 			}
-	
+
 			return buffer.toByteArray();
 		}
 		catch( final Exception e ) {
@@ -122,7 +122,7 @@ public class Util {
 				throw new RuntimeException( e );
 			}
 		}
-	
+
 		return path;
 	}
 
@@ -140,16 +140,16 @@ public class Util {
 	public static void copyWebServerResourcesFromJarToPath( final File sourceJarFile, final Path destinationPath ) {
 		Objects.requireNonNull( sourceJarFile );
 		Objects.requireNonNull( destinationPath );
-	
+
 		try( final JarFile jarFile = new JarFile( sourceJarFile )) {
 			final Enumeration<JarEntry> entries = jarFile.entries();
-	
+
 			while( entries.hasMoreElements() ) {
 				final JarEntry entry = entries.nextElement();
-	
+
 				if( entry.getName().startsWith( "WebServerResources/" ) ) {
 					final File targetFile = destinationPath.resolve( entry.getName() ).toFile();
-	
+
 					if( entry.isDirectory() ) {
 						targetFile.mkdirs();
 					}
@@ -161,9 +161,8 @@ public class Util {
 				}
 			}
 		}
-		catch( final Exception e ) {
+		catch( final IOException e ) {
 			throw new RuntimeException( e );
 		}
 	}
-
 }
