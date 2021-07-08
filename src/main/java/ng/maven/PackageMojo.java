@@ -87,19 +87,28 @@ public class PackageMojo extends AbstractMojo {
 
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
 		// FIXME: Flatten components  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/" + woresourcesFolderName, woa.resourcesPath().toString() ); // FIXME: This should be woresources, here for compatibility
+		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/" + woresourcesFolderName, woa.resourcesPath().toString() );
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
 		Util.writeStringToPath( Util.readTemplate( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
 
-		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
+		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
+		final String standardClassPathString = Util.readTemplate( "classpath" );
+		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.macosPath().resolve( "MacOSXServerClassPath.txt" ) );
 		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath // Hugi 2021-07-08
 
 		// Create the executable script for UNIX
 		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
-		Util.writeStringToPath( Util.readTemplate( "launch-script" ), unixLaunchScriptPath );
+		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
+		Util.writeStringToPath( unixLaunchScriptString, unixLaunchScriptPath );
+		Util.makeUserExecutable( unixLaunchScriptPath );
+
+		// CHECKME: For some reason, the MacOS directory contains an exact copy of the launch script // Hugi 2021-07-08
+		Util.writeStringToPath( unixLaunchScriptString, woa.macosPath().resolve( applicationName ) );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
 		// Create the executable script for Windows
