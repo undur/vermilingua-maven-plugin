@@ -65,16 +65,7 @@ public class PackageMojo extends AbstractMojo {
 
 			final Path artifactPathInRepository = artifact.getFile().toPath();
 
-			final Path artifactFolderPath = woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() );
-
-			try {
-				if( !Files.exists( artifactFolderPath ) ) {
-					Files.createDirectories( artifactFolderPath );
-				}
-			}
-			catch( final IOException e ) {
-				throw new RuntimeException( e );
-			}
+			final Path artifactFolderPath = folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
 
 			final Path targetPath = artifactFolderPath.resolve( artifact.getFile().getName() );
 
@@ -91,6 +82,7 @@ public class PackageMojo extends AbstractMojo {
 		try {
 			copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
 			copyDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() );
+			copyDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 		}
 		catch( final IOException e ) {
 			e.printStackTrace();
@@ -214,15 +206,19 @@ public class PackageMojo extends AbstractMojo {
 		}
 
 		public Path unixPath() {
-			return folder( woaPath().resolve( "UNIX" ) );
+			return folder( contentsPath().resolve( "UNIX" ) );
 		}
 
 		public Path windowsPath() {
-			return folder( woaPath().resolve( "Windows" ) );
+			return folder( contentsPath().resolve( "Windows" ) );
 		}
 
 		public Path resourcesPath() {
 			return folder( contentsPath().resolve( "Resources" ) );
+		}
+
+		public Path webServerResourcesPath() {
+			return folder( contentsPath().resolve( "WebServerResources" ) );
 		}
 
 		public Path javaPath() {
@@ -233,25 +229,26 @@ public class PackageMojo extends AbstractMojo {
 			return woaPath().resolve( _applicationName );
 		}
 
-		/**
-		 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
-		 */
-		private static Path folder( final Path path ) {
-			if( Files.exists( path ) ) {
-				if( !Files.isDirectory( path ) ) {
-					throw new IllegalArgumentException( "Given folder path exists but is not a folder" );
-				}
-			}
-			else {
-				try {
-					Files.createDirectory( path );
-				}
-				catch( final IOException e ) {
-					throw new RuntimeException( e );
-				}
-			}
+	}
 
-			return path;
+	/**
+	 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
+	 */
+	private static Path folder( final Path path ) {
+		if( Files.exists( path ) ) {
+			if( !Files.isDirectory( path ) ) {
+				throw new IllegalArgumentException( "Given folder path exists but is not a folder" );
+			}
 		}
+		else {
+			try {
+				Files.createDirectory( path );
+			}
+			catch( final IOException e ) {
+				throw new RuntimeException( e );
+			}
+		}
+
+		return path;
 	}
 }
