@@ -149,7 +149,7 @@ public class PackageMojo extends AbstractMojo {
 	}
 
 	private static String template( final String name ) {
-		try( InputStream stream = PackageMojo.class.getResourceAsStream( "/scripts/" + name + ".template" )) {
+		try( InputStream stream = PackageMojo.class.getResourceAsStream( "/scripts/" + name + ".template.txt" )) {
 			return new String( b( stream ), StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
