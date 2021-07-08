@@ -1,6 +1,6 @@
 <img align="right" src="https://www.hugi.io/github/img/antkiller2.png" width="40">
 
-A pure maven plugin for building Wonder applications and frameworks, "pure maven" meaning it doesn't use the woproject ant tasks. In theory, this should give us more flexibility when it comes to performing changes/modifications to the plugin and the build process.
+A pure maven plugin for building Wonder applications and frameworks, "pure maven" meaning it doesn't use the woproject ant tasks. In theory, this makes it easier to modify the plugin and improve the build process.
 
 ## Usage
 
