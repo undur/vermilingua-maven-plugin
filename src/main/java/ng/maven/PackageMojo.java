@@ -65,7 +65,7 @@ public class PackageMojo extends AbstractMojo {
 
 			final Path artifactPathInRepository = artifact.getFile().toPath();
 
-			final Path artifactFolderPath = woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getVersion() );
+			final Path artifactFolderPath = woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() );
 
 			try {
 				if( !Files.exists( artifactFolderPath ) ) {
