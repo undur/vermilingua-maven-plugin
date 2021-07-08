@@ -140,10 +140,6 @@ public class PackageMojo extends AbstractMojo {
 		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName );
 		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
 		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
-
-		for( final String string : classpathStrings ) {
-			System.out.println( string );
-		}
 	}
 
 	/**
