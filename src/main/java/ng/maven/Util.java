@@ -39,6 +39,9 @@ public class Util {
 	 * FIXME: Change to accept Paths as parameters // Hugi 2021-07-08
 	 */
 	public static void copyContentsOfDirectoryToDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) {
+		Objects.requireNonNull( sourceDirectoryLocation );
+		Objects.requireNonNull( destinationDirectoryLocation );
+
 		try {
 			Files.walk( Paths.get( sourceDirectoryLocation ) )
 					.forEach( source -> {
@@ -62,6 +65,9 @@ public class Util {
 	 * Writes [string] to a file specified by [path]
 	 */
 	public static void writeStringToPath( final String string, final Path path ) {
+		Objects.requireNonNull( string );
+		Objects.requireNonNull( path );
+
 		try {
 			Files.write( path, string.getBytes( StandardCharsets.UTF_8 ) );
 		}
@@ -71,6 +77,8 @@ public class Util {
 	}
 
 	public static String template( final String name ) {
+		Objects.requireNonNull( name );
+
 		try( InputStream stream = PackageMojo.class.getResourceAsStream( "/scripts/" + name + ".template.txt" )) {
 			return new String( byteArrayFromInputStream( stream ), StandardCharsets.UTF_8 );
 		}
@@ -161,6 +169,8 @@ public class Util {
 	 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
 	 */
 	public static Path folder( final Path path ) {
+		Objects.requireNonNull( path );
+
 		if( Files.exists( path ) ) {
 			if( !Files.isDirectory( path ) ) {
 				throw new IllegalArgumentException( "Given folder path exists but is not a folder" );
@@ -179,6 +189,8 @@ public class Util {
 	}
 
 	private static byte[] byteArrayFromInputStream( InputStream is ) {
+		Objects.requireNonNull( is );
+
 		try {
 			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
@@ -197,6 +209,9 @@ public class Util {
 	}
 
 	private static void copy( final InputStream source, final OutputStream target ) throws IOException {
+		Objects.requireNonNull( source );
+		Objects.requireNonNull( target );
+
 		final byte[] buf = new byte[8192];
 		int length;
 		while( (length = source.read( buf )) > 0 ) {
