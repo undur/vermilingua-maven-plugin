@@ -1,10 +1,13 @@
 package ng.maven;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -92,7 +95,8 @@ public class PackageMojo extends AbstractMojo {
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
-		final String classPathFileTemplateString = Util.readTemplate( "classpath" );
+		String classPathFileTemplateString = Util.readTemplate( "classpath" );
+		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", applicationClassName() );
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
@@ -139,6 +143,22 @@ public class PackageMojo extends AbstractMojo {
 
 		for( final String string : classpathStrings ) {
 			System.out.println( string );
+		}
+	}
+
+	/**
+	 * @return The name of the Application's main class, from the project's build.properties
+	 *
+	 * CHECKME: I don't like depending on build.properties. Additional files make me angry. Oh well, perhaps it's ok. For now // Hugi 2021-07-08
+	 */
+	private String applicationClassName() {
+		try( FileInputStream fis = new FileInputStream( project.getBasedir() + "/build.properties" )) {
+			final Properties buildProperties = new Properties();
+			buildProperties.load( fis );
+			return buildProperties.getProperty( "principalClass" );
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
 		}
 	}
 
