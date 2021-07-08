@@ -40,7 +40,7 @@
                 <string>${NSJavaPath}</string>
         </array>
         <key>NSJavaPathClient</key>
-        <string>hugi.jar</string>
+        <string>${NSJavaPathClient}</string>
         <key>NSJavaRoot</key>
         <string>Contents/Resources/Java</string>
 
