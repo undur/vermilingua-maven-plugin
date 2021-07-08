@@ -90,8 +90,6 @@ public class PackageMojo extends AbstractMojo {
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
-		Util.writeStringToPath( Util.readTemplate( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
-
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
 		final String classPathFileTemplateString = Util.readTemplate( "classpath" );
@@ -107,7 +105,15 @@ public class PackageMojo extends AbstractMojo {
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
-		// FIXME: Generate Info.plist // Hugi 2021-07-08
+		// CHECKME: Fugly template implementation, beautify // Hugi 2021-07-08
+		String infoPlistString = Util.readTemplate( "info-plist" );
+		infoPlistString = infoPlistString.replace( "${NSExecutable}", applicationName );
+		infoPlistString = infoPlistString.replace( "${CFBundleExecutable}", applicationName );
+		infoPlistString = infoPlistString.replace( "${CFBundleShortVersionString}", project.getVersion() );
+		infoPlistString = infoPlistString.replace( "${CFBundleVersion}", project.getVersion() );
+		infoPlistString = infoPlistString.replace( "${NSJavaPath}", appJarFilename );
+		infoPlistString = infoPlistString.replace( "${NSJavaPathClient}", appJarFilename );
+		Util.writeStringToPath( infoPlistString, woa.contentsPath().resolve( "Info.plist" ) );
 
 		// Create the executable script for UNIX
 		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
