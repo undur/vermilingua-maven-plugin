@@ -46,9 +46,6 @@ public class PackageMojo extends AbstractMojo {
 		// This is the WOA bundle, the destination for our build
 		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
 
-		// Start working on that list of paths to add to classpath
-		final List<String> stringsForClasspath = new ArrayList<>();
-
 		// This is the name of the JAR file generated for the application
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
@@ -59,6 +56,9 @@ public class PackageMojo extends AbstractMojo {
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
 		}
+
+		// Start working on that list of paths to add to classpath
+		final List<String> stringsForClasspath = new ArrayList<>();
 
 		// FIXME: I don't like to use strings to represent locations in the tree
 		stringsForClasspath.add( "Contents/Resources/Java/" + appJarFilename );
