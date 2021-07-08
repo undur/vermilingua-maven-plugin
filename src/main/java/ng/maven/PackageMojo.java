@@ -72,6 +72,8 @@ public class PackageMojo extends AbstractMojo {
 			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
 			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( artifact.getFile().getName() );
 			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA );
+
+			// Add the jar to the classpath
 			classpathStrings.add( artifactPathInWOA.toString() );
 		}
 
@@ -79,7 +81,7 @@ public class PackageMojo extends AbstractMojo {
 		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
 			if( Util.containsWebServerResources( artifact.getFile() ) ) {
 				final Path destinationPath = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
-				Util.copyWebServerResourcesFromJarToPath( artifact.getFile(), destinationPath );
+				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile(), destinationPath );
 			}
 		}
 
@@ -89,20 +91,20 @@ public class PackageMojo extends AbstractMojo {
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
-		Util.writeStringToPath( Util.template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
+		Util.writeStringToPath( Util.readTemplate( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
 
-		Util.writeStringToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
-		Util.writeStringToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
+		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+		Util.writeStringToPath( Util.readTemplate( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath  // Hugi 2021-07-08
 
 		// Create the executable script for UNIX
 		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
-		Util.writeStringToPath( Util.template( "launch-script" ), unixLaunchScriptPath );
+		Util.writeStringToPath( Util.readTemplate( "launch-script" ), unixLaunchScriptPath );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
 		// Create the executable script for Windows
 		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName + ".cmd" );
-		Util.writeStringToPath( Util.template( "launch-script-cmd" ), windowsLaunchScriptPath );
+		Util.writeStringToPath( Util.readTemplate( "launch-script-cmd" ), windowsLaunchScriptPath );
 		Util.makeUserExecutable( windowsLaunchScriptPath );
 	}
 

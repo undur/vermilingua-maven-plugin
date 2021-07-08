@@ -76,7 +76,7 @@ public class Util {
 		}
 	}
 
-	public static String template( final String name ) {
+	public static String readTemplate( final String name ) {
 		Objects.requireNonNull( name );
 
 		try( InputStream stream = PackageMojo.class.getResourceAsStream( "/scripts/" + name + ".template.txt" )) {
@@ -134,9 +134,10 @@ public class Util {
 	/**
 	 * Yeah, two arguments, one is a path, the other one a file. So shoot me.
 	 *
-	 * FIXME: Don't copy WebServerRrsources if it's empty
+	 * FIXME: Don't copy the folder if it's empty // Hugi 2021-08-07
 	 */
-	public static void copyWebServerResourcesFromJarToPath( final File sourceJarFile, final Path destinationPath ) {
+	public static void copyFolderFromJarToPath( final String folderName, final File sourceJarFile, final Path destinationPath ) {
+		Objects.requireNonNull( folderName );
 		Objects.requireNonNull( sourceJarFile );
 		Objects.requireNonNull( destinationPath );
 
@@ -146,7 +147,7 @@ public class Util {
 			while( entries.hasMoreElements() ) {
 				final JarEntry entry = entries.nextElement();
 
-				if( entry.getName().startsWith( "WebServerResources/" ) ) {
+				if( entry.getName().startsWith( folderName + "/" ) ) {
 					final File targetFile = destinationPath.resolve( entry.getName() ).toFile();
 
 					if( entry.isDirectory() ) {
