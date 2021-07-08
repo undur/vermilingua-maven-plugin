@@ -136,6 +136,8 @@ public class Util {
 
 	/**
 	 * Yeah, two arguments, one is a path, the other one a file. So shoot me.
+	 *
+	 * FIXME: Don't copy WebServerRrsources if it's empty
 	 */
 	public static void copyWebServerResourcesFromJarToPath( final File sourceJarFile, final Path destinationPath ) {
 		Objects.requireNonNull( sourceJarFile );
