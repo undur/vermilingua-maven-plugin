@@ -79,14 +79,9 @@ public class PackageMojo extends AbstractMojo {
 			}
 		}
 
-		try {
-			copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
-			copyDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() );
-			copyDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
-		}
-		catch( final IOException e ) {
-			e.printStackTrace();
-		}
+		copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
+		copyDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should eventually be woresources
+		copyDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
 		stringsForClasspath.add( 0, "Contents/Resources/Java/ng-testapp.jar" );
 
@@ -94,24 +89,31 @@ public class PackageMojo extends AbstractMojo {
 		makeExecutable( woa.baseLaunchScriptPath() );
 
 		writeToPath( template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+		writeToPath( template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
+		// FIXME: Add Windows classpath
 	}
 
 	/**
 	 * FIXME: Change to accept Paths as parameters
 	 */
-	private static void copyDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) throws IOException {
-		Files.walk( Paths.get( sourceDirectoryLocation ) )
-				.forEach( source -> {
-					final Path destination = Paths.get( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
-					try {
-						if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack
-							Files.copy( source, destination );
+	private static void copyDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) {
+		try {
+			Files.walk( Paths.get( sourceDirectoryLocation ) )
+					.forEach( source -> {
+						final Path destination = Paths.get( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
+						try {
+							if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack
+								Files.copy( source, destination );
+							}
 						}
-					}
-					catch( final IOException e ) {
-						e.printStackTrace();
-					}
-				} );
+						catch( final IOException e ) {
+							throw new RuntimeException( e );
+						}
+					} );
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
 	private static void writeToPath( final String string, final Path path ) {
@@ -228,7 +230,6 @@ public class PackageMojo extends AbstractMojo {
 		public Path baseLaunchScriptPath() {
 			return woaPath().resolve( _applicationName );
 		}
-
 	}
 
 	/**
