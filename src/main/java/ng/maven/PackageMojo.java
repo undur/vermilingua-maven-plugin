@@ -48,7 +48,7 @@ public class PackageMojo extends AbstractMojo {
 		final String applicationName = project.getArtifactId();
 
 		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
-		final WOA woa = WOA.getAtPath( buildPath, applicationName );
+		final WOA woa = WOA.create( buildPath, applicationName );
 
 		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unneccesary // Hugi 2021-07-08
@@ -122,14 +122,12 @@ public class PackageMojo extends AbstractMojo {
 	 */
 	public static class WOA {
 
-		private final String _applicationName;
-
 		private final Path _woaPath;
 
 		/**
 		 * @return The WOA bundle [applicationName].woa in [containingDirectory]
 		 */
-		public static WOA getAtPath( final Path containingDirectory, final String applicationName ) {
+		public static WOA create( final Path containingDirectory, final String applicationName ) {
 			Objects.requireNonNull( containingDirectory );
 			Objects.requireNonNull( applicationName );
 			final Path woaPath = containingDirectory.resolve( applicationName + ".woa" );
@@ -140,7 +138,6 @@ public class PackageMojo extends AbstractMojo {
 			Objects.requireNonNull( woaPath );
 			Objects.requireNonNull( applicationName );
 			_woaPath = Util.folder( woaPath );
-			_applicationName = applicationName;
 		}
 
 		public Path woaPath() {
