@@ -242,7 +242,7 @@ public class PackageMojo extends AbstractMojo {
 		}
 		else {
 			try {
-				Files.createDirectory( path );
+				Files.createDirectories( path );
 			}
 			catch( final IOException e ) {
 				throw new RuntimeException( e );
