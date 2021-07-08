@@ -1,16 +1,22 @@
 package ng.maven;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class Util {
 
@@ -118,6 +124,46 @@ public class Util {
 		}
 	
 		return path;
+	}
+
+	public static void copy( final InputStream source, final OutputStream target ) throws IOException {
+		final byte[] buf = new byte[8192];
+		int length;
+		while( (length = source.read( buf )) > 0 ) {
+			target.write( buf, 0, length );
+		}
+	}
+
+	/**
+	 * Yeah, two arguments, one is a path, the other one a file. So shoot me.
+	 */
+	public static void copyWebServerResourcesFromJarToPath( final File sourceJarFile, final Path destinationPath ) {
+		Objects.requireNonNull( sourceJarFile );
+		Objects.requireNonNull( destinationPath );
+	
+		try( final JarFile jarFile = new JarFile( sourceJarFile )) {
+			final Enumeration<JarEntry> entries = jarFile.entries();
+	
+			while( entries.hasMoreElements() ) {
+				final JarEntry entry = entries.nextElement();
+	
+				if( entry.getName().startsWith( "WebServerResources/" ) ) {
+					final File targetFile = destinationPath.resolve( entry.getName() ).toFile();
+	
+					if( entry.isDirectory() ) {
+						targetFile.mkdirs();
+					}
+					else {
+						final InputStream inStream = jarFile.getInputStream( entry );
+						final OutputStream outStream = new FileOutputStream( targetFile );
+						copy( inStream, outStream );
+					}
+				}
+			}
+		}
+		catch( final Exception e ) {
+			throw new RuntimeException( e );
+		}
 	}
 
 }
