@@ -26,6 +26,7 @@ The `<woresourcesFolderName>` configuration parameter is to keep compatibility w
 *  The default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
 * There's no deployment/install target, no split install. Should be easy enough to create
 * In a similar vein, there's no generation of compressed artifacts, just a generation of the woa
+* Patternsets are not supported, primarily because I don't use them myself
 * `flattenComponents` and `flattenResources` have not yet been implemented
 * Currently only supports building Applications, not frameworks (`woapplication` packaging, not `woframework`)
 
