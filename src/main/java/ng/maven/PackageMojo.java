@@ -34,24 +34,24 @@ public class PackageMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
+		// This is the 'target' directory
 		final Path buildPath = Paths.get( project.getBuild().getDirectory() );
 
-		// This is the destination for our build
+		// This is the jar file resulting from the compilation of our application project (App.jar)
+		final Path artifactPath = project.getArtifact().getFile().toPath();
+
+		// This is the WOA bundle, the destination for our build
 		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
 
-		//
 		// Copy in the main jar
-		//
 		try {
-			Files.copy( project.getArtifact().getFile().toPath(), woa.javaPath().resolve( project.getArtifact().getArtifactId() + ".jar" ) );
+			Files.copy( artifactPath, woa.javaPath().resolve( project.getArtifact().getArtifactId() + ".jar" ) );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
 		}
 
-		//
 		// Copy in the dependency jars
-		//
 		@SuppressWarnings("unchecked")
 		final Set<Artifact> artifacts = project.getArtifacts();
 
@@ -87,9 +87,8 @@ public class PackageMojo extends AbstractMojo {
 
 		stringsForClasspath.add( 0, "Contents/Resources/Java/ng-testapp.jar" );
 		final String cpString = String.join( ":", stringsForClasspath );
-		//
+
 		// Create the executable
-		//
 		final StringBuilder b = new StringBuilder();
 		b.append( "java -cp " + cpString + " ng.testapp.Application" );
 		try {
@@ -116,7 +115,7 @@ public class PackageMojo extends AbstractMojo {
 		private final Path _woaPath;
 
 		/**
-		 * @return A WOA bundle wth [applicationName], initialized in [containingDirectory]
+		 * @return The WOA bundle [applicationName].woa in [containingDirectory]
 		 */
 		public static WOA getAtPath( final Path containingDirectory, final String applicationName ) {
 			Objects.requireNonNull( containingDirectory );
@@ -146,6 +145,9 @@ public class PackageMojo extends AbstractMojo {
 			return folder( resourcesPath().resolve( "Java" ) );
 		}
 
+		/**
+		 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
+		 */
 		private static Path folder( final Path path ) {
 			if( Files.exists( path ) ) {
 				if( !Files.isDirectory( path ) ) {
