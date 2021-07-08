@@ -90,6 +90,7 @@ public class PackageMojo extends AbstractMojo {
 		writeToPath( template( "launch-script" ), woa.baseLaunchScriptPath() );
 		makeExecutable( woa.baseLaunchScriptPath() );
 
+		writeToPath( template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
 		writeToPath( template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		writeToPath( template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath
