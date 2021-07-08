@@ -107,13 +107,18 @@ public class PackageMojo extends AbstractMojo {
 		Util.writeStringToPath( unixLaunchScriptString, unixLaunchScriptPath );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
-		// CHECKME: For some reason, the MacOS directory contains an exact copy of the launch script // Hugi 2021-07-08
+		// CHECKME: For some reason, Contents/MacOS contains an exact copy of the launch script from the WOA root // Hugi 2021-07-08
 		Util.writeStringToPath( unixLaunchScriptString, woa.macosPath().resolve( applicationName ) );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
 		// Create the executable script for Windows
 		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName + ".cmd" );
-		Util.writeStringToPath( Util.readTemplate( "launch-script-cmd" ), windowsLaunchScriptPath );
+		final String windowsLaunchScriptString = Util.readTemplate( "launch-script-cmd" );
+		Util.writeStringToPath( windowsLaunchScriptString, windowsLaunchScriptPath );
+		Util.makeUserExecutable( windowsLaunchScriptPath );
+
+		// CHECKME: And of course Contents/Windows directory contains an exact copy of the launch script from the WOA root // Hugi 2021-07-08
+		Util.writeStringToPath( windowsLaunchScriptString, woa.windowsPath().resolve( applicationName ) );
 		Util.makeUserExecutable( windowsLaunchScriptPath );
 	}
 
