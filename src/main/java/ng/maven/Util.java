@@ -26,7 +26,7 @@ public class Util {
 	/**
 	 * FIXME: Change to accept Paths as parameters
 	 */
-	public static void copyDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) {
+	public static void copyContentsOfDirectoryToDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) {
 		try {
 			Files.walk( Paths.get( sourceDirectoryLocation ) )
 					.forEach( source -> {
@@ -46,7 +46,7 @@ public class Util {
 		}
 	}
 
-	public static void writeToPath( final String string, final Path path ) {
+	public static void writeStringToPath( final String string, final Path path ) {
 		try {
 			Files.write( path, string.getBytes( StandardCharsets.UTF_8 ) );
 		}

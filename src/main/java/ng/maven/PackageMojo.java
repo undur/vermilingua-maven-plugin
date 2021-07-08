@@ -67,16 +67,16 @@ public class PackageMojo extends AbstractMojo {
 			Util.copyFile( artifactPathInRepository, targetPath );
 		}
 
-		Util.copyDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
-		Util.copyDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should eventually be woresources
-		Util.copyDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/resources", woa.resourcesPath().toString() ); // FIXME: This should eventually be woresources
+		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
-		Util.writeToPath( Util.template( "launch-script" ), woa.baseLaunchScriptPath() );
+		Util.writeStringToPath( Util.template( "launch-script" ), woa.baseLaunchScriptPath() );
 		Util.makeExecutable( woa.baseLaunchScriptPath() );
 
-		Util.writeToPath( Util.template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
-		Util.writeToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
-		Util.writeToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
+		Util.writeStringToPath( Util.template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
+		Util.writeStringToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+		Util.writeStringToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath
 	}
 
