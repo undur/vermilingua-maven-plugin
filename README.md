@@ -1,4 +1,4 @@
-# Vermilingua
+![die die die](https://www.hugi.io/github/img/antkiller.png)
 
 A pure maven plugin for building Wonder applications and frameworks, "pure maven" meaning it doesn't use the woproject ant tasks. In theory, this should give us more flexibility when it comes to performing changes/modifications to the plugin and the build process.
 
