@@ -23,10 +23,6 @@ public class PackageMojo extends AbstractMojo {
 	@Parameter(property = "project", required = true, readonly = true)
 	MavenProject project;
 
-	private String applicationName() {
-		return project.getArtifactId();
-	}
-
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -36,8 +32,8 @@ public class PackageMojo extends AbstractMojo {
 		// This is the jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = project.getArtifact().getFile().toPath();
 
-		// This is the WOA bundle, the destination for our build
-		final WOA woa = WOA.getAtPath( buildPath, applicationName() );
+		// This is the WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
+		final WOA woa = WOA.getAtPath( buildPath, project.getArtifactId() );
 
 		// This will be the eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
@@ -70,6 +66,7 @@ public class PackageMojo extends AbstractMojo {
 		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
 		Util.writeStringToPath( Util.template( "info-plist" ), woa.contentsPath().resolve( "Info.plist" ) );
+
 		Util.writeStringToPath( Util.template( "classpath" ), woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		Util.writeStringToPath( Util.template( "classpath" ), woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		// FIXME: Add Windows classpath
