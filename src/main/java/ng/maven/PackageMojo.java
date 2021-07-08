@@ -49,16 +49,19 @@ public class PackageMojo extends AbstractMojo {
 		// Start working on that list of paths to add to classpath
 		final List<String> stringsForClasspath = new ArrayList<>();
 
+		// This is the name of the JAR file generated for the application
+		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
+
 		// Copy the main jar to the woa
 		try {
-			Files.copy( artifactPath, woa.javaPath().resolve( project.getArtifact().getArtifactId().toLowerCase() + ".jar" ) );
+			Files.copy( artifactPath, woa.javaPath().resolve( appJarFilename ) );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
 		}
 
 		// FIXME: I don't like to use strings to represent locations in the tree
-		stringsForClasspath.add( "Contents/Resources/Java/" + project.getArtifact().getArtifactId().toLowerCase() + ".jar" );
+		stringsForClasspath.add( "Contents/Resources/Java/" + appJarFilename );
 
 		// Copy in the dependency jars
 		@SuppressWarnings("unchecked")
