@@ -28,6 +28,11 @@ public class PackageMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		new PackageWOApplication().execute( project, woresourcesFolderName );
+		if( project.getPackaging().equals( "woapplication" ) ) {
+			new PackageWOApplication().execute( project, woresourcesFolderName );
+		}
+		if( project.getPackaging().equals( "woframework" ) ) {
+			throw new MojoExecutionException( "You're trying to build a Framework, I can't do that (yet)" );
+		}
 	}
 }
