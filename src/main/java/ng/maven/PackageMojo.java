@@ -137,7 +137,7 @@ public class PackageMojo extends AbstractMojo {
 		Util.makeUserExecutable( windowsLaunchScriptPath );
 
 		// CHECKME: And of course Contents/Windows contains an exact copy of the Windows script from the WOA root // Hugi 2021-07-08
-		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName );
+		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName + ".cmd" );
 		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
 		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
 	}
