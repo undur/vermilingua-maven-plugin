@@ -15,23 +15,23 @@ import org.apache.maven.project.MavenProject;
 
 public class PackageWOApplication {
 
-	public void execute( final MavenProject project, final String woresourcesFolderName ) {
+	public void execute( final MavenProject mavenProject, final String woresourcesFolderName ) {
 
 		// Usually Maven's standard 'target' directory
-		final Path buildPath = Paths.get( project.getBuild().getDirectory() );
+		final Path buildPath = Paths.get( mavenProject.getBuild().getDirectory() );
 
 		// The jar file resulting from the compilation of our application project (App.jar)
-		final Path artifactPath = project.getArtifact().getFile().toPath();
+		final Path artifactPath = mavenProject.getArtifact().getFile().toPath();
 
 		// The name of the application, gotten from the artifactId
-		final String applicationName = project.getArtifactId();
+		final String applicationName = mavenProject.getArtifactId();
 
 		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
 		final WOA woa = WOA.create( buildPath, applicationName );
 
 		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unnecessary // Hugi 2021-07-08
-		final String appJarFilename = project.getArtifact().getArtifactId().toLowerCase() + ".jar";
+		final String appJarFilename = mavenProject.getArtifact().getArtifactId().toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
 		Util.copyFile( artifactPath, woa.javaPath().resolve( appJarFilename ) );
@@ -46,7 +46,7 @@ public class PackageWOApplication {
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
-		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
+		for( final Artifact artifact : (Set<Artifact>)mavenProject.getArtifacts() ) {
 			final Path artifactPathInMavenRepository = artifact.getFile().toPath();
 			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
 			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( artifact.getFile().getName() );
@@ -57,23 +57,23 @@ public class PackageWOApplication {
 		}
 
 		// Copy WebServerResources from framework jars to the WOA
-		for( final Artifact artifact : (Set<Artifact>)project.getArtifacts() ) {
+		for( final Artifact artifact : (Set<Artifact>)mavenProject.getArtifacts() ) {
 			if( Util.containsWebServerResources( artifact.getFile() ) ) {
 				final Path destinationPath = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
 				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile(), destinationPath );
 			}
 		}
 
-		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( mavenProject.getBasedir() + "/src/main/components", woa.resourcesPath().toString() );
 		// FIXME: Flatten components  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/" + woresourcesFolderName, woa.resourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( mavenProject.getBasedir() + "/src/main/" + woresourcesFolderName, woa.resourcesPath().toString() );
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( project.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( mavenProject.getBasedir() + "/src/main/webserver-resources", woa.webServerResourcesPath().toString() );
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
 		String classPathFileTemplateString = Util.readTemplate( "classpath" );
-		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", applicationClassName( project ) );
+		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", applicationClassName( mavenProject ) );
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
@@ -90,8 +90,8 @@ public class PackageWOApplication {
 		String infoPlistString = Util.readTemplate( "info-plist" );
 		infoPlistString = infoPlistString.replace( "${NSExecutable}", applicationName );
 		infoPlistString = infoPlistString.replace( "${CFBundleExecutable}", applicationName );
-		infoPlistString = infoPlistString.replace( "${CFBundleShortVersionString}", project.getVersion() );
-		infoPlistString = infoPlistString.replace( "${CFBundleVersion}", project.getVersion() );
+		infoPlistString = infoPlistString.replace( "${CFBundleShortVersionString}", mavenProject.getVersion() );
+		infoPlistString = infoPlistString.replace( "${CFBundleVersion}", mavenProject.getVersion() );
 		infoPlistString = infoPlistString.replace( "${NSJavaPath}", appJarFilename );
 		infoPlistString = infoPlistString.replace( "${NSJavaPathClient}", appJarFilename );
 		Util.writeStringToPath( infoPlistString, woa.contentsPath().resolve( "Info.plist" ) );
