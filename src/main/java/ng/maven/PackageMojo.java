@@ -28,6 +28,6 @@ public class PackageMojo extends AbstractMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-
+		new PackageWOApplication().execute( project, woresourcesFolderName );
 	}
 }
