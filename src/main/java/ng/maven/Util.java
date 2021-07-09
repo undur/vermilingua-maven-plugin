@@ -79,7 +79,7 @@ public class Util {
 	public static String readTemplate( final String name ) {
 		Objects.requireNonNull( name );
 
-		try( InputStream stream = PackageWOApplicationMojo.class.getResourceAsStream( "/templates/" + name + ".template.txt" )) {
+		try( InputStream stream = PackageWOApplication.class.getResourceAsStream( "/templates/" + name + ".template.txt" )) {
 			return new String( byteArrayFromInputStream( stream ), StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {

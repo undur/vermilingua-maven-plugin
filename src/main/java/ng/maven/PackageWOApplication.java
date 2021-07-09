@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
-public class PackageWOApplicationMojo {
+public class PackageWOApplication {
 
 	public void execute( final MavenProject project, final String woresourcesFolderName ) {
 
