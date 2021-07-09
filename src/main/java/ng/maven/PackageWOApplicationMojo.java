@@ -21,7 +21,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class PackageMojo extends AbstractMojo {
+public class PackageWOApplicationMojo extends AbstractMojo {
 
 	/**
 	 * The maven project. This gets injected by Maven during the build
