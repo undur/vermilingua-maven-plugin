@@ -11,34 +11,11 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-@Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
-public class PackageWOApplicationMojo extends AbstractMojo {
+public class PackageWOApplicationMojo {
 
-	/**
-	 * The maven project. This gets injected by Maven during the build
-	 */
-	@Parameter(property = "project", required = true, readonly = true)
-	MavenProject project;
-
-	/**
-	 * Allows the user to specify an alternative name for the WO bundle resources folder (probably "resources")
-	 *
-	 * CHECKME: I'd prefer not to include this and just standardize on the new/correct bundle layout with a separate "woresources" folder  // Hugi 2021-07-08
-	 */
-	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = "woresources")
-	String woresourcesFolderName;
-
-	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute( final MavenProject project, final String woresourcesFolderName ) {
 
 		// Usually Maven's standard 'target' directory
 		final Path buildPath = Paths.get( project.getBuild().getDirectory() );
@@ -96,7 +73,7 @@ public class PackageWOApplicationMojo extends AbstractMojo {
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
 		String classPathFileTemplateString = Util.readTemplate( "classpath" );
-		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", applicationClassName() );
+		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", applicationClassName( project ) );
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
@@ -147,7 +124,7 @@ public class PackageWOApplicationMojo extends AbstractMojo {
 	 *
 	 * CHECKME: I don't like depending on build.properties. Additional files make me angry. Oh well, perhaps it's ok. For now // Hugi 2021-07-08
 	 */
-	private String applicationClassName() {
+	private String applicationClassName( final MavenProject project ) {
 		try( FileInputStream fis = new FileInputStream( project.getBasedir() + "/build.properties" )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
