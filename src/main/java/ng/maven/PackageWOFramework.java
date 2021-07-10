@@ -1,5 +1,6 @@
 package ng.maven;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -20,8 +21,15 @@ public class PackageWOFramework {
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-10
 		// FIXME: Both of the above happen in some logic common to both the .WOA and the .framework packaging
 
-		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/components" ), artifactPath );
-		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/" + woresourcesFolderName ), artifactPath );
-		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/webserver-resources" ), artifactPath );
+		Util.copyContentsOfFolderAtPathToFolderInJar( Paths.get( mavenProject.getBasedir() + "/src/main/components" ), "Resources", artifactPath );
+
+		final Path resourcesSourcePath = Paths.get( mavenProject.getBasedir() + "/src/main/" + woresourcesFolderName );
+
+		// FIXME: Should be totally OK for this not to exist. Check in the WOA build as well, check for WebsServerResources and Components as well
+		if( Files.exists( resourcesSourcePath ) ) {
+			Util.copyContentsOfFolderAtPathToFolderInJar( resourcesSourcePath, "Resources", artifactPath );
+		}
+
+		Util.copyContentsOfFolderAtPathToFolderInJar( Paths.get( mavenProject.getBasedir() + "/src/main/webserver-resources" ), "WebServerResources", artifactPath );
 	}
 }

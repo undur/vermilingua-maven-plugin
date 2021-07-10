@@ -173,16 +173,18 @@ public class Util {
 	}
 
 	/**
-	 * Writes the folder specified by [sourcePath] into the specified jar file.
-	 * Copies the folder itself, not just the containing, i.e. the root of the destination jar will contain /[sourcePath].getFileName()/...
+	 * Writes the contents of the folder specified by [sourcePath] into a folder named [folder] in the root of  [destinationJarPath]
+	 * Creates the folder in question if missing.
 	 *
 	 * https://stackoverflow.com/questions/62313791/replacing-the-manifest-mf-file-in-a-jar-programmatically
 	 * https://stackoverflow.com/questions/7548900/updating-jars-contents-from-code
 	 *
 	 * FIXME: First implementation attempt. This is actually pretty horrid // Hugi 2021-07-10
+	 * FIXME: Does this overwrite existing files silently or fail on overwrite?
 	 */
-	public static void copyFolderAtPathToRootOfJar( final Path sourcePath, final Path destinationJarPath ) {
+	public static void copyContentsOfFolderAtPathToFolderInJar( final Path sourcePath, final String folderName, final Path destinationJarPath ) {
 		Objects.requireNonNull( sourcePath );
+		Objects.requireNonNull( folderName );
 		Objects.requireNonNull( destinationJarPath );
 
 		final URI uri = URI.create( "jar:file:" + destinationJarPath.toString() );
@@ -192,8 +194,8 @@ public class Util {
 
 				try {
 					if( !Files.isDirectory( folderEntry ) ) {
-						final Path relativePath = sourcePath.getParent().relativize( folderEntry );
-						final Path pathInZipFile = zipfs.getPath( relativePath.toString() );
+						final Path relativePath = sourcePath.relativize( folderEntry );
+						final Path pathInZipFile = zipfs.getPath( folderName + "/" + relativePath.toString() ); // FIXME: This is what I hate, all this string munging // Hugi 2021-07-10
 						Files.createDirectories( pathInZipFile );
 						Files.copy( folderEntry, pathInZipFile, StandardCopyOption.REPLACE_EXISTING );
 					}
