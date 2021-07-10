@@ -26,6 +26,9 @@ public class PackageMojo extends AbstractMojo {
 	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = "woresources")
 	String woresourcesFolderName;
 
+	/**
+	 * CHECKME: Still considering the correct design here, that's why this might look a bit... odd // Hugi 2021-07-10
+	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		if( project.getPackaging().equals( "woapplication" ) ) {
