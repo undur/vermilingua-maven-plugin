@@ -79,7 +79,3 @@ AppName.woa
 ### Build process (`woframework`)
 
 *TODO*
-
-## Maven Plugin Development process
-	
-<img src="https://www.hugi.io/github/img/science-dog.jpg" width="400">
