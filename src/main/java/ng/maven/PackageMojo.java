@@ -31,11 +31,17 @@ public class PackageMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if( project.getPackaging().equals( "woapplication" ) ) {
+		final String packaging = project.getPackaging();
+
+		if( packaging.equals( "woapplication" ) ) {
 			new PackageWOApplication().execute( project, woresourcesFolderName );
 		}
-		if( project.getPackaging().equals( "woframework" ) ) {
-			throw new MojoExecutionException( "You're trying to build a Framework, I can't do that (yet)" );
+
+		if( packaging.equals( "woframework" ) ) {
+			new PackageWOFramework().execute( project, woresourcesFolderName );
+
 		}
+
+		throw new MojoExecutionException( String.format( "I have no know what the heck you're asking me to build (%s???) but I don't know how to do it.", packaging ) );
 	}
 }
