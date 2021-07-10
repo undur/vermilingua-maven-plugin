@@ -60,7 +60,7 @@ public class PackageWOApplication {
 		for( final Artifact artifact : (Set<Artifact>)mavenProject.getArtifacts() ) {
 			if( Util.containsWebServerResources( artifact.getFile() ) ) {
 				final Path destinationPath = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
-				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile(), destinationPath );
+				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile().toPath(), destinationPath );
 			}
 		}
 

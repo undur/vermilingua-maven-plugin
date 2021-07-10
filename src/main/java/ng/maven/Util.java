@@ -132,16 +132,17 @@ public class Util {
 	}
 
 	/**
-	 * Yeah, two arguments, one is a path, the other one a file. So shoot me.
+	 * Copies the folder specified by folderName to destinationPath.
+	 * Copies the entire folder, not just the content (as in, you will end up with [destinationPath]/[folderName]/...contents of [folderName]
 	 *
 	 * FIXME: Don't copy the folder if it's empty // Hugi 2021-08-07
 	 */
-	public static void copyFolderFromJarToPath( final String folderName, final File sourceJarFile, final Path destinationPath ) {
+	public static void copyFolderFromJarToPath( final String folderName, final Path sourceJarPath, final Path destinationPath ) {
 		Objects.requireNonNull( folderName );
-		Objects.requireNonNull( sourceJarFile );
+		Objects.requireNonNull( sourceJarPath );
 		Objects.requireNonNull( destinationPath );
 
-		try( final JarFile jarFile = new JarFile( sourceJarFile )) {
+		try( final JarFile jarFile = new JarFile( sourceJarPath.toFile() )) {
 			final Enumeration<JarEntry> entries = jarFile.entries();
 
 			while( entries.hasMoreElements() ) {
