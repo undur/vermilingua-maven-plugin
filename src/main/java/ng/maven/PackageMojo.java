@@ -39,7 +39,6 @@ public class PackageMojo extends AbstractMojo {
 
 		if( packaging.equals( "woframework" ) ) {
 			new PackageWOFramework().execute( project, woresourcesFolderName );
-
 		}
 
 		throw new MojoExecutionException( String.format( "I have no know what the heck you're asking me to build (%s???) but I don't know how to do it.", packaging ) );
