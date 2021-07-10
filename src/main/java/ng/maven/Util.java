@@ -6,11 +6,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Objects;
@@ -133,7 +138,7 @@ public class Util {
 
 	/**
 	 * Copies the folder specified by folderName to destinationPath.
-	 * Copies the entire folder, not just the content (as in, you will end up with [destinationPath]/[folderName]/...contents of [folderName]
+	 * Copies the entire folder, not just the content (as in, you will end up with [destinationPath]/[folderName]/...
 	 *
 	 * FIXME: Don't copy the folder if it's empty // Hugi 2021-08-07
 	 */
@@ -161,6 +166,42 @@ public class Util {
 					}
 				}
 			}
+		}
+		catch( final IOException e ) {
+			throw new RuntimeException( e );
+		}
+	}
+
+	/**
+	 * Writes the folder specified by [sourcePath] into the specified jar file.
+	 * Copies the folder itself, not just the containing, i.e. the root of the destination jar will contain /[sourcePath].getFileName()/...
+	 *
+	 * https://stackoverflow.com/questions/62313791/replacing-the-manifest-mf-file-in-a-jar-programmatically
+	 * https://stackoverflow.com/questions/7548900/updating-jars-contents-from-code
+	 *
+	 * FIXME: First implementation attempt. This is actually pretty horrid // Hugi 2021-07-10
+	 */
+	public static void copyFolderAtPathToRootOfJar( final Path sourcePath, final Path destinationJarPath ) {
+		Objects.requireNonNull( sourcePath );
+		Objects.requireNonNull( destinationJarPath );
+
+		final URI uri = URI.create( "jar:file:" + destinationJarPath.toString() );
+
+		try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
+			Files.walk( sourcePath ).forEach( folderEntry -> {
+
+				try {
+					if( !Files.isDirectory( folderEntry ) ) {
+						final Path relativePath = sourcePath.getParent().relativize( folderEntry );
+						final Path pathInZipFile = zipfs.getPath( relativePath.toString() );
+						Files.createDirectories( pathInZipFile );
+						Files.copy( folderEntry, pathInZipFile, StandardCopyOption.REPLACE_EXISTING );
+					}
+				}
+				catch( final Exception e ) {
+					throw new RuntimeException( e );
+				}
+			} );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
