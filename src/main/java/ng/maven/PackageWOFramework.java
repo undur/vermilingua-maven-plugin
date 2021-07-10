@@ -21,7 +21,7 @@ public class PackageWOFramework {
 		// FIXME: Both of the above happen in some logic common to both the .WOA and the .framework packaging
 
 		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/components" ), artifactPath );
-		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/" + "resources" ), artifactPath );
+		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/" + woresourcesFolderName ), artifactPath );
 		Util.copyFolderAtPathToRootOfJar( Paths.get( mavenProject.getBasedir() + "/src/main/webserver-resources" ), artifactPath );
 	}
 }
