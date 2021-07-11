@@ -76,11 +76,11 @@ public class PackageWOApplication {
 
 		if( flattenComponents ) {
 			// So here's the deal:
-			// We're going to walk down the tree and look at each path in the WOComponents folder.
+			// We're going to walk down the tree and look at each path in src/components.
 			// If the path represents any plain file (and not in a .wo bundlefolder) we dump it into [resource container], no questions asked.
 			// If the path represents a folder with the suffix .wo, we're going to copy it and it's contents to [resource container] and stop going down that path.
-			// [resource container] is usually the WOA's /Resources,
-			// except if the component is localized (in /components/[lang].lproj), in which case [resource container] will be /Resources/[lang].lproj
+			// [resource container] is usually the WOA's /Resources, except
+			// if the component is localized (in src/components/[lang].lproj), in which case [resource container] will be /Resources/[lang].lproj
 			try {
 				Files.walk( Paths.get( componentsDir ) ).forEach( current -> {
 
