@@ -12,7 +12,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collections;
@@ -48,9 +47,9 @@ public class Util {
 		Objects.requireNonNull( destinationDirectoryLocation );
 
 		try {
-			Files.walk( Paths.get( sourceDirectoryLocation ) )
+			Files.walk( Path.of( sourceDirectoryLocation ) )
 					.forEach( source -> {
-						final Path destination = Paths.get( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
+						final Path destination = Path.of( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
 						try {
 							if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack // Hugi 2021-07-08
 								Files.copy( source, destination );

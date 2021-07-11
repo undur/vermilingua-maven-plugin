@@ -4,7 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +22,7 @@ public class PackageWOApplication {
 	public void execute( final MavenProject mavenProject, final String woresourcesFolderName ) {
 
 		// Usually Maven's standard 'target' directory
-		final Path buildPath = Paths.get( mavenProject.getBuild().getDirectory() );
+		final Path buildPath = Path.of( mavenProject.getBuild().getDirectory() );
 
 		// The jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = mavenProject.getArtifact().getFile().toPath();
@@ -82,7 +81,7 @@ public class PackageWOApplication {
 			// [resource container] is usually the WOA's /Resources, except
 			// if the component is localized (in src/components/[lang].lproj), in which case [resource container] will be /Resources/[lang].lproj
 			try {
-				Files.walk( Paths.get( componentsDir ) ).forEach( current -> {
+				Files.walk( Path.of( componentsDir ) ).forEach( current -> {
 
 				} );
 			}
