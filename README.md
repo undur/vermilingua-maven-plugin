@@ -9,7 +9,7 @@ No, it's a pure maven plugin for building Wonder applications and frameworks, "p
 * Clone this repository and run `mvn install` on it to install the plugin
 * Replace the wolifecycle-maven-plugin <plugin> element in your pom.xml with
 
-```
+```xml
 <plugin>
 	<groupId>is.rebbi</groupId>
 	<artifactId>vermilingua-maven-plugin</artifactId>
@@ -23,14 +23,18 @@ No, it's a pure maven plugin for building Wonder applications and frameworks, "p
 
 The `<woresourcesFolderName>` configuration parameter is to keep compatibility with current projects. This plugin defaults to use the folder `src/main/woresources` for wo bundle resources rather than the `src/main/resources` folder.
 
+## Current state and work in progress
+
+* Currently only builds applications, not frameworks (`woapplication` packaging, not `woframework`)
+* Currently only generates a WOA (i.e. does not generate split install artifacts nor compressed artifacts)
+* `flattenComponents` and `flattenResources` have not yet been implemented
+* Has entered usage on a few very basic application projects and seems to work fine for the most
+
 ## Differences from wolifecycle-maven-plugin
 
-* Currently only supports building applications, not frameworks (`woapplication` packaging, not `woframework`)
-* No generation of split install artifacts nor compressed artifacts, just generates a WOA.
 * Patternsets are not supported, primarily because I don't use them myself
-* `flattenComponents` and `flattenResources` have not yet been implemented
-* And finally, as mentioned before; the default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
 * No support for building war files (servlet projects)
+* And finally, as mentioned before; the default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
 
 ### Build process (`woapplication`)
 
