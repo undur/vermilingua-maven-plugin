@@ -1,6 +1,5 @@
 package ng.maven;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -84,7 +83,7 @@ public class Util {
 		Objects.requireNonNull( name );
 
 		try( InputStream stream = PackageWOApplication.class.getResourceAsStream( "/templates/" + name + ".template.txt" )) {
-			return new String( byteArrayFromInputStream( stream ), StandardCharsets.UTF_8 );
+			return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
@@ -104,7 +103,7 @@ public class Util {
 			Files.setPosixFilePermissions( path, perms );
 		}
 		catch( final IOException e ) {
-			e.printStackTrace();
+			throw new RuntimeException( e );
 		}
 	}
 
@@ -227,26 +226,6 @@ public class Util {
 		}
 
 		return path;
-	}
-
-	private static byte[] byteArrayFromInputStream( InputStream is ) {
-		Objects.requireNonNull( is );
-
-		try {
-			final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-
-			int nRead;
-			final byte[] data = new byte[16384];
-
-			while( (nRead = is.read( data, 0, data.length )) != -1 ) {
-				buffer.write( data, 0, nRead );
-			}
-
-			return buffer.toByteArray();
-		}
-		catch( final Exception e ) {
-			throw new RuntimeException( e );
-		}
 	}
 
 	private static void copy( final InputStream source, final OutputStream target ) throws IOException {
