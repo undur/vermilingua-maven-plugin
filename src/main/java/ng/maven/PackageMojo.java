@@ -11,6 +11,7 @@ import org.apache.maven.project.MavenProject;
 
 import ng.packaging.PackageWOApplication;
 import ng.packaging.PackageWOFramework;
+import ng.packaging.SourceProject;
 
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class PackageMojo extends AbstractMojo {
@@ -36,11 +37,13 @@ public class PackageMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		final String packaging = project.getPackaging();
 
+		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
+
 		if( packaging.equals( "woapplication" ) ) {
-			new PackageWOApplication().execute( project, woresourcesFolderName );
+			new PackageWOApplication().execute( sourceProject );
 		}
 		else if( packaging.equals( "woframework" ) ) {
-			new PackageWOFramework().execute( project, woresourcesFolderName );
+			new PackageWOFramework().execute( sourceProject );
 		}
 		else {
 			throw new MojoExecutionException( String.format( "I have no know what the heck you're asking me to build (%s???) but I don't know how to do it.", packaging ) );

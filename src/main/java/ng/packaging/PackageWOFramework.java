@@ -12,7 +12,9 @@ public class PackageWOFramework {
 	 * FIXME: currently this will only build a maven style project // Hugi 2021-07-10
 	 * FIXME: This duplicates some logic from the WOA build. That's on purpose, to help see the natural common aspects of the WOA build and the framework build, before consolidating common logic. // Hugi 2021-07-10
 	 */
-	public void execute( final MavenProject mavenProject, final String woresourcesFolderName ) {
+	public void execute( final SourceProject sourceProject ) {
+
+		final MavenProject mavenProject = sourceProject.mavenProject();
 
 		// The jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = mavenProject.getArtifact().getFile().toPath();
@@ -23,7 +25,7 @@ public class PackageWOFramework {
 
 		Util.copyContentsOfFolderAtPathToFolderInJar( Path.of( mavenProject.getBasedir() + "/src/main/components" ), "Resources", artifactPath );
 
-		final Path resourcesSourcePath = Path.of( mavenProject.getBasedir() + "/src/main/" + woresourcesFolderName );
+		final Path resourcesSourcePath = Path.of( mavenProject.getBasedir() + "/src/main/" + sourceProject.woresourcesFolderName() );
 
 		// FIXME: Should be totally OK for this not to exist. Check in the WOA build as well, check for WebsServerResources and Components as well // Hugi 2021-07-10
 		if( Files.exists( resourcesSourcePath ) ) {

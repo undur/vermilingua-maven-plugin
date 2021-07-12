@@ -1,13 +1,11 @@
 package ng.packaging;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -19,7 +17,9 @@ public class PackageWOApplication {
 	 */
 	private final boolean flattenComponents = false;
 
-	public void execute( final MavenProject mavenProject, final String woresourcesFolderName ) {
+	public void execute( final SourceProject sourceProject ) {
+
+		final MavenProject mavenProject = sourceProject.mavenProject();
 
 		// Usually Maven's standard 'target' directory
 		final Path buildPath = Path.of( mavenProject.getBuild().getDirectory() );
@@ -70,7 +70,7 @@ public class PackageWOApplication {
 
 		// CHECKME: This trio of variables should come from the "project object" we'll have soon // Hugi 2021-07-11
 		final String componentsDir = mavenProject.getBasedir() + "/src/main/components";
-		final String woresourcesDir = mavenProject.getBasedir() + "/src/main/" + woresourcesFolderName;
+		final String woresourcesDir = mavenProject.getBasedir() + "/src/main/" + sourceProject.woresourcesFolderName();
 		final String webserverResourcesDir = mavenProject.getBasedir() + "/src/main/webserver-resources";
 
 		if( flattenComponents ) {
@@ -101,7 +101,7 @@ public class PackageWOApplication {
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
 		String classPathFileTemplateString = Util.readTemplate( "classpath" );
-		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", applicationClassName( mavenProject ) );
+		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", sourceProject.applicationClassName( mavenProject ) );
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
@@ -145,22 +145,6 @@ public class PackageWOApplication {
 		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName + ".cmd" );
 		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
 		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
-	}
-
-	/**
-	 * @return The name of the Application's main class, from the project's build.properties
-	 *
-	 * CHECKME: I don't like depending on build.properties. Additional files make me angry. Oh well, perhaps it's ok. For now // Hugi 2021-07-08
-	 */
-	private String applicationClassName( final MavenProject project ) {
-		try( FileInputStream fis = new FileInputStream( project.getBasedir() + "/build.properties" )) {
-			final Properties buildProperties = new Properties();
-			buildProperties.load( fis );
-			return buildProperties.getProperty( "principalClass" );
-		}
-		catch( final IOException e ) {
-			throw new RuntimeException( e );
-		}
 	}
 
 	/**
