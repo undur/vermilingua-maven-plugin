@@ -1,4 +1,4 @@
-package ng.maven;
+package ng.packaging;
 
 import java.io.File;
 import java.io.FileOutputStream;

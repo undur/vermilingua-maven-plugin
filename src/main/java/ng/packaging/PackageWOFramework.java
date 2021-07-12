@@ -1,4 +1,4 @@
-package ng.maven;
+package ng.packaging;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
