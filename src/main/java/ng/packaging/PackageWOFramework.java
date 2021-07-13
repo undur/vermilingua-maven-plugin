@@ -6,7 +6,6 @@ import java.nio.file.Path;
 public class PackageWOFramework {
 
 	/**
-	 * FIXME: Currently only builds a jar framework for use with a maven project (no .framework folder) // Hugi 2021-07-10
 	 * FIXME: Flatten components // Hugi 2021-07-10
 	 * FIXME: Flatten resources (?)  // Hugi 2021-07-10
 	 */
