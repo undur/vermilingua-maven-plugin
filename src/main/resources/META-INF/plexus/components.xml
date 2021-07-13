@@ -92,6 +92,7 @@
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
 				<type>woframework</type>
+				<extension>jar</extension>
 				<language>java</language>
 				<addedToClasspath>true</addedToClasspath>
 			</configuration>
