@@ -8,7 +8,6 @@ import org.apache.maven.project.MavenProject;
 public class PackageWOFramework {
 
 	/**
-	 * FIXME: We need to fix the name of the installed artifact, currenty has the extension "woframework" based on it's packaging // Hugi 2021-07-10
 	 * FIXME: currently this will only build a maven style project // Hugi 2021-07-10
 	 * FIXME: This duplicates some logic from the WOA build. That's on purpose, to help see the natural common aspects of the WOA build and the framework build, before consolidating common logic. // Hugi 2021-07-10
 	 */
