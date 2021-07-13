@@ -41,7 +41,7 @@ public class SourceProject {
 	 *
 	 * CHECKME: I don't like depending on build.properties. Additional files make me angry. Oh well, perhaps it's ok. For now // Hugi 2021-07-08
 	 */
-	public String applicationClassName( final MavenProject project ) {
+	public String principalClassName( final MavenProject project ) {
 		try( FileInputStream fis = new FileInputStream( project.getBasedir() + "/build.properties" )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
