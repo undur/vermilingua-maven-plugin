@@ -16,6 +16,8 @@ import org.apache.maven.project.MavenProject;
 
 public class SourceProject {
 
+	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
+
 	private final MavenProject _mavenProject;
 	private final String _woresourcesFolderName;
 

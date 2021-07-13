@@ -25,7 +25,7 @@ public class PackageMojo extends AbstractMojo {
 	/**
 	 * Allows the user to specify an alternative name for the WO bundle resources folder (probably "resources")
 	 */
-	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = "woresources")
+	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME)
 	String woresourcesFolderName;
 
 	/**
@@ -34,8 +34,8 @@ public class PackageMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		if( !"woresources".equals( woresourcesFolderName ) ) {
-			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name 'woresources' is recommended", woresourcesFolderName ) );
+		if( !woresourcesFolderName.equals( SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) ) {
+			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) );
 		}
 
 		final String packaging = project.getPackaging();
