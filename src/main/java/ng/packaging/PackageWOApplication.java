@@ -76,7 +76,7 @@ public class PackageWOApplication {
 			// [resource container] is usually the WOA's /Resources, except
 			// if the component is localized (in src/components/[lang].lproj), in which case [resource container] will be /Resources/[lang].lproj
 			try {
-				Files.walk( sourceProject.comopnentsPath() ).forEach( current -> {
+				Files.walk( sourceProject.componentsPath() ).forEach( current -> {
 
 				} );
 			}
@@ -85,11 +85,11 @@ public class PackageWOApplication {
 			}
 		}
 		else {
-			Util.copyContentsOfDirectoryToDirectory( sourceProject.comopnentsPath().toString(), woa.resourcesPath().toString() );
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath().toString(), woa.resourcesPath().toString() );
 		}
 
 		// FIXME: Flatten components  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.resourcesPath().toString(), woa.resourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath().toString(), woa.resourcesPath().toString() );
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath().toString(), woa.webServerResourcesPath().toString() );
 

@@ -50,11 +50,11 @@ public class SourceProject {
 		}
 	}
 
-	public Path comopnentsPath() {
+	public Path componentsPath() {
 		return Path.of( mavenProject().getBasedir() + "/src/main/components" );
 	}
 
-	public Path resourcesPath() {
+	public Path woresourcesPath() {
 		return Path.of( mavenProject().getBasedir() + "/src/main/" + woresourcesFolderName() );
 	}
 
