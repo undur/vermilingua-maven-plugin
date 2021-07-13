@@ -26,6 +26,8 @@
 		<string>webo</string>
 		<key>CFBundleVersion</key>
 		<string>7.3-SNAPSHOT</string>
+		<key>Has_WOComponents</key>
+		<true/>
 		<key>Java</key>
 		<dict>
 			<key>JVMVersion</key>
