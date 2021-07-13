@@ -113,6 +113,7 @@ public class PackageWOApplication {
 		String infoPlistString = Util.readTemplate( "info-plist" );
 		infoPlistString = infoPlistString.replace( "${NSExecutable}", applicationName );
 		infoPlistString = infoPlistString.replace( "${CFBundleExecutable}", applicationName );
+		infoPlistString = infoPlistString.replace( "${CFBundleIconFile}", "WOAfile.icns" );
 		infoPlistString = infoPlistString.replace( "${CFBundleShortVersionString}", mavenProject.getVersion() );
 		infoPlistString = infoPlistString.replace( "${CFBundleVersion}", mavenProject.getVersion() );
 		infoPlistString = infoPlistString.replace( "${NSJavaPath}", appJarFilename );
