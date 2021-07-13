@@ -13,13 +13,18 @@ public class PackageWOFramework {
 
 		final Path artifactPath = sourceProject.mavenProject().getArtifact().getFile().toPath();
 
-		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", artifactPath );
+		// FIXME: Should be totally OK for resource folders not to exist. Applies to the WOA build as well // Hugi 2021-07-10
 
-		// FIXME: Should be totally OK for this not to exist. Check in the WOA build as well, check for WebServerResources and Components as well // Hugi 2021-07-10
+		if( Files.exists( sourceProject.componentsPath() ) ) {
+			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", artifactPath );
+		}
+
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
 			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.woresourcesPath(), "Resources", artifactPath );
 		}
 
-		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
+		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
+			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
+		}
 	}
 }
