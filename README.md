@@ -23,10 +23,10 @@ No, it's a pure maven plugin for building Wonder applications and frameworks, "p
 
 The `<woresourcesFolderName>` configuration parameter is to keep compatibility with current projects. This plugin defaults to use the folder `src/main/woresources` for wo bundle resources rather than the `src/main/resources` folder.
 
-## Current state and work in progress
+## Work in progress
 
-* Currently only builds applications, not frameworks (`woapplication` packaging, not `woframework`)
-* Currently only generates a WOA (i.e. does not generate split install artifacts nor compressed artifacts)
+* Applications: Currently only generates a WOA (i.e. does not generate split install artifacts nor compressed artifacts)
+* Frameworks: Currently only generates a .jar framework for use with maven, not a .framework bundle folder for use with Ant
 * `flattenComponents` and `flattenResources` have not yet been implemented
 * Has entered usage on a few very basic application projects and seems to work fine for the most
 
