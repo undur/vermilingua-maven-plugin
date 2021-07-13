@@ -12,12 +12,10 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -94,13 +92,7 @@ public class Util {
 		Objects.requireNonNull( path );
 
 		try {
-			final Set<PosixFilePermission> perms = new HashSet<>();
-			perms.add( PosixFilePermission.OWNER_READ );
-			perms.add( PosixFilePermission.OWNER_WRITE );
-			perms.add( PosixFilePermission.OWNER_EXECUTE );
-			perms.add( PosixFilePermission.GROUP_READ );
-			perms.add( PosixFilePermission.OTHERS_READ );
-			Files.setPosixFilePermissions( path, perms );
+			Files.setPosixFilePermissions( path, PosixFilePermissions.fromString( "rwxr--r--" ) );
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
