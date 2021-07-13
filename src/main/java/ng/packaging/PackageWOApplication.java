@@ -120,6 +120,8 @@ public class PackageWOApplication {
 		infoPlistString = infoPlistString.replace( "${CFBundleVersion}", mavenProject.getVersion() );
 		infoPlistString = infoPlistString.replace( "${NSJavaPath}", appJarFilename );
 		infoPlistString = infoPlistString.replace( "${NSJavaPathClient}", appJarFilename );
+		// FIXME: Has_WOComponents (for frameworks) // Hugi 2021-07-13
+		// FIXME: NSPrincipalClass (for frameworks) // Hugi 2021-07-13
 		Util.writeStringToPath( infoPlistString, woa.contentsPath().resolve( "Info.plist" ) );
 
 		// Create the executable script for UNIX
