@@ -2,6 +2,7 @@ package ng.packaging;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -47,5 +48,17 @@ public class SourceProject {
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
 		}
+	}
+
+	public Path comopnentsPath() {
+		return Path.of( mavenProject().getBasedir() + "/src/main/components" );
+	}
+
+	public Path resourcesPath() {
+		return Path.of( mavenProject().getBasedir() + "/src/main/" + woresourcesFolderName() );
+	}
+
+	public Path webServerResourcesPath() {
+		return Path.of( mavenProject().getBasedir() + "/src/main/webserver-resources" );
 	}
 }
