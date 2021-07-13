@@ -17,9 +17,9 @@
         <key>CFBundleInfoDictionaryVersion</key>
         <string>6.0</string>
         <key>CFBundleName</key>
-        <string>WOA</string>
+        <string>${CFBundleName}</string>
         <key>CFBundlePackageType</key>
-        <string>APPL</string>
+        <string>${CFBundlePackageType}</string>
         <key>CFBundleShortVersionString</key>
         <string>${CFBundleShortVersionString}</string>
         <key>CFBundleSignature</key>
