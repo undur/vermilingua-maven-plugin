@@ -68,11 +68,6 @@ public class PackageWOApplication {
 			}
 		}
 
-		// CHECKME: This trio of variables should come from the "project object" we'll have soon // Hugi 2021-07-11
-		final String componentsDir = mavenProject.getBasedir() + "/src/main/components";
-		final String woresourcesDir = mavenProject.getBasedir() + "/src/main/" + sourceProject.woresourcesFolderName();
-		final String webserverResourcesDir = mavenProject.getBasedir() + "/src/main/webserver-resources";
-
 		if( flattenComponents ) {
 			// So here's the deal:
 			// We're going to walk down the tree and look at each path in src/components.
@@ -81,7 +76,7 @@ public class PackageWOApplication {
 			// [resource container] is usually the WOA's /Resources, except
 			// if the component is localized (in src/components/[lang].lproj), in which case [resource container] will be /Resources/[lang].lproj
 			try {
-				Files.walk( Path.of( componentsDir ) ).forEach( current -> {
+				Files.walk( sourceProject.comopnentsPath() ).forEach( current -> {
 
 				} );
 			}
@@ -90,13 +85,13 @@ public class PackageWOApplication {
 			}
 		}
 		else {
-			Util.copyContentsOfDirectoryToDirectory( componentsDir, woa.resourcesPath().toString() );
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.comopnentsPath().toString(), woa.resourcesPath().toString() );
 		}
 
 		// FIXME: Flatten components  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( woresourcesDir, woa.resourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.resourcesPath().toString(), woa.resourcesPath().toString() );
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( webserverResourcesDir, woa.webServerResourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath().toString(), woa.webServerResourcesPath().toString() );
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08

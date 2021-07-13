@@ -22,15 +22,13 @@ public class PackageWOFramework {
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-10
 		// FIXME: Both of the above happen in some logic common to both the .WOA and the .framework packaging // Hugi 2021-07-10
 
-		Util.copyContentsOfFolderAtPathToFolderInJar( Path.of( mavenProject.getBasedir() + "/src/main/components" ), "Resources", artifactPath );
-
-		final Path resourcesSourcePath = Path.of( mavenProject.getBasedir() + "/src/main/" + sourceProject.woresourcesFolderName() );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.comopnentsPath(), "Resources", artifactPath );
 
 		// FIXME: Should be totally OK for this not to exist. Check in the WOA build as well, check for WebsServerResources and Components as well // Hugi 2021-07-10
-		if( Files.exists( resourcesSourcePath ) ) {
-			Util.copyContentsOfFolderAtPathToFolderInJar( resourcesSourcePath, "Resources", artifactPath );
+		if( Files.exists( sourceProject.resourcesPath() ) ) {
+			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.resourcesPath(), "Resources", artifactPath );
 		}
 
-		Util.copyContentsOfFolderAtPathToFolderInJar( Path.of( mavenProject.getBasedir() + "/src/main/webserver-resources" ), "WebServerResources", artifactPath );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
 	}
 }
