@@ -24,8 +24,6 @@ public class PackageMojo extends AbstractMojo {
 
 	/**
 	 * Allows the user to specify an alternative name for the WO bundle resources folder (probably "resources")
-	 *
-	 * CHECKME: I'd prefer not to include this and just standardize on the new/correct bundle layout with a separate "woresources" folder  // Hugi 2021-07-08
 	 */
 	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = "woresources")
 	String woresourcesFolderName;
@@ -35,6 +33,11 @@ public class PackageMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+
+		if( !"woresources".equals( woresourcesFolderName ) ) {
+			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name 'woresources' is recommended", woresourcesFolderName ) );
+		}
+
 		final String packaging = project.getPackaging();
 
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
