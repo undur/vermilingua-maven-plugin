@@ -70,7 +70,7 @@ public class SourceProject {
 		case "framework":
 			return Type.Framework;
 		default:
-			throw new IllegalArgumentException( String.format( "I've never seen a project of type '' before. Check your build.properties" ) );
+			throw new IllegalArgumentException( String.format( "I've never seen a project of type '%s' before. Check your build.properties", stringType ) );
 		}
 	}
 
