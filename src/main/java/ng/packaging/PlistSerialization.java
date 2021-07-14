@@ -29,12 +29,8 @@ public class PlistSerialization {
 		b.append( value );
 	}
 
-	private void indent( int indent ) {
-		append( "\t".repeat( indent ) );
-	}
-
 	private void append( final int indent, final Object value ) {
-		indent( indent );
+		append( "\t".repeat( indent ) );
 		append( value );
 	}
 
