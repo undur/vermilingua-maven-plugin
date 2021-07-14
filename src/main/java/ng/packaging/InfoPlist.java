@@ -3,10 +3,11 @@ package ng.packaging;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class InfoPlist {
 
-	public static String make( final String applicationName, final String version, final String jarFileName ) {
+	public static String make( final SourceProject.Type type, final String applicationName, final String version, final String jarFileName, final String principalClassName ) {
 		final var infoPlist = new LinkedHashMap<>();
 		infoPlist.put( "NSExecutable", applicationName );
 		infoPlist.put( "CFBundleDevelopmentRegion", "English" );
@@ -26,8 +27,14 @@ public class InfoPlist {
 		infoPlist.put( "NSJavaPath", List.of( jarFileName ) );
 		infoPlist.put( "NSJavaPathClient", jarFileName );
 		infoPlist.put( "NSJavaRoot", "Contents/Resources/Java" );
+
 		// FIXME: Has_WOComponents (for frameworks) // Hugi 2021-07-13
-		// FIXME: NSPrincipalClass (for frameworks) // Hugi 2021-07-13
+
+		if( type == SourceProject.Type.Framework ) {
+			Objects.requireNonNull( principalClassName );
+			infoPlist.put( "NSPrincipalClass", principalClassName );
+		}
+
 		return new PlistSerialization( infoPlist ).toString();
 	}
 }

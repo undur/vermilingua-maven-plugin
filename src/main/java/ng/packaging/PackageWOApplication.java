@@ -10,6 +10,8 @@ import java.util.Objects;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
+import ng.packaging.SourceProject.Type;
+
 public class PackageWOApplication {
 
 	/**
@@ -109,7 +111,7 @@ public class PackageWOApplication {
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
-		final String infoPlistString = InfoPlist.make( applicationName, mavenProject.getVersion(), appJarFilename );
+		final String infoPlistString = InfoPlist.make( Type.Application, applicationName, mavenProject.getVersion(), appJarFilename, sourceProject.principalClassName() );
 		final Path infoPlistPath = woa.contentsPath().resolve( "Info.plist" );
 		Util.writeStringToPath( infoPlistString, infoPlistPath );
 
