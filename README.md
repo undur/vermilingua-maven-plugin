@@ -1,4 +1,4 @@
-<img align="right" src="https://www.hugi.io/github/img/antkiller2.png" width="40">
+<img align="right" src="https://www.hugi.io/github/img/antkiller2.png" width="60">
 
 ## What is This? A Center for Ants? 
 
@@ -35,5 +35,6 @@ The `<woresourcesFolderName>` configuration parameter is to keep compatibility w
 
 * Patternsets are not supported, primarily because I don't use them myself.
 * No support for building war files (servlet projects).
+* Only generates maven-style jar frameworks (not a .framework folder bundle for use with Ant).
 * Default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
 * `flattenComponents` will default to true (once implemented) since WO doesn't know how to locate components in subfolders in production anyway.
