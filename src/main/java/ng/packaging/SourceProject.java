@@ -23,6 +23,10 @@ public class SourceProject {
 		public boolean isApp() {
 			return this == Application;
 		}
+
+		public boolean isFramework() {
+			return this == Framework;
+		}
 	}
 
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
