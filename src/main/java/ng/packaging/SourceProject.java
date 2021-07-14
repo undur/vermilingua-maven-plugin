@@ -20,12 +20,14 @@ public class SourceProject {
 
 	private final MavenProject _mavenProject;
 	private final String _woresourcesFolderName;
+	private final Properties _buildProperties;
 
 	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName ) {
 		Objects.requireNonNull( mavenProject );
 		Objects.requireNonNull( woresourcesFolderName );
 		_mavenProject = mavenProject;
 		_woresourcesFolderName = woresourcesFolderName;
+		_buildProperties = readBuildProperties();
 	}
 
 	public MavenProject mavenProject() {
@@ -40,10 +42,14 @@ public class SourceProject {
 	 * @return The name of the Application's main class, from the project's build.properties
 	 */
 	public String principalClassName() {
+		return _buildProperties.getProperty( "principalClass" );
+	}
+
+	public Properties readBuildProperties() {
 		try( FileInputStream fis = new FileInputStream( mavenProject().getBasedir() + "/build.properties" )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
-			return buildProperties.getProperty( "principalClass" );
+			return buildProperties;
 		}
 		catch( final IOException e ) {
 			throw new RuntimeException( e );
