@@ -16,6 +16,11 @@ import org.apache.maven.project.MavenProject;
 
 public class SourceProject {
 
+	public static enum Type {
+		Application,
+		Framework
+	}
+
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
 
 	private final MavenProject _mavenProject;
@@ -45,7 +50,30 @@ public class SourceProject {
 		return _buildProperties.getProperty( "principalClass" );
 	}
 
-	public Properties readBuildProperties() {
+	/**
+	 * @return The type of the project
+	 */
+	public Type type() {
+		final String stringType = _buildProperties.getProperty( "project.type" );
+
+		switch( stringType ) {
+		case "application":
+			return Type.Application;
+		case "framework":
+			return Type.Application;
+		default:
+			throw new IllegalArgumentException( String.format( "I've never seen a project of type '' before. Check your build.properties" ) );
+		}
+	}
+
+	/**
+	 * @return The projects build.properties
+	 *
+	 * In theory, most of the stuff we actually _need_ from there could be derived from the pom.
+	 * But this is the mechanism we currently have and it works well, so let's stick with it,
+	 * at least until we start working on WOLips // Hugi 2021-07-14
+	 */
+	private Properties readBuildProperties() {
 		try( FileInputStream fis = new FileInputStream( mavenProject().getBasedir() + "/build.properties" )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
