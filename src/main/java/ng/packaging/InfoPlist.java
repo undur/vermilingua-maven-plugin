@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class InfoPlist {
 
-	public static String make( final SourceProject.Type type, final String applicationName, final String version, final String jarFileName, final String principalClassName ) {
+	public static String make( final SourceProject.Type type, final String applicationName, final String version, final String mainJarFileName, final String principalClassName ) {
 		final var infoPlist = new LinkedHashMap<>();
 		infoPlist.put( "NSExecutable", applicationName );
 		infoPlist.put( "CFBundleDevelopmentRegion", "English" );
@@ -24,8 +24,8 @@ public class InfoPlist {
 		infoPlist.put( "Java", Map.of( "JVMVersion", "1.5+" ) );
 		infoPlist.put( "NSJavaClientRoot", "Contents/WebServerResources/Java" );
 		infoPlist.put( "NSJavaNeeded", "FIXME" ); // FIXME: This is a boolean in the original version, add support for boolean serialization // Hugi 2021-07-14
-		infoPlist.put( "NSJavaPath", List.of( jarFileName ) );
-		infoPlist.put( "NSJavaPathClient", jarFileName );
+		infoPlist.put( "NSJavaPath", List.of( mainJarFileName ) );
+		infoPlist.put( "NSJavaPathClient", mainJarFileName );
 		infoPlist.put( "NSJavaRoot", "Contents/Resources/Java" );
 
 		// FIXME: Has_WOComponents (for frameworks) // Hugi 2021-07-13
