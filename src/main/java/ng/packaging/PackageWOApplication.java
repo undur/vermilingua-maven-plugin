@@ -109,20 +109,9 @@ public class PackageWOApplication {
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
-		// CHECKME: Fugly template implementation, beautify // Hugi 2021-07-08
-		String infoPlistString = Util.readTemplate( "info-plist" );
-		infoPlistString = infoPlistString.replace( "${NSExecutable}", applicationName );
-		infoPlistString = infoPlistString.replace( "${CFBundleExecutable}", applicationName );
-		infoPlistString = infoPlistString.replace( "${CFBundleIconFile}", "WOAfile.icns" );
-		infoPlistString = infoPlistString.replace( "${CFBundleName}", "WOA" );
-		infoPlistString = infoPlistString.replace( "${CFBundlePackageType}", "APPL" );
-		infoPlistString = infoPlistString.replace( "${CFBundleShortVersionString}", mavenProject.getVersion() );
-		infoPlistString = infoPlistString.replace( "${CFBundleVersion}", mavenProject.getVersion() );
-		infoPlistString = infoPlistString.replace( "${NSJavaPath}", appJarFilename );
-		infoPlistString = infoPlistString.replace( "${NSJavaPathClient}", appJarFilename );
-		// FIXME: Has_WOComponents (for frameworks) // Hugi 2021-07-13
-		// FIXME: NSPrincipalClass (for frameworks) // Hugi 2021-07-13
-		Util.writeStringToPath( infoPlistString, woa.contentsPath().resolve( "Info.plist" ) );
+		final String infoPlistString = InfoPlist.make( applicationName, mavenProject.getVersion(), appJarFilename );
+		final Path infoPlistPath = woa.contentsPath().resolve( "Info.plist" );
+		Util.writeStringToPath( infoPlistString, infoPlistPath );
 
 		// Create the executable script for UNIX
 		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
