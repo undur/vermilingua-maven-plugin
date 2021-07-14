@@ -213,7 +213,7 @@ public class Util {
 
 		try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
 			final Path pathInZipFile = zipfs.getPath( destinationFilePathInsideJar );
-			Files.createDirectories( pathInZipFile );
+			//			Files.createDirectories( pathInZipFile ); // FIXME: We probably need to keep this, in case there are no resources copied beforehand
 			Files.writeString( pathInZipFile, string, StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
