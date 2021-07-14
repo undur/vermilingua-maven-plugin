@@ -42,36 +42,49 @@ public class PlistSerialization {
 
 	private void appendEntry( final int indent, final Object object ) {
 		if( object != null ) {
-			final String elementName = elementNameFromObject( object );
-			append( indent, "<" + elementName + ">" );
 
-			if( object instanceof String ) {
-				append( object );
-				append( "</" + elementName + ">\n" );
+			// Booleans are a bit.. special. The value is the element, so there's no container element
+			if( object instanceof Boolean ) {
+				if( (Boolean)object ) {
+					append( indent, "<true />\n" );
+				}
+				else {
+					append( indent, "<false />\n" );
+				}
 			}
+			else {
+				final String elementName = elementNameFromObject( object );
+				append( indent, "<" + elementName + ">" );
 
-			if( object instanceof Map ) {
-				final Map<String, Object> map = (Map<String, Object>)object;
-
-				append( "\n" );
-
-				for( final Entry<String, Object> entry : map.entrySet() ) {
-					append( indent + 1, "<key>" + entry.getKey() + "</key>\n" );
-					appendEntry( indent + 1, entry.getValue() );
+				if( object instanceof String ) {
+					append( object );
+					append( "</" + elementName + ">\n" );
 				}
 
-				append( indent, "</" + elementName + ">\n" );
-			}
+				if( object instanceof Map ) {
+					final Map<String, Object> map = (Map<String, Object>)object;
 
-			if( object instanceof List ) {
-				final List<?> list = (List<?>)object;
-				append( "\n" );
+					append( "\n" );
 
-				for( final Object o : list ) {
-					appendEntry( indent + 1, o );
+					for( final Entry<String, Object> entry : map.entrySet() ) {
+						append( indent + 1, "<key>" + entry.getKey() + "</key>\n" );
+						appendEntry( indent + 1, entry.getValue() );
+					}
+
+					append( indent, "</" + elementName + ">\n" );
 				}
 
-				append( indent, "</" + elementName + ">\n" );
+				if( object instanceof List ) {
+					final List<?> list = (List<?>)object;
+
+					append( "\n" );
+
+					for( final Object o : list ) {
+						appendEntry( indent + 1, o );
+					}
+
+					append( indent, "</" + elementName + ">\n" );
+				}
 			}
 		}
 	}
