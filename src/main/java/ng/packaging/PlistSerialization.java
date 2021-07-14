@@ -1,7 +1,5 @@
 package ng.packaging;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -108,28 +106,5 @@ public class PlistSerialization {
 	@Override
 	public String toString() {
 		return b.toString();
-	}
-
-	/**
-	 * FIXME: For testing purposes only // Hugi 2021-07-13
-	 */
-	public static void main( String[] args ) {
-		final var m = new HashMap<>();
-		m.put( "smu", "bla" );
-
-		final var n = new HashMap<>();
-		n.put( "hehe", "hoho" );
-
-		m.put( "more", n );
-
-		final var list = new ArrayList<>();
-		list.add( "Hugi" );
-		list.add( "Egill" );
-		//		list.add( m );
-
-		m.put( "somelist", list );
-
-		final PlistSerialization p = new PlistSerialization( m );
-		System.out.println( p.toString() );
 	}
 }
