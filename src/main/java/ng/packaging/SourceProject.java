@@ -39,8 +39,8 @@ public class SourceProject {
 	/**
 	 * @return The name of the Application's main class, from the project's build.properties
 	 */
-	public String principalClassName( final MavenProject project ) {
-		try( FileInputStream fis = new FileInputStream( project.getBasedir() + "/build.properties" )) {
+	public String principalClassName() {
+		try( FileInputStream fis = new FileInputStream( mavenProject().getBasedir() + "/build.properties" )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
 			return buildProperties.getProperty( "principalClass" );
