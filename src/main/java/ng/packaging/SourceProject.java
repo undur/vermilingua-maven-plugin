@@ -18,7 +18,11 @@ public class SourceProject {
 
 	public static enum Type {
 		Application,
-		Framework
+		Framework;
+
+		public boolean isApp() {
+			return this == Application;
+		}
 	}
 
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
