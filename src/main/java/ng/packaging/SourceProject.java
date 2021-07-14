@@ -68,7 +68,7 @@ public class SourceProject {
 		case "application":
 			return Type.Application;
 		case "framework":
-			return Type.Application;
+			return Type.Framework;
 		default:
 			throw new IllegalArgumentException( String.format( "I've never seen a project of type '' before. Check your build.properties" ) );
 		}
