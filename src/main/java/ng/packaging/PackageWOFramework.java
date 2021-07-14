@@ -1,6 +1,5 @@
 package ng.packaging;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import ng.packaging.SourceProject.Type;
@@ -15,19 +14,9 @@ public class PackageWOFramework {
 
 		final Path artifactPath = sourceProject.mavenProject().getArtifact().getFile().toPath();
 
-		// FIXME: Should be totally OK for resource folders not to exist. Applies to the WOA build as well // Hugi 2021-07-10
-
-		if( Files.exists( sourceProject.componentsPath() ) ) {
-			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", artifactPath );
-		}
-
-		if( Files.exists( sourceProject.woresourcesPath() ) ) {
-			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.woresourcesPath(), "Resources", artifactPath );
-		}
-
-		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
-			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
-		}
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", artifactPath );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.woresourcesPath(), "Resources", artifactPath );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
 
 		// FIXME: Quick hacking to try out Info.plist generation. Refactor, preferably before anyone sees it // Hugi 2021-07-14
 		final var mp = sourceProject.mavenProject();

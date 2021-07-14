@@ -164,7 +164,9 @@ public class Util {
 
 	/**
 	 * Writes the contents of the folder specified by [sourcePath] into a folder named [folder] in the root of  [destinationJarPath]
-	 * Creates the folder in question if missing.
+	 *
+	 * - Does nothing if the folder specified by sourcePath does not exist
+	 * - Creates the destination folder if missing.
 	 *
 	 * FIXME: First implementation attempt. This is actually pretty horrid // Hugi 2021-07-10
 	 * FIXME: Should this overwrite existing files silently or fail on overwrite?
@@ -174,26 +176,28 @@ public class Util {
 		Objects.requireNonNull( folderName );
 		Objects.requireNonNull( destinationJarPath );
 
-		final URI uri = URI.create( "jar:file:" + destinationJarPath.toString() );
+		if( Files.exists( sourcePath ) ) {
+			final URI uri = URI.create( "jar:file:" + destinationJarPath.toString() );
 
-		try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
-			Files.walk( sourcePath ).forEach( folderEntry -> {
+			try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
+				Files.walk( sourcePath ).forEach( folderEntry -> {
 
-				try {
-					if( !Files.isDirectory( folderEntry ) ) {
-						final Path relativePath = sourcePath.relativize( folderEntry );
-						final Path pathInZipFile = zipfs.getPath( folderName + "/" + relativePath.toString() ); // FIXME: This is what I hate, all this string munging // Hugi 2021-07-10
-						Files.createDirectories( pathInZipFile );
-						Files.copy( folderEntry, pathInZipFile, StandardCopyOption.REPLACE_EXISTING );
+					try {
+						if( !Files.isDirectory( folderEntry ) ) {
+							final Path relativePath = sourcePath.relativize( folderEntry );
+							final Path pathInZipFile = zipfs.getPath( folderName + "/" + relativePath.toString() ); // FIXME: This is what I hate, all this string munging // Hugi 2021-07-10
+							Files.createDirectories( pathInZipFile );
+							Files.copy( folderEntry, pathInZipFile, StandardCopyOption.REPLACE_EXISTING );
+						}
 					}
-				}
-				catch( final Exception e ) {
-					throw new RuntimeException( e );
-				}
-			} );
-		}
-		catch( final IOException e ) {
-			throw new RuntimeException( e );
+					catch( final Exception e ) {
+						throw new RuntimeException( e );
+					}
+				} );
+			}
+			catch( final IOException e ) {
+				throw new RuntimeException( e );
+			}
 		}
 	}
 
