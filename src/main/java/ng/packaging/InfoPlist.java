@@ -1,7 +1,7 @@
 package ng.packaging;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class InfoPlist {
@@ -23,7 +23,7 @@ public class InfoPlist {
 		infoPlist.put( "Java", Map.of( "JVMVersion", "1.5+" ) );
 		infoPlist.put( "NSJavaClientRoot", "Contents/WebServerResources/Java" );
 		infoPlist.put( "NSJavaNeeded", "FIXME" ); // FIXME: This is a boolean in the original version, add support for boolean serialization // Hugi 2021-07-14
-		infoPlist.put( "NSJavaPath", Arrays.asList( jarFileName ) );
+		infoPlist.put( "NSJavaPath", List.of( jarFileName ) );
 		infoPlist.put( "NSJavaPathClient", jarFileName );
 		infoPlist.put( "NSJavaRoot", "Contents/Resources/Java" );
 		// FIXME: Has_WOComponents (for frameworks) // Hugi 2021-07-13
