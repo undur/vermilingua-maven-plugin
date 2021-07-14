@@ -3,6 +3,7 @@
 ## What is This? A Center for Ants? 
 
 No, it's a pure maven plugin for building Wonder applications and frameworks, "pure maven" meaning it doesn't use the woproject ant tasks. In theory, this makes it easier to modify the plugin and improve the build process.
+The plugin is already in real production use on a couple of apps and frameworks (including a fork of Wonder) and works fine for the most (although not all features hav been implemented yet.
 
 ## Usage
 
@@ -25,16 +26,16 @@ The `<woresourcesFolderName>` configuration parameter is to keep compatibility w
 
 ## Work in progress
 
-* Applications: Currently only generates a WOA (i.e. does not generate split install artifacts nor compressed artifacts)
-* Frameworks: Currently only generates a .jar framework for use with maven, not a .framework bundle folder for use with Ant
-* `flattenComponents` and `flattenResources` have not yet been implemented
-* Has entered usage on a few very basic application projects and seems to work fine for the most
+* Applications: Currently only generates a WOA (i.e. does not generate split install artifacts nor compressed artifacts).
+* `flattenComponents`  has not yet been implemented.
+* `flattenResources` has not yet been implemented.
 
 ## Differences from wolifecycle-maven-plugin
 
-* Patternsets are not supported, primarily because I don't use them myself
-* No support for building war files (servlet projects)
-* And finally, as mentioned before; the default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
+* Patternsets are not supported, primarily because I don't use them myself.
+* No support for building war files (servlet projects).
+* Default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
+* `flattenComponents` will default to true (once implemented) since WO doesn't know how to locate components in subfolders in production anyway.
 
 ### Build process (`woapplication`)
 
