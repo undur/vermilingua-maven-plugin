@@ -3,7 +3,6 @@ package ng.packaging;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class InfoPlist {
 
@@ -13,26 +12,30 @@ public class InfoPlist {
 		infoPlist.put( "CFBundleDevelopmentRegion", "English" );
 		infoPlist.put( "CFBundleExecutable", applicationName );
 		infoPlist.put( "CFBundleGetInfoString", "" );
-		infoPlist.put( "CFBundleIconFile", "WOAfile.icns" );
+		infoPlist.put( "CFBundleIconFile", type.isApp() ? "WOAfile.icns" : "" );
 		infoPlist.put( "CFBundleIdentifier", "com.apple.myapp" );
 		infoPlist.put( "CFBundleInfoDictionaryVersion", "6.0" );
-		infoPlist.put( "CFBundleName", "WOA" );
-		infoPlist.put( "CFBundlePackageType", "APPL" );
+		infoPlist.put( "CFBundleName", type.isApp() ? "WOA" : "WOF" );
+		infoPlist.put( "CFBundlePackageType", type.isApp() ? "APPL" : "FMWK" );
 		infoPlist.put( "CFBundleShortVersionString", version );
 		infoPlist.put( "CFBundleSignature", "webo" );
 		infoPlist.put( "CFBundleVersion", version );
 		infoPlist.put( "Java", Map.of( "JVMVersion", "1.5+" ) );
 		infoPlist.put( "NSJavaClientRoot", "Contents/WebServerResources/Java" );
-		infoPlist.put( "NSJavaNeeded", "FIXME" ); // FIXME: This is a boolean in the original version, add support for boolean serialization // Hugi 2021-07-14
+		infoPlist.put( "NSJavaNeeded", true );
 		infoPlist.put( "NSJavaPath", List.of( mainJarFileName ) );
 		infoPlist.put( "NSJavaPathClient", mainJarFileName );
 		infoPlist.put( "NSJavaRoot", "Contents/Resources/Java" );
 
-		// FIXME: Has_WOComponents (for frameworks) // Hugi 2021-07-13
+		// FIXME: WE probably need to check if the framework actually contains components. Don't lie // Hugi 2021-07-14
+		if( !type.isApp() ) {
+			infoPlist.put( "Has_WOComponents", true );
+		}
 
 		if( type == SourceProject.Type.Framework ) {
-			Objects.requireNonNull( principalClassName );
-			infoPlist.put( "NSPrincipalClass", principalClassName );
+			if( principalClassName != null && !principalClassName.isEmpty() ) {
+				infoPlist.put( "NSPrincipalClass", principalClassName );
+			}
 		}
 
 		return new PlistSerialization( infoPlist ).toString();
