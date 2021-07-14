@@ -27,11 +27,11 @@ public class InfoPlist {
 		infoPlist.put( "CFBundleSignature", "webo" );
 		infoPlist.put( "CFBundleVersion", version );
 		infoPlist.put( "Java", Map.of( "JVMVersion", "1.5+" ) );
-		infoPlist.put( "NSJavaClientRoot", "Contents/WebServerResources/Java" );
+		infoPlist.put( "NSJavaClientRoot", type.isApp() ? "Contents/WebServerResources/Java" : "WebServerResources/Java" );
 		infoPlist.put( "NSJavaNeeded", true );
 		infoPlist.put( "NSJavaPath", List.of( mainJarFileName ) );
 		infoPlist.put( "NSJavaPathClient", mainJarFileName );
-		infoPlist.put( "NSJavaRoot", "Contents/Resources/Java" );
+		infoPlist.put( "NSJavaRoot", type.isApp() ? "Contents/Resources/Java" : "Resources/Java" );
 
 		if( type.isFramework() ) {
 			// Note; wolifecycle seems to just set this to true for all frameworks, regardless of if they have components or not.
