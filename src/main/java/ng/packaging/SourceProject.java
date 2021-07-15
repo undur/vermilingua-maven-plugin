@@ -32,19 +32,38 @@ public class SourceProject {
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
 
 	private final MavenProject _mavenProject;
+
+	/**
+	 * The name of the built product (minus extension).
+	 * Read from ${build.finalName} in the pom.xml, but defaults to ${artifactId} if not specified.
+	 */
+	private final String _finalName;
+
+	/**
+	 * Name of the bundle folder that contains WO resources.
+	 */
 	private final String _woresourcesFolderName;
+
+	/**
+	 * Contents of the build.properties file in the project root.
+	 */
 	private final Properties _buildProperties;
 
-	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName ) {
+	public SourceProject( final MavenProject mavenProject, final String finalName, final String woresourcesFolderName ) {
 		Objects.requireNonNull( mavenProject );
 		Objects.requireNonNull( woresourcesFolderName );
 		_mavenProject = mavenProject;
+		_finalName = finalName;
 		_woresourcesFolderName = woresourcesFolderName;
 		_buildProperties = readBuildProperties();
 	}
 
 	public MavenProject mavenProject() {
 		return _mavenProject;
+	}
+
+	public String finalName() {
+		return _finalName;
 	}
 
 	public String woresourcesFolderName() {
