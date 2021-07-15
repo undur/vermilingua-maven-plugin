@@ -35,7 +35,6 @@ public class SourceProject {
 
 	/**
 	 * The name of the built product (minus extension).
-	 * Read from ${build.finalName} in the pom.xml, but defaults to ${artifactId} if not specified.
 	 */
 	private final String _finalName;
 
