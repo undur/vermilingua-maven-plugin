@@ -29,6 +29,14 @@ public class PackageMojo extends AbstractMojo {
 	String woresourcesFolderName;
 
 	/**
+	 * Allows the user to specify a different name for the build product (Application name). By default the product is named
+	 *
+	 * CHECKME: Look into the usage/effect of this for jar frameworks, if any // Hugi 2021-07-15
+	 */
+	@Parameter(property = "project.build.finalName", required = false, defaultValue = "${artifactId}")
+	String finalName;
+
+	/**
 	 * CHECKME: Still considering the correct design here, that's why this might look a bit... odd // Hugi 2021-07-10
 	 */
 	@Override
