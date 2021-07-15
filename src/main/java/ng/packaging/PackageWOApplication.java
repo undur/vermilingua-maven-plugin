@@ -27,8 +27,8 @@ public class PackageWOApplication {
 		// The jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = mavenProject.getArtifact().getFile().toPath();
 
-		// The name of the application, gotten from the artifactId
-		final String applicationName = mavenProject.getArtifactId();
+		// The name of the application.
+		final String applicationName = sourceProject.finalName();
 
 		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
 		final WOA woa = WOA.create( buildPath, applicationName );
