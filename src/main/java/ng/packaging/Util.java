@@ -1,10 +1,8 @@
 package ng.packaging;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -150,16 +148,14 @@ public class Util {
 				final JarEntry entry = entries.nextElement();
 
 				if( entry.getName().startsWith( folderName + "/" ) ) {
-					final File targetFile = destinationPath.resolve( entry.getName() ).toFile();
+					final Path targetPath = destinationPath.resolve( entry.getName() );
 
 					if( entry.isDirectory() ) {
-						targetFile.mkdirs();
+						Files.createDirectories( targetPath );
 					}
 					else {
 						try( final InputStream inStream = jarFile.getInputStream( entry )) {
-							try( OutputStream outStream = new FileOutputStream( targetFile )) {
-								inStream.transferTo( outStream );
-							}
+							Files.copy( inStream, targetPath );
 						}
 					}
 				}
