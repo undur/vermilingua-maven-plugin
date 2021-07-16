@@ -3,6 +3,7 @@ package ng.packaging;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
@@ -30,7 +31,7 @@ public class Util {
 			Files.copy( sourcePath, destinationPath );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -57,12 +58,12 @@ public class Util {
 							}
 						}
 						catch( final IOException e ) {
-							throw new RuntimeException( e );
+							throw new UncheckedIOException( e );
 						}
 					} );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -77,7 +78,7 @@ public class Util {
 			Files.write( path, string.getBytes( StandardCharsets.UTF_8 ) );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -88,7 +89,7 @@ public class Util {
 			return new String( stream.readAllBytes(), StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -99,7 +100,7 @@ public class Util {
 			Files.setPosixFilePermissions( path, PosixFilePermissions.fromString( "rwxr--r--" ) );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -126,7 +127,7 @@ public class Util {
 			return false;
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -162,7 +163,7 @@ public class Util {
 			}
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -194,13 +195,13 @@ public class Util {
 							Files.copy( folderEntry, pathInZipFile, StandardCopyOption.REPLACE_EXISTING );
 						}
 					}
-					catch( final Exception e ) {
-						throw new RuntimeException( e );
+					catch( final IOException e ) {
+						throw new UncheckedIOException( e );
 					}
 				} );
 			}
 			catch( final IOException e ) {
-				throw new RuntimeException( e );
+				throw new UncheckedIOException( e );
 			}
 		}
 	}
@@ -225,7 +226,7 @@ public class Util {
 			Files.writeString( pathInZipFile, string, StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 
@@ -245,7 +246,7 @@ public class Util {
 				Files.createDirectories( path );
 			}
 			catch( final IOException e ) {
-				throw new RuntimeException( e );
+				throw new UncheckedIOException( e );
 			}
 		}
 

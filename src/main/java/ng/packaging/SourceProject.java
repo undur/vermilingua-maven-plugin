@@ -2,6 +2,7 @@ package ng.packaging;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Properties;
@@ -124,7 +125,7 @@ public class SourceProject {
 			return buildProperties;
 		}
 		catch( final IOException e ) {
-			throw new RuntimeException( e );
+			throw new UncheckedIOException( e );
 		}
 	}
 

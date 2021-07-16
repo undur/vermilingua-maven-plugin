@@ -1,6 +1,7 @@
 package ng.packaging;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -75,7 +76,7 @@ public class PackageWOApplication {
 				} );
 			}
 			catch( final IOException e ) {
-				throw new RuntimeException( e );
+				throw new UncheckedIOException( e );
 			}
 		}
 		else {
