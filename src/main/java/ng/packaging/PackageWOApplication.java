@@ -21,7 +21,7 @@ public class PackageWOApplication {
 		final WOA woa = WOA.create( buildPath, finalName );
 
 		// The eventual name of the app's JAR file
-		final String appJarFilename = sourceProject.name() + ".jar";
+		final String appJarFilename = sourceProject.targetJarNameForWOA();
 
 		// Copy the app jar to the woa
 		Util.copyFile( sourceProject.jarPath(), woa.javaPath().resolve( appJarFilename ) );

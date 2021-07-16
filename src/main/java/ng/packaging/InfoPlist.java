@@ -16,7 +16,7 @@ public class InfoPlist {
 		final SourceProject.Type type = sourceProject.type();
 		final String bundleName = sourceProject.name();
 		final String version = sourceProject.version();
-		final String mainJarFileName = sourceProject.name() + ".jar"; // CHECKME: PReferably store the name of this jar in a central location // Hugi 2021-07-16
+		final String mainJarFileName = sourceProject.targetJarNameForWOA();
 
 		final var infoPlist = new LinkedHashMap<>();
 		infoPlist.put( "NSExecutable", bundleName );
