@@ -20,7 +20,7 @@ public class PackageWOFramework {
 		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
 
 		// FIXME: Quick hacking to try out Info.plist generation. Refactor, preferably before anyone sees it // Hugi 2021-07-14
-		final var name = sourceProject.finalName();
+		final var name = sourceProject.name();
 		final var version = mp.getVersion();
 		final var mainJarFilename = mp.getArtifact().getArtifactId().toLowerCase() + ".jar";
 		final String infoPlistString = InfoPlist.make( sourceProject, name, version, mainJarFilename );
