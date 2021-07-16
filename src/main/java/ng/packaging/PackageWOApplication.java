@@ -24,9 +24,6 @@ public class PackageWOApplication {
 		// Usually Maven's standard 'target' directory
 		final Path buildPath = Path.of( mavenProject.getBuild().getDirectory() );
 
-		// The jar file resulting from the compilation of our application project (App.jar)
-		final Path artifactPath = mavenProject.getArtifact().getFile().toPath();
-
 		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
 		final WOA woa = WOA.create( buildPath, finalName );
 
@@ -35,7 +32,7 @@ public class PackageWOApplication {
 		final String appJarFilename = finalName.toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
-		Util.copyFile( artifactPath, woa.javaPath().resolve( appJarFilename ) );
+		Util.copyFile( sourceProject.jarPath(), woa.javaPath().resolve( appJarFilename ) );
 
 		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
@@ -106,7 +103,7 @@ public class PackageWOApplication {
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
-		final String infoPlistString = InfoPlist.make( sourceProject, sourceProject.name(), mavenProject.getVersion(), appJarFilename );
+		final String infoPlistString = InfoPlist.make( sourceProject );
 		final Path infoPlistPath = woa.contentsPath().resolve( "Info.plist" );
 		Util.writeStringToPath( infoPlistString, infoPlistPath );
 
