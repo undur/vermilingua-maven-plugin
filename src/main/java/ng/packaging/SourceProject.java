@@ -34,11 +34,6 @@ public class SourceProject {
 	private final MavenProject _mavenProject;
 
 	/**
-	 * The name of the built product (minus extension).
-	 */
-	private final String _finalName;
-
-	/**
 	 * Name of the bundle folder that contains WO resources.
 	 */
 	private final String _woresourcesFolderName;
@@ -48,21 +43,16 @@ public class SourceProject {
 	 */
 	private final Properties _buildProperties;
 
-	public SourceProject( final MavenProject mavenProject, final String finalName, final String woresourcesFolderName ) {
+	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName ) {
 		Objects.requireNonNull( mavenProject );
 		Objects.requireNonNull( woresourcesFolderName );
 		_mavenProject = mavenProject;
-		_finalName = finalName;
 		_woresourcesFolderName = woresourcesFolderName;
 		_buildProperties = readBuildProperties();
 	}
 
 	public MavenProject mavenProject() {
 		return _mavenProject;
-	}
-
-	public String finalName() {
-		return _finalName;
 	}
 
 	public String woresourcesFolderName() {
@@ -74,6 +64,13 @@ public class SourceProject {
 	 */
 	public String principalClassName() {
 		return _buildProperties.getProperty( "principalClass" );
+	}
+
+	/**
+	 * @return Name of the WebObjects project as specified in build.properties
+	 */
+	public String name() {
+		return _buildProperties.getProperty( "project.name" );
 	}
 
 	/**

@@ -48,7 +48,7 @@ public class PackageMojo extends AbstractMojo {
 
 		final String packaging = project.getPackaging();
 
-		final SourceProject sourceProject = new SourceProject( project, finalName, woresourcesFolderName );
+		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
 
 		if( packaging.equals( "woapplication" ) ) {
 			new PackageWOApplication().execute( sourceProject );
