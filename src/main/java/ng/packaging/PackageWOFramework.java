@@ -1,9 +1,5 @@
 package ng.packaging;
 
-import java.nio.file.Path;
-
-import org.apache.maven.project.MavenProject;
-
 public class PackageWOFramework {
 
 	/**
@@ -12,14 +8,11 @@ public class PackageWOFramework {
 	 */
 	public void execute( final SourceProject sourceProject ) {
 
-		final MavenProject mp = sourceProject.mavenProject();
-		final Path artifactPath = mp.getArtifact().getFile().toPath();
-
-		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", artifactPath );
-		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.woresourcesPath(), "Resources", artifactPath );
-		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", artifactPath );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", sourceProject.jarPath() );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.woresourcesPath(), "Resources", sourceProject.jarPath() );
+		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", sourceProject.jarPath() );
 
 		final String infoPlistString = InfoPlist.make( sourceProject );
-		Util.writeStringToPathInJar( infoPlistString, "Resources/Info.plist", artifactPath );
+		Util.writeStringToPathInJar( infoPlistString, "Resources/Info.plist", sourceProject.jarPath() );
 	}
 }
