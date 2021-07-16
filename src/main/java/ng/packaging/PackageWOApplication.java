@@ -79,11 +79,11 @@ public class PackageWOApplication {
 			}
 		}
 		else {
-			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.resourcesPath() );
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
 		}
 
 		// FIXME: Flatten components  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.resourcesPath() );
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
 
@@ -173,7 +173,7 @@ public class PackageWOApplication {
 			return Util.folder( contentsPath().resolve( "Windows" ) );
 		}
 
-		public Path resourcesPath() {
+		public Path woresourcesPath() {
 			return Util.folder( contentsPath().resolve( "Resources" ) );
 		}
 
@@ -182,7 +182,7 @@ public class PackageWOApplication {
 		}
 
 		public Path javaPath() {
-			return Util.folder( resourcesPath().resolve( "Java" ) );
+			return Util.folder( woresourcesPath().resolve( "Java" ) );
 		}
 	}
 }
