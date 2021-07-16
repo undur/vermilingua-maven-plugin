@@ -74,6 +74,25 @@ public class SourceProject {
 	}
 
 	/**
+	 * @return Version of the project, as specified in the pom file.
+	 */
+	public String version() {
+		return mavenProject().getVersion();
+	}
+
+	/**
+	 * @return The path to the jar file from the compilation of the project
+	 *
+	 * Including this as a part of "SourceProject" might look strange at first,
+	 * but note that this object represents the state of the project after jar.
+	 *
+	 * Still, I'd like to move this away from here eventually // Hugi 2021-07-16
+	 */
+	public Path jarPath() {
+		return mavenProject().getArtifact().getFile().toPath();
+	}
+
+	/**
 	 * @return The type of the project
 	 */
 	public Type type() {
