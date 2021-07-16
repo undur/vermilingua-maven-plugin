@@ -4,7 +4,7 @@
 
 No, it's a pure maven plugin for building Wonder applications and frameworks, "pure maven" meaning it doesn't use the woproject ant tasks. In theory, this makes it easier to modify the plugin and improve the build process.
 
-The plugin is already in real production use on a couple of apps and frameworks (including a fork of Wonder) and works fine for the most (although not all features hav been implemented yet.
+The plugin is already in production use on a few apps and frameworks (including a fork of Wonder) and works well. Note theat a couple of features from wolifecycle have been implemented yet (see below).
 
 ## Usage
 
