@@ -17,7 +17,7 @@ public class PackageWOApplication {
 	 */
 	private final boolean flattenComponents = false;
 
-	public void execute( final SourceProject sourceProject ) {
+	public void execute( final SourceProject sourceProject, final String finalName ) {
 
 		final MavenProject mavenProject = sourceProject.mavenProject();
 
@@ -27,15 +27,12 @@ public class PackageWOApplication {
 		// The jar file resulting from the compilation of our application project (App.jar)
 		final Path artifactPath = mavenProject.getArtifact().getFile().toPath();
 
-		// The name of the application.
-		final String applicationName = sourceProject.finalName();
-
 		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
-		final WOA woa = WOA.create( buildPath, applicationName );
+		final WOA woa = WOA.create( buildPath, finalName );
 
 		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
 		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unnecessary // Hugi 2021-07-08
-		final String appJarFilename = mavenProject.getArtifact().getArtifactId().toLowerCase() + ".jar";
+		final String appJarFilename = finalName.toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
 		Util.copyFile( artifactPath, woa.javaPath().resolve( appJarFilename ) );
@@ -109,29 +106,29 @@ public class PackageWOApplication {
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
-		final String infoPlistString = InfoPlist.make( sourceProject, applicationName, mavenProject.getVersion(), appJarFilename );
+		final String infoPlistString = InfoPlist.make( sourceProject, sourceProject.name(), mavenProject.getVersion(), appJarFilename );
 		final Path infoPlistPath = woa.contentsPath().resolve( "Info.plist" );
 		Util.writeStringToPath( infoPlistString, infoPlistPath );
 
 		// Create the executable script for UNIX
 		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
-		final Path unixLaunchScriptPath = woa.woaPath().resolve( applicationName );
+		final Path unixLaunchScriptPath = woa.woaPath().resolve( sourceProject.name() );
 		Util.writeStringToPath( unixLaunchScriptString, unixLaunchScriptPath );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
 		// CHECKME: For some reason, Contents/MacOS contains an exact copy of the launch script from the WOA root // Hugi 2021-07-08
-		final Path redundantMacOSLaunchScriptPath = woa.macosPath().resolve( applicationName );
+		final Path redundantMacOSLaunchScriptPath = woa.macosPath().resolve( sourceProject.name() );
 		Util.writeStringToPath( unixLaunchScriptString, redundantMacOSLaunchScriptPath );
 		Util.makeUserExecutable( redundantMacOSLaunchScriptPath );
 
 		// Create the executable script for Windows
 		final String windowsLaunchScriptString = Util.readTemplate( "launch-script-cmd" );
-		final Path windowsLaunchScriptPath = woa.woaPath().resolve( applicationName + ".cmd" );
+		final Path windowsLaunchScriptPath = woa.woaPath().resolve( sourceProject.name() + ".cmd" );
 		Util.writeStringToPath( windowsLaunchScriptString, windowsLaunchScriptPath );
 		Util.makeUserExecutable( windowsLaunchScriptPath );
 
 		// CHECKME: And of course Contents/Windows contains an exact copy of the Windows script from the WOA root // Hugi 2021-07-08
-		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( applicationName + ".cmd" );
+		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( sourceProject.name() + ".cmd" );
 		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
 		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
 	}

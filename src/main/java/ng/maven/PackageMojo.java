@@ -51,7 +51,7 @@ public class PackageMojo extends AbstractMojo {
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
 
 		if( packaging.equals( "woapplication" ) ) {
-			new PackageWOApplication().execute( sourceProject );
+			new PackageWOApplication().execute( sourceProject, finalName );
 		}
 		else if( packaging.equals( "woframework" ) ) {
 			new PackageWOFramework().execute( sourceProject );
