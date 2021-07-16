@@ -20,7 +20,7 @@ public class PackageWOApplication {
 		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
 		final WOA woa = WOA.create( buildPath, finalName );
 
-		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
+		// The eventual name of the app's JAR file
 		final String appJarFilename = sourceProject.name() + ".jar";
 
 		// Copy the app jar to the woa
