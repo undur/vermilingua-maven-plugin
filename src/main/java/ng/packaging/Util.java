@@ -156,9 +156,11 @@ public class Util {
 						targetFile.mkdirs();
 					}
 					else {
-						final InputStream inStream = jarFile.getInputStream( entry );
-						final OutputStream outStream = new FileOutputStream( targetFile );
-						copy( inStream, outStream );
+						try( final InputStream inStream = jarFile.getInputStream( entry )) {
+							try( OutputStream outStream = new FileOutputStream( targetFile )) {
+								inStream.transferTo( outStream );
+							}
+						}
 					}
 				}
 			}
@@ -252,16 +254,5 @@ public class Util {
 		}
 
 		return path;
-	}
-
-	private static void copy( final InputStream source, final OutputStream target ) throws IOException {
-		Objects.requireNonNull( source );
-		Objects.requireNonNull( target );
-
-		final byte[] buf = new byte[8192];
-		int length;
-		while( (length = source.read( buf )) > 0 ) {
-			target.write( buf, 0, length );
-		}
 	}
 }
