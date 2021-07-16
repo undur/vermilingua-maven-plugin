@@ -103,7 +103,7 @@ public class Util {
 		}
 	}
 
-	public static boolean containsWebServerResources( final File sourceJarFile ) {
+	public static boolean containsNonEmptyWebServerResourcesDirectory( final File sourceJarFile ) {
 		Objects.requireNonNull( sourceJarFile );
 
 		try( final JarFile jarFile = new JarFile( sourceJarFile )) {

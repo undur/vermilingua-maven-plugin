@@ -56,7 +56,7 @@ public class PackageWOApplication {
 
 		// Copy WebServerResources from framework jars to the WOA
 		for( final Artifact artifact : mavenProject.getArtifacts() ) {
-			if( Util.containsWebServerResources( artifact.getFile() ) ) {
+			if( Util.containsNonEmptyWebServerResourcesDirectory( artifact.getFile() ) ) {
 				final Path destinationPath = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
 				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile().toPath(), destinationPath );
 			}
