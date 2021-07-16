@@ -38,3 +38,4 @@ The `<woresourcesFolderName>` configuration parameter is to keep compatibility w
 * Only generates maven-style jar frameworks (not a .framework folder bundle for use with Ant).
 * Default location for wo bundle resources is `src/main/woresources` rather than `src/main/resources` (which is now reserved for java classpath resources As God Intended).
 * `flattenComponents` will default to true (once implemented) since WO doesn't know how to locate components in subfolders in production anyway.
+* When building applications, `${build.finalName}` (set in the pom) will only affect the name of the WOA folder. The insides of two WOAs made from the same project, but compiled with different `finalName`s, will look exactly the same.
