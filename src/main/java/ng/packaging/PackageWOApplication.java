@@ -1,8 +1,5 @@
 package ng.packaging;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +9,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
 public class PackageWOApplication {
-
-	/**
-	 * FIXME: Including this as a flag while testing. Will probably get deleted later (since we want this to be the default) // Hugi 2021-07-11
-	 */
-	private final boolean flattenComponents = false;
 
 	public void execute( final SourceProject sourceProject, final String finalName ) {
 
@@ -63,29 +55,10 @@ public class PackageWOApplication {
 			}
 		}
 
-		if( flattenComponents ) {
-			// So here's the deal:
-			// We're going to walk down the tree and look at each path in src/components.
-			// If the path represents any plain file (and not in a .wo bundlefolder) we dump it into [resource container], no questions asked.
-			// If the path represents a folder with the suffix .wo, we're going to copy it and it's contents to [resource container] and stop going down that path.
-			// [resource container] is usually the WOA's /Resources, except
-			// if the component is localized (in src/components/[lang].lproj), in which case [resource container] will be /Resources/[lang].lproj
-			try {
-				Files.walk( sourceProject.componentsPath() ).forEach( current -> {
-
-				} );
-			}
-			catch( final IOException e ) {
-				throw new UncheckedIOException( e );
-			}
-		}
-		else {
-			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
-		}
-
-		// FIXME: Flatten components  // Hugi 2021-07-08
+		// FIXME: Flatten components // Hugi 2021-07-08
+		// FIXME: Flatten resources // Hugi 2021-07-08
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
 		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
-		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
 		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
