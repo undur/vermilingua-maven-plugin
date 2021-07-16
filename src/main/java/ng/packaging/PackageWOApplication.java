@@ -21,8 +21,7 @@ public class PackageWOApplication {
 		final WOA woa = WOA.create( buildPath, finalName );
 
 		// The eventual name of the app's JAR file. Lowercase app name with .jar appended.
-		// CHECKME: I'm not sure why they chose to lowercase the JAR name. It seems totally unnecessary // Hugi 2021-07-08
-		final String appJarFilename = finalName.toLowerCase() + ".jar";
+		final String appJarFilename = sourceProject.name() + ".jar";
 
 		// Copy the app jar to the woa
 		Util.copyFile( sourceProject.jarPath(), woa.javaPath().resolve( appJarFilename ) );

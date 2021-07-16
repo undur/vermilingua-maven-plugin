@@ -16,7 +16,7 @@ public class InfoPlist {
 		final SourceProject.Type type = sourceProject.type();
 		final String bundleName = sourceProject.name();
 		final String version = sourceProject.version();
-		final String mainJarFileName = sourceProject.jarPath().getFileName().toString().toLowerCase(); // FIXME: Move this into the build configuration Hugi 2021-07-16
+		final String mainJarFileName = sourceProject.name();
 
 		final var infoPlist = new LinkedHashMap<>();
 		infoPlist.put( "NSExecutable", bundleName );
