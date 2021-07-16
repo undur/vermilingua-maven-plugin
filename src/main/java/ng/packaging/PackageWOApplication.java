@@ -31,8 +31,6 @@ public class PackageWOApplication {
 
 		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that for now, check later // Hugi 2021-07-08
 		classpathStrings.add( "APPROOT/Resources/Java/" );
-
-		// CHECKME: Not a fan of using hardcoded folder names // Hugi 2021-07-08
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
