@@ -23,15 +23,18 @@ public class PackageMojo extends AbstractMojo {
 	MavenProject project;
 
 	/**
-	 * Allows the user to specify an alternative name for the WO bundle resources folder (probably "resources")
+	 * Allows the user to specify an alternative name for the source project's WO bundle resources folder (probably "resources")
 	 */
 	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME)
 	String woresourcesFolderName;
 
 	/**
-	 * Allows the user to specify a different name for the build product (Application name). By default the product is named
+	 * Allows the user to specify a different name for the build product. Defaults to the project's artifactId.
 	 *
-	 * CHECKME: Look into the usage/effect of this for jar frameworks, if any // Hugi 2021-07-15
+	 * For Applications, this will only set the name of the resulting .WOA and the main application jar file. NSBundle.name() (read from Info.plist) remains unaffected.
+	 *
+	 * In the case of frameworks, this will only affect the name of the jar file generated (in /target),
+	 * mvn install will still use the jar naming conventions dictated by the repository layout, regardless of what the interim jar package is named.
 	 */
 	@Parameter(property = "project.build.finalName", required = false, defaultValue = "${artifactId}")
 	String finalName;
