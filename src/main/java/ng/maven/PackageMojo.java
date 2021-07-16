@@ -31,10 +31,10 @@ public class PackageMojo extends AbstractMojo {
 	/**
 	 * Allows the user to specify a different name for the build product. Defaults to the project's artifactId.
 	 *
-	 * For Applications, this will only set the name of the resulting .WOA and the main application jar file. NSBundle.name() (read from Info.plist) remains unaffected.
+	 * For Applications, this will only set the name of the resulting .WOA folder and nothing else
 	 *
-	 * In the case of frameworks, this will only affect the name of the jar file generated (in /target),
-	 * mvn install will still use the jar naming conventions dictated by the repository layout, regardless of what the interim jar package is named.
+	 * In the case of frameworks, this is mostly useless since it will only affect the name of the jar file generated in /target.
+	 * "mvn install" will still use the jar naming conventions dictated by the repository layout, regardless of what the interim jar package is named.
 	 */
 	@Parameter(property = "project.build.finalName", required = false, defaultValue = "${artifactId}")
 	String finalName;
