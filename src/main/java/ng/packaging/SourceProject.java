@@ -81,12 +81,12 @@ public class SourceProject {
 	}
 
 	/**
-	 * @return The path to the jar file from the compilation of the project
+	 * @return The path to the jar file from the inital compilation/packaging of the project java sources
 	 *
-	 * Including this as a part of "SourceProject" might look strange at first,
-	 * but note that this object represents the state of the project after jar.
+	 * Including this as a part of "SourceProject" might look strange but note that
+	 * SourceProject represents a WO project after maven's jar plugin has done it's job.
 	 *
-	 * Still, I'd like to move this away from here eventually // Hugi 2021-07-16
+	 * Still, feels weird. I'd like to move this away from here eventually // Hugi 2021-07-16
 	 */
 	public Path jarPath() {
 		return mavenProject().getArtifact().getFile().toPath();
