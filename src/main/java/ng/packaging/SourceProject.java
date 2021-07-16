@@ -145,6 +145,6 @@ public class SourceProject {
 	 * FIXME: This is added as a temporary measure until the final name for the app's JAR file is decided // Hugi 2021-07-16
 	 */
 	public String targetJarNameForWOA() {
-		return name().toLowerCase() + ".jar";
+		return name() + ".jar";
 	}
 }
