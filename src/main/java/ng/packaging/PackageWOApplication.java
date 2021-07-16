@@ -79,13 +79,13 @@ public class PackageWOApplication {
 			}
 		}
 		else {
-			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath().toString(), woa.resourcesPath().toString() );
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.resourcesPath() );
 		}
 
 		// FIXME: Flatten components  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath().toString(), woa.resourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.resourcesPath() );
 		// FIXME: Flatten resources (?)  // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath().toString(), woa.webServerResourcesPath().toString() );
+		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08

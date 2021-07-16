@@ -37,16 +37,22 @@ public class Util {
 	}
 
 	/**
-	 * FIXME: Change to accept Paths as parameters // Hugi 2021-07-08
+	 * Copy the contents of the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory]
+	 *
+	 * FIXME: Specify replace/overwrite/failure conditions // Hugi 2021-07-16
 	 */
-	public static void copyContentsOfDirectoryToDirectory( String sourceDirectoryLocation, String destinationDirectoryLocation ) {
-		Objects.requireNonNull( sourceDirectoryLocation );
-		Objects.requireNonNull( destinationDirectoryLocation );
+	public static void copyContentsOfDirectoryToDirectory( final Path sourceDirectory, final Path destinationDirectory ) {
+		Objects.requireNonNull( sourceDirectory );
+		Objects.requireNonNull( destinationDirectory );
+
+		// FIXME: Remove that infernal string munging // Hugi 2021-07-08
+		final String sourceDirectoryLocationString = sourceDirectory.toString();
+		final String destinationDirectoryLocationString = destinationDirectory.toString();
 
 		try {
-			Files.walk( Path.of( sourceDirectoryLocation ) )
+			Files.walk( Path.of( sourceDirectoryLocationString ) )
 					.forEach( source -> {
-						final Path destination = Path.of( destinationDirectoryLocation, source.toString().substring( sourceDirectoryLocation.length() ) );
+						final Path destination = Path.of( destinationDirectoryLocationString, source.toString().substring( sourceDirectoryLocationString.length() ) );
 						try {
 							if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack // Hugi 2021-07-08
 								Files.copy( source, destination );
