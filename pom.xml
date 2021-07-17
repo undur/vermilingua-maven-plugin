@@ -24,6 +24,50 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+
+		<plugins>
+			<plugin>
+				<groupId>com.soebes.itf.jupiter.extension</groupId>
+				<artifactId>itf-maven-plugin</artifactId>
+				<version>0.10.0</version>
+				<executions>
+					<execution>
+						<id>installing</id>
+						<phase>pre-integration-test</phase>
+						<goals>
+							<goal>install</goal>
+							<goal>resources-its</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M5</version>
+				<configuration>
+					<systemProperties>
+						<maven.version>${maven.version}</maven.version>
+						<maven.home>${maven.home}</maven.home>
+					</systemProperties>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources-its</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
 	</build>
 
 	<dependencies>
@@ -42,6 +86,24 @@
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
 			<version>3.8.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.7.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.soebes.itf.jupiter.extension</groupId>
+			<artifactId>itf-jupiter-extension</artifactId>
+			<version>0.10.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.soebes.itf.jupiter.extension</groupId>
+			<artifactId>itf-assertj</artifactId>
+			<version>0.10.0</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
