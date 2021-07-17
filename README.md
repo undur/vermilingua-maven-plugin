@@ -1,3 +1,4 @@
+![](https://github.com/paulhoadley/vermilingua-maven-plugin/workflows/build/badge.svg)
 <img align="right" src="https://www.hugi.io/github/img/antkiller2.png" width="60">
 
 ## What is This? A Center for Ants? 
