@@ -10,7 +10,7 @@ import org.apache.maven.project.MavenProject;
 
 public class PackageWOApplication {
 
-	public void execute( final SourceProject sourceProject, final String finalName ) {
+	public WOA execute( final SourceProject sourceProject, final String finalName ) {
 
 		final MavenProject mavenProject = sourceProject.mavenProject();
 
@@ -99,6 +99,8 @@ public class PackageWOApplication {
 		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( sourceProject.name() + ".cmd" );
 		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
 		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
+
+		return woa;
 	}
 
 	/**
