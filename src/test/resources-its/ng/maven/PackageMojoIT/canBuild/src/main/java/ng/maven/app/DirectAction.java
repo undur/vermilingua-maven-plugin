@@ -3,16 +3,10 @@ package ng.maven.app;
 
 import ng.maven.components.Main;
 
-import com.webobjects.appserver.WOActionResults;
-import com.webobjects.appserver.WORequest;
-import er.extensions.appserver.ERXDirectAction;
+public class DirectAction {
+	private int i;
 
-public class DirectAction extends ERXDirectAction {
-	public DirectAction( WORequest request ) {
-		super( request );
-	}
-
-	public WOActionResults defaultAction() {
-		return pageWithName( Main.class.getName() );
+	public DirectAction(int i) {
+		this.i = i;
 	}
 }
