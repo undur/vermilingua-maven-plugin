@@ -37,37 +37,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<dependencies>
-		<dependency>
-			<groupId>wonder.core</groupId>
-			<artifactId>ERExtensions</artifactId>
-			<version>${wonder.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>wonder.core</groupId>
-			<artifactId>WOOgnl</artifactId>
-			<version>${wonder.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>wonder.core</groupId>
-			<artifactId>ERPrototypes</artifactId>
-			<version>${wonder.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.webobjects</groupId>
-			<artifactId>JavaWebObjects</artifactId>
-			<version>${webobjects.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.webobjects</groupId>
-			<artifactId>JavaEOAccess</artifactId>
-			<version>${webobjects.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.webobjects</groupId>
-			<artifactId>JavaFoundation</artifactId>
-			<version>${webobjects.version}</version>
-		</dependency>
-	</dependencies>
 </project>
