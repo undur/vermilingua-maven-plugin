@@ -47,7 +47,7 @@ public class PackageWOApplication {
 		// Copy WebServerResources from framework jars to the WOA
 		for( final Artifact artifact : mavenProject.getArtifacts() ) {
 			if( Util.containsNonEmptyWebServerResourcesDirectory( artifact.getFile() ) ) {
-				final Path destinationPath = woa.contentsPath().resolve( "Frameworks" ).resolve( artifact.getArtifactId() + ".framework" );
+				final Path destinationPath = woa.frameworksPath().resolve( artifact.getArtifactId() + ".framework" );
 				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile().toPath(), destinationPath );
 			}
 		}
@@ -134,6 +134,10 @@ public class PackageWOApplication {
 			return Util.folder( woaPath().resolve( "Contents" ) );
 		}
 
+		public Path frameworksPath() {
+			return Util.folder( contentsPath().resolve( "Frameworks" ) );
+		}
+
 		public Path macosPath() {
 			return Util.folder( contentsPath().resolve( "MacOS" ) );
 		}
@@ -156,6 +160,18 @@ public class PackageWOApplication {
 
 		public Path javaPath() {
 			return Util.folder( woresourcesPath().resolve( "Java" ) );
+		}
+
+		/**
+		 * FIXME: Initial placeholder for this functionality, it's an outside task that I don't like having as a part of the WOA
+		 */
+		public void extractWebServerResources() {
+			final Path splitPath = Util.folder( woaPath().getParent().resolve( woaPath().getFileName() + ".webserverresources" ) );
+			final Path splitWebServerResourcesPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "WebServerResources" ) );
+			final Path splitFrameworksPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "Frameworks" ) );
+
+			Util.copyContentsOfDirectoryToDirectory( webServerResourcesPath(), splitWebServerResourcesPath );
+			Util.copyContentsOfDirectoryToDirectory( frameworksPath(), splitFrameworksPath );
 		}
 	}
 }

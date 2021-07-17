@@ -10,6 +10,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
 import ng.packaging.PackageWOApplication;
+import ng.packaging.PackageWOApplication.WOA;
 import ng.packaging.PackageWOFramework;
 import ng.packaging.SourceProject;
 
@@ -40,6 +41,18 @@ public class PackageMojo extends AbstractMojo {
 	String finalName;
 
 	/**
+	 * Indicates that we want to extract webserver resources (for both the app and it's included frameworks)
+	 * to a separate folder alongside the WOA (for installation on a web server)
+	 *
+	 * FIXME: Parameter needs a better name // Hugi 2021-07-17
+	 * FIXME: Add a separate parameter for product/artifact compression // Hugi 2021-07-17
+	 * FIXME: Since this is a relatively lightweight task, it *could* be performed by default. It's the compression that takes time // Hugi 2021-07-17
+	 * FIXME: Decide on names for the final artifacts // Hugi 2021-07-17
+	 */
+	@Parameter(property = "performSplit", required = false)
+	boolean performSplit;
+
+	/**
 	 * CHECKME: Still considering the correct design here, that's why this might look a bit... odd // Hugi 2021-07-10
 	 */
 	@Override
@@ -54,7 +67,11 @@ public class PackageMojo extends AbstractMojo {
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
 
 		if( packaging.equals( "woapplication" ) ) {
-			new PackageWOApplication().execute( sourceProject, finalName );
+			final WOA woa = new PackageWOApplication().execute( sourceProject, finalName );
+
+			if( performSplit ) {
+				woa.extractWebServerResources();
+			}
 		}
 		else if( packaging.equals( "woframework" ) ) {
 			new PackageWOFramework().execute( sourceProject );
