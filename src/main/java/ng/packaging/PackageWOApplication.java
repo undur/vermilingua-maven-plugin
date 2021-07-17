@@ -17,7 +17,7 @@ public class PackageWOApplication {
 		// Usually Maven's standard 'target' directory
 		final Path buildPath = Path.of( mavenProject.getBuild().getDirectory() );
 
-		// The WOA bundle, the destination for our build. Bundle gets named after the app's artifactId
+		// The WOA bundle, the destination for our build.
 		final WOA woa = WOA.create( buildPath, finalName );
 
 		// The eventual name of the app's JAR file
