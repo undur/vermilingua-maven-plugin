@@ -70,7 +70,7 @@ public class PackageWOApplication {
 		final String windowsClassPathString = classPathFileTemplateString + String.join( "\r\n", classpathStrings ).replace( "/", "\\" ); //CHECKME: Nice pretzels. We can make this more understandable // Hugi 2021-07-08
 		Util.writeStringToPath( windowsClassPathString, woa.windowsPath().resolve( "CLSSPATH.TXT" ) );
 
-		// CHECKME: I have no idea what the subpaths file does. Ditch it? // Hugi 2021-07-08
+		// CHECKME: I have no idea what the subpaths file does. // Hugi 2021-07-08
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
