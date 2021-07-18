@@ -30,17 +30,6 @@ public class PackageMojo extends AbstractMojo {
 	String woresourcesFolderName;
 
 	/**
-	 * Allows the user to specify a different name for the build product. If not specified, defaults to $artifactId-$version.
-	 *
-	 * For Applications, this will only set the name of the resulting .WOA folder and nothing else
-	 *
-	 * In the case of frameworks, this is mostly useless since it will only affect the name of the jar file generated in /target.
-	 * "mvn install" will still use the jar naming conventions dictated by the repository layout, regardless of what the interim jar package is named.
-	 */
-	@Parameter(property = "project.build.finalName", required = false)
-	String finalName;
-
-	/**
 	 * Indicates that we want to extract webserver resources (for both the app and it's included frameworks)
 	 * to a separate folder alongside the WOA (for installation on a web server)
 	 *
@@ -67,6 +56,7 @@ public class PackageMojo extends AbstractMojo {
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
 
 		if( packaging.equals( "woapplication" ) ) {
+			final String finalName = project.getBuild().getFinalName();
 			final WOA woa = new PackageWOApplication().execute( sourceProject, finalName );
 
 			if( performSplit ) {
