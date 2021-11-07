@@ -29,7 +29,7 @@
 			<plugin>
 				<groupId>com.soebes.itf.jupiter.extension</groupId>
 				<artifactId>itf-maven-plugin</artifactId>
-				<version>0.10.0</version>
+				<version>0.11.0</version>
 				<executions>
 					<execution>
 						<id>installing</id>
@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-plugin-api</artifactId>
-			<version>3.8.1</version>
+			<version>3.8.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
@@ -93,24 +93,24 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-core</artifactId>
-			<version>3.8.1</version>
+			<version>3.8.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.7.2</version>
+			<version>5.8.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.soebes.itf.jupiter.extension</groupId>
 			<artifactId>itf-jupiter-extension</artifactId>
-			<version>0.10.0</version>
+			<version>0.11.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.soebes.itf.jupiter.extension</groupId>
 			<artifactId>itf-assertj</artifactId>
-			<version>0.10.0</version>
+			<version>0.11.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
