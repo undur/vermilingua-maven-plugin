@@ -107,7 +107,7 @@ public class SourceProject {
 		case "woframework":
 			return Type.Framework;
 		default:
-			throw new IllegalArgumentException( String.format( "I've never seen a project of type '%s' before. Check your build.properties", stringType ) );
+			throw new IllegalArgumentException( String.format( "I'm not familiar with packaging '%s'. The only packaging types I know are 'woapplication' and 'woframework'", stringType ) );
 		}
 	}
 
