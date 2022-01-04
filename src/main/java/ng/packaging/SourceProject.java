@@ -99,12 +99,12 @@ public class SourceProject {
 	 * @return The type of the project
 	 */
 	public Type type() {
-		final String stringType = _buildProperties.getProperty( "project.type" );
+		final String stringType = mavenProject().getPackaging();
 
 		switch( stringType ) {
-		case "application":
+		case "woapplication":
 			return Type.Application;
-		case "framework":
+		case "woframework":
 			return Type.Framework;
 		default:
 			throw new IllegalArgumentException( String.format( "I've never seen a project of type '%s' before. Check your build.properties", stringType ) );
