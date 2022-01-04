@@ -51,11 +51,9 @@ public class PackageMojo extends AbstractMojo {
 			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) );
 		}
 
-		final String packaging = project.getPackaging();
-
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
 
-		if( packaging.equals( "woapplication" ) ) {
+		if( sourceProject.type().isApp() ) {
 			final String finalName = project.getBuild().getFinalName();
 			final WOA woa = new PackageWOApplication().execute( sourceProject, finalName );
 
@@ -63,11 +61,11 @@ public class PackageMojo extends AbstractMojo {
 				woa.extractWebServerResources();
 			}
 		}
-		else if( packaging.equals( "woframework" ) ) {
+		else if( sourceProject.type().isFramework() ) {
 			new PackageWOFramework().execute( sourceProject );
 		}
 		else {
-			throw new MojoExecutionException( String.format( "I have no know what the heck you're asking me to build (%s???) but I don't know how to do it.", packaging ) );
+			throw new MojoExecutionException( String.format( "I have no know what the heck you're asking me to build (%s???) but I don't know how to do it.", project.getPackaging() ) );
 		}
 	}
 }
