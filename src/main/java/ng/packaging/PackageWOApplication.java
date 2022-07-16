@@ -1,5 +1,6 @@
 package ng.packaging;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,9 +55,27 @@ public class PackageWOApplication {
 
 		// FIXME: Flatten components // Hugi 2021-07-08
 		// FIXME: Flatten resources // Hugi 2021-07-08
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
-		Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
+
+		if( Files.exists( sourceProject.componentsPath() ) ) {
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
+		}
+		else {
+			System.out.println( "WARN - components folder does not exist" ); // FIXME: Replace with logger
+		}
+
+		if( Files.exists( sourceProject.woresourcesPath() ) ) {
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
+		}
+		else {
+			System.out.println( "WARN - woresources folder does not exist" ); // FIXME: Replace with logger
+		}
+
+		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
+		}
+		else {
+			System.out.println( "WARN - webserver-resources folder does not exist" ); // FIXME: Replace with logger
+		}
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
