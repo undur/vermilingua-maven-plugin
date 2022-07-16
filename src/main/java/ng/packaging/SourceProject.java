@@ -1,5 +1,6 @@
 package ng.packaging;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -119,7 +120,14 @@ public class SourceProject {
 	 * at least until we start working on WOLips // Hugi 2021-07-14
 	 */
 	private Properties readBuildProperties() {
-		try( FileInputStream fis = new FileInputStream( mavenProject().getBasedir() + "/build.properties" )) {
+		final String pathToBuildPropertiesFile = mavenProject().getBasedir() + "/build.properties";
+
+		// FIXME: we might want to do this in project preflighting, rather than in the actual read method // Hugi 2022-07-16
+		if( !new File( pathToBuildPropertiesFile ).exists() ) {
+			throw new IllegalStateException( "build.properties file not found ing project root (%s)".formatted( pathToBuildPropertiesFile ) );
+		}
+
+		try( FileInputStream fis = new FileInputStream( pathToBuildPropertiesFile )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
 			return buildProperties;
