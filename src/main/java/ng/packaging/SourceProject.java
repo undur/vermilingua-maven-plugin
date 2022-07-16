@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -51,6 +53,8 @@ public class SourceProject {
 		_mavenProject = mavenProject;
 		_woresourcesFolderName = woresourcesFolderName;
 		_buildProperties = readBuildProperties();
+
+		validateBuildProperties();
 	}
 
 	public MavenProject mavenProject() {
@@ -135,6 +139,35 @@ public class SourceProject {
 		catch( final IOException e ) {
 			throw new UncheckedIOException( e );
 		}
+	}
+
+	/**
+	 * Ensure all required properties are present
+	 *
+	 * @throws IllegalArgumentException // FIXME: Pick a better exception type or make our own // Hugi 2022-07-16
+	 */
+	private void validateBuildProperties() {
+		for( final String propertyName : requiredBuildProperties() ) {
+			if( !_buildProperties.containsKey( propertyName ) ) {
+				throw new IllegalArgumentException( "%s must be present in build.properties".formatted( propertyName ) );
+			}
+		}
+	}
+
+	/**
+	 * @return The list of properties that _must_ be present in build.properties for a build to succeed
+	 */
+	private List<String> requiredBuildProperties() {
+		final List<String> requiredBuildProperties = new ArrayList<>();
+		requiredBuildProperties.add( "project.name" );
+
+		// No sense in building an application without a Principal class to run
+		// However, frameworks do not need one
+		if( type() == Type.Application ) {
+			requiredBuildProperties.add( "principalClass" );
+		}
+
+		return requiredBuildProperties;
 	}
 
 	public Path componentsPath() {
