@@ -332,5 +332,5 @@ done
 #
 echo Launching ${SCRIPT_NAME}.woa ...
 
-echo ${JAVA_EXECUTABLE} ${JAVA_EXECUTABLE_ARGS} --add-exports java.base/sun.security.action=ALL-UNNAMED -classpath \"${THE_CLASSPATH}\" ${APPLICATION_CLASS} ${COMMAND_LINE_ARGS}
-eval exec ${JAVA_EXECUTABLE} ${JAVA_EXECUTABLE_ARGS} --add-exports java.base/sun.security.action=ALL-UNNAMED -classpath "${THE_CLASSPATH}" ${APPLICATION_CLASS} ${COMMAND_LINE_ARGS}
+echo ${JAVA_EXECUTABLE} ${JAVA_EXECUTABLE_ARGS} --add-exports java.base/sun.security.action=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED -classpath \"${THE_CLASSPATH}\" ${APPLICATION_CLASS} ${COMMAND_LINE_ARGS}
+eval exec ${JAVA_EXECUTABLE} ${JAVA_EXECUTABLE_ARGS} --add-exports java.base/sun.security.action=ALL-UNNAMED --add-opens java.base/java.time=ALL-UNNAMED -classpath "${THE_CLASSPATH}" ${APPLICATION_CLASS} ${COMMAND_LINE_ARGS}
