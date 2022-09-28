@@ -89,7 +89,7 @@ public class SourceProject {
 	}
 
 	/**
-	 * @return The name of the Application's main class, from the project's build.properties
+	 * @return In the case of applications, this is the main class. In the case of frameworks, this is the framework's principalClass
 	 */
 	public String principalClassName() {
 		return _buildProperties.getProperty( "principalClass" );
@@ -203,7 +203,7 @@ public class SourceProject {
 		final List<String> requiredBuildProperties = new ArrayList<>();
 		requiredBuildProperties.add( "project.name" );
 
-		// No sense in building an application without a Principal class to run
+		// No sense in building an application without a main class to run
 		// However, frameworks do not need one
 		if( type() == Type.Application ) {
 			requiredBuildProperties.add( "principalClass" );

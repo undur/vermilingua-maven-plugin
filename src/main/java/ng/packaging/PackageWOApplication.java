@@ -27,8 +27,6 @@ public class PackageWOApplication {
 		Objects.requireNonNull( woaName );
 		Objects.requireNonNull( targetPath );
 
-		//		final MavenProject mavenProject = sourceProject.mavenProject();
-
 		// The WOA bundle, the destination for our build.
 		final WOA woa = WOA.create( targetPath, woaName );
 
@@ -41,8 +39,7 @@ public class PackageWOApplication {
 		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
 
-		// WOLifecycle includes the java folder itself on the classpath. I'm not sure why, but better replicate it // Hugi 2021-07-08
-		classpathStrings.add( "APPROOT/Resources/Java/" );
+		classpathStrings.add( "APPROOT/Resources/Java/" ); // WOLifecycle includes the java folder itself on the classpath. I'm not sure why, but better replicate it // Hugi 2021-07-08
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
