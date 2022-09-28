@@ -6,16 +6,10 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.MavenProject;
 
 public class PackageWOApplicationJAROnly {
 
-	public WOA execute( final SourceProject sourceProject, final String finalName ) {
-
-		final MavenProject mavenProject = sourceProject.mavenProject();
-
-		// Usually Maven's standard 'target' directory
-		final Path buildPath = Path.of( mavenProject.getBuild().getDirectory() );
+	public WOA execute( final SourceProject sourceProject, final String finalName, final Path buildPath ) {
 
 		// The WOA bundle, the destination for our build.
 		final WOA woa = WOA.create( buildPath, finalName );
@@ -34,7 +28,7 @@ public class PackageWOApplicationJAROnly {
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
-		for( final Artifact artifact : mavenProject.getArtifacts() ) {
+		for( final Artifact artifact : sourceProject.dependencies() ) {
 			final Path artifactPathInMavenRepository = artifact.getFile().toPath();
 			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( artifact.getGroupId().replace( ".", "/" ) + "/" + artifact.getArtifactId() + "/" + artifact.getVersion() ) );
 			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( artifact.getFile().getName() );
@@ -45,7 +39,7 @@ public class PackageWOApplicationJAROnly {
 		}
 
 		// Copy WebServerResources from framework jars to the WOA
-		for( final Artifact artifact : mavenProject.getArtifacts() ) {
+		for( final Artifact artifact : sourceProject.dependencies() ) {
 			if( Util.jarContainsNonEmptyWebServerResourcesDirectoryInRoot( artifact.getFile() ) ) {
 				final Path destinationPath = woa.frameworksPath().resolve( artifact.getArtifactId() + ".framework" );
 				Util.copyFolderFromJarToPath( "WebServerResources", artifact.getFile().toPath(), destinationPath );

@@ -6,10 +6,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -59,10 +61,25 @@ public class SourceProject {
 		validateBuildProperties();
 	}
 
-	public MavenProject mavenProject() {
+	/**
+	 * @return The maven project used this SourceProject was constructed from
+	 */
+	private MavenProject mavenProject() {
 		return _mavenProject;
 	}
 
+	/**
+	 * @return Dependencies of this project
+	 *
+	 * FIXME: Replace the Artifact class with our own wrapper class // Hugi 2022-09-28
+	 */
+	public Collection<Artifact> dependencies() {
+		return mavenProject().getArtifacts();
+	}
+
+	/**
+	 * @return The name of the WO bundle resources folder
+	 */
 	public String woresourcesFolderName() {
 		return _woresourcesFolderName;
 	}
