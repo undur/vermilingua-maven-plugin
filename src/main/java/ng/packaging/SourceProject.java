@@ -14,8 +14,6 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Source for packaging of a WO build (Application or framework)
- *
- * FIXME: This includes MavenProject at the moment, we want to gradually abstract that away // Hugi 2021-07-12
  */
 
 public class SourceProject {
@@ -35,6 +33,10 @@ public class SourceProject {
 
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
 
+	/**
+	 * Note: We're currently including the maven project to get references to the resolved dependencies (.getArtifacts()).
+	 * This isn't a huge problem now, but Eventually this should probably be abstracted away removed to make building possible outside of a maven context
+	 */
 	private final MavenProject _mavenProject;
 
 	/**
