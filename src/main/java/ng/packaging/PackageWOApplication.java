@@ -15,6 +15,15 @@ public class PackageWOApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger( PackageWOApplication.class );
 
+	/**
+	 * Builds a WOA bundle
+	 *
+	 * @param sourceProject The project we're building from
+	 * @param woaName Name of the WOA (not including the .woa suffix)
+	 * @param targetPath Directory where the WOA bundle will be placed
+	 *
+	 * @return The assembled WOA bundle
+	 */
 	public WOA execute( final SourceProject sourceProject, final String woaName, final Path targetPath ) {
 		Objects.requireNonNull( sourceProject );
 		Objects.requireNonNull( woaName );
