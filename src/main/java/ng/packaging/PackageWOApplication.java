@@ -85,6 +85,7 @@ public class PackageWOApplication {
 		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
 		String classPathFileTemplateString = Util.readTemplate( "classpath" );
 		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", sourceProject.principalClassName() );
+		classPathFileTemplateString = classPathFileTemplateString.replace( "${JVMOptions}", sourceProject.jvmOptions() );
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );

@@ -1,5 +1,5 @@
 # JVM              == java
-# JVMOptions       == 
+# JVMOptions       == ${JVMOptions} 
 # JDB              == jdb
 # JDBOptions       == 
 # ApplicationClass == ${ApplicationClass}
