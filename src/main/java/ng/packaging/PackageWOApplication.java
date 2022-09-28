@@ -99,8 +99,7 @@ public class PackageWOApplication {
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
 		final String infoPlistString = InfoPlist.make( sourceProject );
-		final Path infoPlistPath = woa.contentsPath().resolve( "Info.plist" );
-		Util.writeStringToPath( infoPlistString, infoPlistPath );
+		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
 
 		// Create the executable script for UNIX
 		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
@@ -211,6 +210,13 @@ public class PackageWOApplication {
 		 */
 		public Path javaPath() {
 			return Util.folder( woresourcesPath().resolve( "Java" ) );
+		}
+
+		/**
+		 * @return Destination path for Info.plist
+		 */
+		public Path infoPlistPath() {
+			return contentsPath().resolve( "Info.plist" );
 		}
 
 		/**
