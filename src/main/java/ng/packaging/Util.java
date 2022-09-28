@@ -51,15 +51,11 @@ public class Util {
 
 		try {
 			Files.walk( Path.of( sourceDirectoryLocationString ) )
-					.forEach( source -> {
-						final Path destination = Path.of( destinationDirectoryLocationString, source.toString().substring( sourceDirectoryLocationString.length() ) );
-						try {
-							if( !Files.exists( destination ) ) { // FIXME: This is just a hackyhack // Hugi 2021-07-08
-								Files.copy( source, destination );
-							}
-						}
-						catch( final IOException e ) {
-							throw new UncheckedIOException( e );
+					.forEach( sourcePath -> {
+						final Path destinationPath = Path.of( destinationDirectoryLocationString, sourcePath.toString().substring( sourceDirectoryLocationString.length() ) );
+
+						if( !Files.exists( destinationPath ) ) { // FIXME: This is just a hackyhack // Hugi 2021-07-08
+							copyFile( sourcePath, destinationPath );
 						}
 					} );
 		}
