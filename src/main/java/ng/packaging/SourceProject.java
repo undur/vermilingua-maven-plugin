@@ -144,7 +144,7 @@ public class SourceProject {
 	/**
 	 * Ensure all required properties are present
 	 *
-	 * @throws IllegalArgumentException // FIXME: Pick a better exception type or make our own // Hugi 2022-07-16
+	 * @throws IllegalArgumentException If a required build property is not present
 	 */
 	private void validateBuildProperties() {
 		for( final String propertyName : requiredBuildProperties() ) {
