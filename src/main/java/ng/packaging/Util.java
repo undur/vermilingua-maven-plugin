@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.CopyOption;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -24,12 +25,12 @@ public class Util {
 	 * Copy the file at [sourcePath] to a new file specified by [destinationPath]
 	 * This method exists solely to wrap the checked IOException in an UncheckedIOException
 	 */
-	public static void copyFile( final Path sourcePath, final Path destinationPath ) {
+	public static void copyFile( final Path sourcePath, final Path destinationPath, final CopyOption... options ) {
 		Objects.requireNonNull( sourcePath );
 		Objects.requireNonNull( destinationPath );
 
 		try {
-			Files.copy( sourcePath, destinationPath );
+			Files.copy( sourcePath, destinationPath, options );
 		}
 		catch( final IOException e ) {
 			throw new UncheckedIOException( e );
