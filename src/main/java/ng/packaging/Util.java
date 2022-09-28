@@ -22,6 +22,7 @@ public class Util {
 
 	/**
 	 * Copy the file at [sourcePath] to a new file specified by [destinationPath]
+	 * This method exists solely to wrap the checked IOException in an UncheckedIOException
 	 */
 	public static void copyFile( final Path sourcePath, final Path destinationPath ) {
 		Objects.requireNonNull( sourcePath );
@@ -176,8 +177,7 @@ public class Util {
 	 * - Does nothing if the folder specified by sourcePath does not exist
 	 * - Creates the destination folder if missing.
 	 *
-	 * FIXME: First implementation attempt. This is actually pretty horrid // Hugi 2021-07-10
-	 * FIXME: Should this overwrite existing files silently or fail on overwrite?
+	 * FIXME: This method currently silently overwrites existing files in the jar. We probably want to be more intelligent about that // Hugi 2022-09-28
 	 */
 	public static void copyContentsOfFolderAtPathToFolderInJar( final Path sourcePath, final String folderName, final Path destinationJarPath ) {
 		Objects.requireNonNull( sourcePath );

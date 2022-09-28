@@ -1,12 +1,15 @@
 package ng.packaging;
 
+import java.util.Objects;
+
 public class PackageWOFramework {
 
 	/**
 	 * FIXME: Flatten components // Hugi 2021-07-10
-	 * FIXME: Flatten resources (?)  // Hugi 2021-07-10
+	 * FIXME: Flatten resources // Hugi 2021-07-10
 	 */
 	public void execute( final SourceProject sourceProject ) {
+		Objects.requireNonNull( sourceProject );
 
 		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.componentsPath(), "Resources", sourceProject.jarPath() );
 		Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.woresourcesPath(), "Resources", sourceProject.jarPath() );
