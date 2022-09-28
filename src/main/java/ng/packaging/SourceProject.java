@@ -150,9 +150,8 @@ public class SourceProject {
 	private Properties readBuildProperties() {
 		final String pathToBuildPropertiesFile = mavenProject().getBasedir() + "/build.properties";
 
-		// FIXME: we might want to do this in project preflighting, rather than in the actual read method // Hugi 2022-07-16
 		if( !new File( pathToBuildPropertiesFile ).exists() ) {
-			throw new IllegalStateException( "build.properties file not found ing project root (%s)".formatted( pathToBuildPropertiesFile ) );
+			throw new IllegalStateException( "build.properties not found in project root (%s). To build a project with vermilingua, a file called 'build.properties' file must exist in the root and must contain at least the properties %s".formatted( pathToBuildPropertiesFile, requiredBuildProperties() ) );
 		}
 
 		try( FileInputStream fis = new FileInputStream( pathToBuildPropertiesFile )) {
