@@ -8,8 +8,12 @@ import java.util.Objects;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PackageWOApplication {
+
+	private static final Logger logger = LoggerFactory.getLogger( PackageWOApplication.class );
 
 	public WOA execute( final SourceProject sourceProject, final String finalName ) {
 
@@ -60,21 +64,21 @@ public class PackageWOApplication {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
 		}
 		else {
-			System.out.println( "[WARNING] - Not copying components. %s does not exist".formatted( sourceProject.componentsPath() ) ); // FIXME: Replace with logger
+			logger.warn( "Not copying components. %s does not exist".formatted( sourceProject.componentsPath() ) );
 		}
 
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		}
 		else {
-			System.out.println( "[WARNING] - Not copying woresources. %s does not exist".formatted( sourceProject.woresourcesPath() ) ); // FIXME: Replace with logger
+			logger.warn( "Not copying woresources. %s does not exist".formatted( sourceProject.woresourcesPath() ) );
 		}
 
 		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
 		}
 		else {
-			System.out.println( "[WARNING] - Not copying WebServerResources. %s does not exist".formatted( sourceProject.webServerResourcesPath() ) ); // FIXME: Replace with logger
+			logger.warn( "Not copying WebServerResources. %s does not exist".formatted( sourceProject.webServerResourcesPath() ) );
 		}
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
