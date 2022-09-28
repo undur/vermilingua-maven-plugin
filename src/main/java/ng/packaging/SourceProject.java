@@ -170,14 +170,23 @@ public class SourceProject {
 		return requiredBuildProperties;
 	}
 
+	/**
+	 * @return Path to source components
+	 */
 	public Path componentsPath() {
 		return Path.of( mavenProject().getBasedir() + "/src/main/components" );
 	}
 
+	/**
+	 * @return Path to source woresources
+	 */
 	public Path woresourcesPath() {
 		return Path.of( mavenProject().getBasedir() + "/src/main/" + woresourcesFolderName() );
 	}
 
+	/**
+	 * @return Path to source webserver-resources
+	 */
 	public Path webServerResourcesPath() {
 		return Path.of( mavenProject().getBasedir() + "/src/main/webserver-resources" );
 	}
