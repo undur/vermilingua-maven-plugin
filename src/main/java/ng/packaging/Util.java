@@ -104,7 +104,10 @@ public class Util {
 		}
 	}
 
-	public static boolean containsNonEmptyWebServerResourcesDirectory( final File sourceJarFile ) {
+	/**
+	 * @return true if [sourceJarFile] contains a non-empty WebServerResources-directory in it's root
+	 */
+	public static boolean jarContainsNonEmptyWebServerResourcesDirectoryInRoot( final File sourceJarFile ) {
 		Objects.requireNonNull( sourceJarFile );
 
 		try( final JarFile jarFile = new JarFile( sourceJarFile )) {
