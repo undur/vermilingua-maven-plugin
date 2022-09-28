@@ -34,7 +34,7 @@ public class PackageWOApplication {
 		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
 
-		// CHECKME: For some reason the older plugin includes the java folder itself on the classpath. Better replicate that for now, check later // Hugi 2021-07-08
+		// WOLifecycle includes the java folder itself on the classpath. I'm not sure why, but better replicate it // Hugi 2021-07-08
 		classpathStrings.add( "APPROOT/Resources/Java/" );
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
@@ -94,7 +94,7 @@ public class PackageWOApplication {
 		final String windowsClassPathString = classPathFileTemplateString + String.join( "\r\n", classpathStrings ).replace( "/", "\\" ); //CHECKME: Nice pretzels. We can make this more understandable // Hugi 2021-07-08
 		Util.writeStringToPath( windowsClassPathString, woa.windowsPath().resolve( "CLSSPATH.TXT" ) );
 
-		// CHECKME: I have no idea what the subpaths file does. // Hugi 2021-07-08
+		// FIXME: Figure out what the subpaths file does and document // Hugi 2022-09-28
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 

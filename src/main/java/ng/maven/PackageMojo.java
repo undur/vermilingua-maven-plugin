@@ -24,7 +24,7 @@ public class PackageMojo extends AbstractMojo {
 	MavenProject project;
 
 	/**
-	 * Allows the user to specify an alternative name for the source project's WO bundle resources folder (probably "resources")
+	 * Allows the user to specify an alternative name for the source project's WO bundle resources folder (probably "resources", since that's the old wolifecycle default)
 	 */
 	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME)
 	String woresourcesFolderName;
@@ -42,7 +42,7 @@ public class PackageMojo extends AbstractMojo {
 	boolean performSplit;
 
 	/**
-	 * CHECKME: Still considering the correct design here, that's why this might look a bit... odd // Hugi 2021-07-10
+	 * Entry point for the assembly process
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -65,7 +65,7 @@ public class PackageMojo extends AbstractMojo {
 			new PackageWOFramework().execute( sourceProject );
 		}
 		else {
-			throw new MojoExecutionException( String.format( "I have no know what the heck you're asking me to build (%s???) but I don't know how to do it.", project.getPackaging() ) );
+			throw new MojoExecutionException( "I have no idea what you're asking me to build ('%s'? WTF??) but I don't know how to do it.".formatted( project.getPackaging() ) );
 		}
 	}
 }

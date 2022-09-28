@@ -77,7 +77,7 @@ public class SourceProject {
 	/**
 	 * @return Name of the WebObjects project as specified in build.properties
 	 *
-	 * CHECKME: Should we be using mavenProject().getArtifactId()? // Hugi 2021-07-16
+	 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
 	 */
 	public String name() {
 		return _buildProperties.getProperty( "project.name" );
