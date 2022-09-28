@@ -82,6 +82,28 @@ public class SourceProject {
 	}
 
 	/**
+	 * @return String of arguments to pass on to the generated launch scripts' JVM
+	 *
+	 * FIXME: Check target Java version and append applicable parameters. Currently we assume JDK>=17 // Hugi 2022-09-28
+	 */
+	public String jvmOptions() {
+		String jvmOptions = _buildProperties.getProperty( "jvmOptions" );
+
+		if( jvmOptions == null ) {
+			jvmOptions = "";
+		}
+
+		// We're injecting this into all apps, since WO won't run without it
+		final String requiredParameter = "--add-exports java.base/sun.security.action=ALL-UNNAMED";
+
+		if( !jvmOptions.contains( requiredParameter ) ) {
+			jvmOptions = jvmOptions + " " + requiredParameter;
+		}
+
+		return jvmOptions;
+	}
+
+	/**
 	 * @return Version of the project, as specified in the pom file.
 	 */
 	public String version() {
