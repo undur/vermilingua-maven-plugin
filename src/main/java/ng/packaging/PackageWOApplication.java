@@ -150,38 +150,65 @@ public class PackageWOApplication {
 			_woaPath = Util.folder( woaPath );
 		}
 
+		/**
+		 * @return Path to the WOA root
+		 */
 		public Path woaPath() {
 			return _woaPath;
 		}
 
+		/**
+		 * @return Root destination path for the WOA's contents
+		 */
 		public Path contentsPath() {
 			return Util.folder( woaPath().resolve( "Contents" ) );
 		}
 
+		/**
+		 * @return Destination path for frameworks to be embedded in the WOA bundle
+		 */
 		public Path frameworksPath() {
 			return Util.folder( contentsPath().resolve( "Frameworks" ) );
 		}
 
+		/**
+		 * @return Destination path for macOS specific launch scripts/configuration
+		 */
 		public Path macosPath() {
 			return Util.folder( contentsPath().resolve( "MacOS" ) );
 		}
 
+		/**
+		 * @return Destination path for Unix/Linux specific launch scripts/configuration
+		 */
 		public Path unixPath() {
 			return Util.folder( contentsPath().resolve( "UNIX" ) );
 		}
 
+		/**
+		 * @return Destination path for Windows specific launch scripts/configuration
+		 */
 		public Path windowsPath() {
 			return Util.folder( contentsPath().resolve( "Windows" ) );
 		}
 
+		/**
+		 * @return Destination path for WO's woresources/bundle-resources/application-resources/whacchamacallit
+		 */
 		public Path woresourcesPath() {
 			return Util.folder( contentsPath().resolve( "Resources" ) );
 		}
 
+		/**
+		 * @return Destination path for WO's webserver resources
+		 */
 		public Path webServerResourcesPath() {
 			return Util.folder( contentsPath().resolve( "WebServerResources" ) );
 		}
 
+		/**
+		 * @return Destination path for jar files
+		 */
 		public Path javaPath() {
 			return Util.folder( woresourcesPath().resolve( "Java" ) );
 		}
