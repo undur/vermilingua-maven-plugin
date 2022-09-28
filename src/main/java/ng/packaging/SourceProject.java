@@ -134,8 +134,6 @@ public class SourceProject {
 	 *
 	 * Including this as a part of "SourceProject" might look strange but note that
 	 * SourceProject represents a WO project after maven's jar plugin has done it's job.
-	 *
-	 * Still, feels weird. I'd like to move this away from here eventually // Hugi 2021-07-16
 	 */
 	public Path jarPath() {
 		return mavenProject().getArtifact().getFile().toPath();
