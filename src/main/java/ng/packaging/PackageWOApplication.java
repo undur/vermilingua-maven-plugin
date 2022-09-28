@@ -15,17 +15,15 @@ public class PackageWOApplication {
 
 	private static final Logger logger = LoggerFactory.getLogger( PackageWOApplication.class );
 
-	public WOA execute( final SourceProject sourceProject, final String woaName ) {
+	public WOA execute( final SourceProject sourceProject, final String woaName, final Path targetPath ) {
 		Objects.requireNonNull( sourceProject );
 		Objects.requireNonNull( woaName );
+		Objects.requireNonNull( targetPath );
 
 		final MavenProject mavenProject = sourceProject.mavenProject();
 
-		// Usually Maven's standard 'target' directory
-		final Path buildPath = Path.of( mavenProject.getBuild().getDirectory() );
-
 		// The WOA bundle, the destination for our build.
-		final WOA woa = WOA.create( buildPath, woaName );
+		final WOA woa = WOA.create( targetPath, woaName );
 
 		// The eventual name of the app's JAR file
 		final String appJarFilename = sourceProject.targetJarNameForWOA();

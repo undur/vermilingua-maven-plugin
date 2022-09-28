@@ -1,5 +1,7 @@
 package ng.maven;
 
+import java.nio.file.Path;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -55,7 +57,9 @@ public class PackageMojo extends AbstractMojo {
 
 		if( sourceProject.type().isApp() ) {
 			final String finalName = project.getBuild().getFinalName();
-			final WOA woa = new PackageWOApplication().execute( sourceProject, finalName );
+			final Path targetPath = Path.of( project.getBuild().getDirectory() ); // Maven's target directory
+
+			final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath );
 
 			if( performSplit ) {
 				woa.extractWebServerResources();
