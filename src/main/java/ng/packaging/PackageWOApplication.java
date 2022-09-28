@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.maven.artifact.Artifact;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,10 +46,10 @@ public class PackageWOApplication {
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
-		for( final Artifact dependency : sourceProject.dependencies() ) {
-			final Path artifactPathInMavenRepository = dependency.getFile().toPath();
-			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( dependency.getGroupId().replace( ".", "/" ) + "/" + dependency.getArtifactId() + "/" + dependency.getVersion() ) );
-			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( dependency.getFile().getName() );
+		for( final Dependency dependency : sourceProject.dependencies() ) {
+			final Path artifactPathInMavenRepository = dependency.file().toPath();
+			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( dependency.groupId().replace( ".", "/" ) + "/" + dependency.artifactId() + "/" + dependency.version() ) );
+			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( dependency.file().getName() );
 			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA );
 
 			// Add the jar to the classpath
@@ -58,10 +57,10 @@ public class PackageWOApplication {
 		}
 
 		// Copy WebServerResources from framework jars to the WOA
-		for( final Artifact dependency : sourceProject.dependencies() ) {
-			if( Util.jarContainsNonEmptyWebServerResourcesDirectoryInRoot( dependency.getFile() ) ) {
-				final Path destinationPath = woa.frameworksPath().resolve( dependency.getArtifactId() + ".framework" );
-				Util.copyFolderFromJarToPath( "WebServerResources", dependency.getFile().toPath(), destinationPath );
+		for( final Dependency dependency : sourceProject.dependencies() ) {
+			if( Util.jarContainsNonEmptyWebServerResourcesDirectoryInRoot( dependency.file() ) ) {
+				final Path destinationPath = woa.frameworksPath().resolve( dependency.artifactId() + ".framework" );
+				Util.copyFolderFromJarToPath( "WebServerResources", dependency.file().toPath(), destinationPath );
 			}
 		}
 

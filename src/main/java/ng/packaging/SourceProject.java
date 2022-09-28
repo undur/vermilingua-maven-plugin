@@ -70,11 +70,15 @@ public class SourceProject {
 
 	/**
 	 * @return Dependencies of this project
-	 *
-	 * FIXME: Replace the Artifact class with our own wrapper class // Hugi 2022-09-28
 	 */
-	public Collection<Artifact> dependencies() {
-		return mavenProject().getArtifacts();
+	public Collection<Dependency> dependencies() {
+		List<Dependency> dependencies = new ArrayList<>();
+
+		for( final Artifact a : mavenProject().getArtifacts() ) {
+			dependencies.add( new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) );
+		}
+
+		return dependencies;
 	}
 
 	/**
