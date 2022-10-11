@@ -101,7 +101,13 @@ public class SourceProject {
 	 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
 	 */
 	public String name() {
-		return _buildProperties.getProperty( "project.name" );
+		String projectName = _buildProperties.getProperty( "project.name" );
+
+		if( projectName == null ) {
+			projectName = mavenProject().getName();
+		}
+
+		return projectName;
 	}
 
 	/**
@@ -201,7 +207,7 @@ public class SourceProject {
 	 */
 	private List<String> requiredBuildProperties() {
 		final List<String> requiredBuildProperties = new ArrayList<>();
-		requiredBuildProperties.add( "project.name" );
+		//		requiredBuildProperties.add( "project.name" ); // FIXME: Experimenting with making the project name a non-requirement // Hugi 2022-10-10
 
 		// No sense in building an application without a main class to run
 		// However, frameworks do not need one
