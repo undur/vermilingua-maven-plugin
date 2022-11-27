@@ -13,6 +13,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
@@ -76,35 +77,26 @@ public class Util {
 		Objects.requireNonNull( sourceDirectory );
 		Objects.requireNonNull( destinationDirectory );
 
-		FileVisitor<? super Path> visitor = new FileVisitor<>() {
+		final FileVisitor<? super Path> visitor = new SimpleFileVisitor<>() {
 
 			@Override
 			public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes arg1 ) throws IOException {
 
-				// If this is a .wo folder, copy it in it's entirety (with all it's contents) and then skip walking inside it
+				// If this is a .wo folder, copy it in it's entirety (with all it's contents) and don't look deeper into it
 				if( dir.getFileName().toString().endsWith( ".wo" ) ) {
 					copyContentsOfDirectoryToDirectory( dir, destinationDirectory.resolve( dir.getFileName() ) );
 					return FileVisitResult.SKIP_SUBTREE;
 				}
 
-				// This is a regular directory, so we just keep walking like nothing happened, looking for files
-				return FileVisitResult.CONTINUE;
-			}
-
-			@Override
-			public FileVisitResult postVisitDirectory( Path dir, IOException arg1 ) throws IOException {
+				// In this case, this is a regular directory so we just keep on walking
 				return FileVisitResult.CONTINUE;
 			}
 
 			@Override
 			public FileVisitResult visitFile( Path file, BasicFileAttributes arg1 ) throws IOException {
+				// Regular standalone files just get copied. preVisitDirectory() will already have excluded and copied files inside bundles
 				copyFile( file, destinationDirectory.resolve( file.getFileName() ) );
 				return FileVisitResult.CONTINUE;
-			}
-
-			@Override
-			public FileVisitResult visitFileFailed( Path arg0, IOException arg1 ) throws IOException {
-				return FileVisitResult.TERMINATE;
 			}
 		};
 
