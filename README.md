@@ -45,23 +45,19 @@ than the `src/main/resources` folder.
 
 * Applications: Currently only generates a WOA bundle (i.e. does not
   generate split install artifacts nor compressed artifacts).
-* `flattenComponents` has not yet been implemented.
 * `flattenResources` has not yet been implemented.
 
 ## Differences from `wolifecycle-maven-plugin`
 
 
-* Patternsets are not supported, primarily because I don't use them
-  myself.
+* Patternsets are not supported
 * No support for building WAR files (servlet projects).
 * Only generates Maven-style JAR frameworks (not a `.framework` folder
   bundle for use with Ant).
 * Default location for WebObjects bundle resources is
   `src/main/woresources` rather than `src/main/resources` (which is
   now reserved for Java classpath resources As God Intended).
-* `flattenComponents` will default to true (once implemented) since
-  WebObjects doesn't know how to locate components in sub-folders, in
-  production anyway.
+* `flattenComponents` defaults to true (WO doesn't know how to locate components in sub-folders in production anyway).
 * When building applications, `${build.finalName}` (set in the POM)
   will only affect the name of the WOA folder. The insides of two WOAs
   made from the same project, but compiled with different
