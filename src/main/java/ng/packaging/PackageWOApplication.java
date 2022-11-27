@@ -65,7 +65,7 @@ public class PackageWOApplication {
 		// FIXME: Flatten resources // Hugi 2021-07-08
 
 		if( Files.exists( sourceProject.componentsPath() ) ) {
-			Util.copyContentsOfDirectoryToDirectory( sourceProject.componentsPath(), woa.woresourcesPath() );
+			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath() );
 		}
 		else {
 			logger.warn( "Not copying components. %s does not exist".formatted( sourceProject.componentsPath() ) );

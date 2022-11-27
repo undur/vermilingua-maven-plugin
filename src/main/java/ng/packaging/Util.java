@@ -9,9 +9,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.CopyOption;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -62,6 +65,53 @@ public class Util {
 					} );
 		}
 		catch( final IOException e ) {
+			throw new UncheckedIOException( e );
+		}
+	}
+
+	/**
+	 * FIXME: We're currently hardcoding the .wo suffix, we're going to want to allow for more suffixes (.eomodeld for example)
+	 */
+	public static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory ) {
+		Objects.requireNonNull( sourceDirectory );
+		Objects.requireNonNull( destinationDirectory );
+
+		FileVisitor<? super Path> visitor = new FileVisitor<>() {
+
+			@Override
+			public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes arg1 ) throws IOException {
+
+				// If this is a .wo folder, copy it in it's entirety (with all it's contents) and then skip walking inside it
+				if( dir.getFileName().toString().endsWith( ".wo" ) ) {
+					copyContentsOfDirectoryToDirectory( dir, destinationDirectory.resolve( dir.getFileName() ) );
+					return FileVisitResult.SKIP_SUBTREE;
+				}
+
+				// This is a regular directory, so we just keep walking like nothing happened, looking for files
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult postVisitDirectory( Path dir, IOException arg1 ) throws IOException {
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult visitFile( Path file, BasicFileAttributes arg1 ) throws IOException {
+				copyFile( file, destinationDirectory.resolve( file.getFileName() ) );
+				return FileVisitResult.CONTINUE;
+			}
+
+			@Override
+			public FileVisitResult visitFileFailed( Path arg0, IOException arg1 ) throws IOException {
+				return FileVisitResult.TERMINATE;
+			}
+		};
+
+		try {
+			Files.walkFileTree( sourceDirectory, visitor );
+		}
+		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
 	}
