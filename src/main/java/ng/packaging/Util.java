@@ -55,7 +55,8 @@ public class Util {
 					.forEach( sourcePath -> {
 						final Path destinationPath = Path.of( destinationDirectoryLocationString, sourcePath.toString().substring( sourceDirectoryLocationString.length() ) );
 
-						if( !Files.exists( destinationPath ) ) { // FIXME: This is just a hackyhack // Hugi 2021-07-08
+						// FIXME: We're currently ignoring the situation if the target file already exists. We might want to handle that as an error condition/warning // Hugi 2022-11-27
+						if( !Files.exists( destinationPath ) ) {
 							copyFile( sourcePath, destinationPath );
 						}
 					} );
