@@ -6,16 +6,15 @@
 No, it's a pure Maven plugin for building
 [WebObjects](https://en.wikipedia.org/wiki/WebObjects) and [Project
 Wonder](https://github.com/wocommunity/wonder) applications and
-frameworks.  By "pure Maven", we mean it doesn't use the [WOProject
-Ant Tasks](https://wiki.wocommunity.org/display/WOL/WOProject-Ant).
-In theory, this makes it easier to modify the plugin and improve the
-build process.  Eventually it will be _close to_ a drop-in alternative
-to [WOLifecycle Maven
+frameworks.  "Pure Maven" means it doesn't use the [WOProject
+Ant Tasks](https://wiki.wocommunity.org/display/WOL/WOProject-Ant)
+which makes it run faster and makes it easier to improve the plugin and
+build process.  It's close to a drop-in alternative to the [WOLifecycle Maven
 Plugin](https://github.com/wocommunity/wolifecycle-maven-plugin),
-though some features have not been implemented yet (see below).
+although with some differeces (see below).
 
-This plugin is already in production use on a few applications and
-frameworks (including a fork of Wonder) and works well.
+This plugin is already used to build many production applications and
+frameworks (including a fork of Wonder).
 
 ## Usage
 
@@ -41,12 +40,6 @@ compatibility with current projects. This plugin defaults to use the
 folder `src/main/woresources` for WebObjects bundle resources, rather
 than the `src/main/resources` folder.
 
-## Work in progress
-
-* Applications: Currently only generates a WOA bundle (i.e. does not
-  generate split install artifacts nor compressed artifacts).
-* `flattenResources` has not yet been implemented.
-
 ## Differences from `wolifecycle-maven-plugin`
 
 
@@ -62,3 +55,9 @@ than the `src/main/resources` folder.
   will only affect the name of the WOA folder. The insides of two WOAs
   made from the same project, but compiled with different
   `finalName`s, will look exactly the same.
+  
+  ## Work in progress
+
+* Applications: Currently only generates a WOA bundle (i.e. does not
+  generate split install artifacts nor compressed artifacts).
+* `flattenResources` has not yet been implemented.
