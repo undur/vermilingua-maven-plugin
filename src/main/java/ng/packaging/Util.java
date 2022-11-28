@@ -23,7 +23,12 @@ import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Util {
+
+	private static final Logger logger = LoggerFactory.getLogger( Util.class );
 
 	/**
 	 * Copy the file at [sourcePath] to a new file specified by [destinationPath]
@@ -43,8 +48,6 @@ public class Util {
 
 	/**
 	 * Copy the contents of the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory]
-	 *
-	 * FIXME: Specify replace/overwrite/failure conditions // Hugi 2021-07-16
 	 */
 	public static void copyContentsOfDirectoryToDirectory( final Path sourceDirectory, final Path destinationDirectory ) {
 		Objects.requireNonNull( sourceDirectory );
@@ -59,9 +62,13 @@ public class Util {
 					.forEach( sourcePath -> {
 						final Path destinationPath = Path.of( destinationDirectoryLocationString, sourcePath.toString().substring( sourceDirectoryLocationString.length() ) );
 
-						// FIXME: We're currently ignoring the situation if the target file already exists. We might want to handle that as an error condition/warning // Hugi 2022-11-27
+						// If the target file already exists, we just don't copy and log a warning instead.
+						// We might want to change this to an error condition in the future since this could theoretically result in unexpected behaviour
 						if( !Files.exists( destinationPath ) ) {
 							copyFile( sourcePath, destinationPath );
+						}
+						else {
+							logger.warn( "File {} already exists at {}, not copying", sourcePath, destinationPath );
 						}
 					} );
 		}
