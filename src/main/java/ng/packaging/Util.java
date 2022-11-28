@@ -17,6 +17,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class Util {
 	}
 
 	/**
-	 * Copy the contents of the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory]
+	 * Copy the contents of the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory], maintaining the directory tree/hierarchy.
 	 */
 	public static void copyContentsOfDirectoryToDirectory( final Path sourceDirectory, final Path destinationDirectory ) {
 		Objects.requireNonNull( sourceDirectory );
@@ -58,7 +59,7 @@ public class Util {
 		final String destinationDirectoryLocationString = destinationDirectory.toString();
 
 		try {
-			Files.walk( Path.of( sourceDirectoryLocationString ) )
+			Files.walk( sourceDirectory )
 					.forEach( sourcePath -> {
 						final Path destinationPath = Path.of( destinationDirectoryLocationString, sourcePath.toString().substring( sourceDirectoryLocationString.length() ) );
 
@@ -78,19 +79,22 @@ public class Util {
 	}
 
 	/**
-	 * FIXME: We're currently hardcoding the .wo suffix, we're going to want to allow for more suffixes (.eomodeld for example)
+	 * Copy files in the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory], not maintaining the hierarchy, i.e. "flattening" the structure.
+	 *
+	 * Directories with names ending with [directorySuffixesToNotFlatten] are considered "bundles", i.e. they're essentially treated like files and copied in their entirety.
 	 */
-	public static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory ) {
+	public static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory, final Collection<String> directorySuffixesToNotFlatten ) {
 		Objects.requireNonNull( sourceDirectory );
 		Objects.requireNonNull( destinationDirectory );
+		Objects.requireNonNull( directorySuffixesToNotFlatten );
 
 		final FileVisitor<? super Path> visitor = new SimpleFileVisitor<>() {
 
 			@Override
 			public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes arg1 ) throws IOException {
 
-				// If this is a .wo folder, copy it in it's entirety (with all it's contents) and don't look deeper into it
-				if( dir.getFileName().toString().endsWith( ".wo" ) ) {
+				// If this is a bundle/folder we should not flatten, copy it in it's entirety (with all it's contents) and don't walk deeper into it
+				if( hasAnyOfSuffixes( dir.getFileName().toString(), directorySuffixesToNotFlatten ) ) {
 					copyContentsOfDirectoryToDirectory( dir, destinationDirectory.resolve( dir.getFileName() ) );
 					return FileVisitResult.SKIP_SUBTREE;
 				}
@@ -113,6 +117,22 @@ public class Util {
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
 		}
+	}
+
+	/**
+	 * @return true if the given [string] ends with any of the strings in [endings]
+	 */
+	private static boolean hasAnyOfSuffixes( String string, Collection<String> suffixes ) {
+		Objects.requireNonNull( string );
+		Objects.requireNonNull( suffixes );
+
+		for( final String suffix : suffixes ) {
+			if( string.endsWith( "." + suffix ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**

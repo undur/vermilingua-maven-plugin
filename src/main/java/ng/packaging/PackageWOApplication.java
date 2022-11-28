@@ -61,17 +61,15 @@ public class PackageWOApplication {
 			}
 		}
 
-		// FIXME: Flatten components // Hugi 2021-07-08
-		// FIXME: Flatten resources // Hugi 2021-07-08
-
 		if( Files.exists( sourceProject.componentsPath() ) ) {
-			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath() );
+			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath(), List.of( "wo" ) );
 		}
 		else {
 			logger.warn( "Not copying components. %s does not exist".formatted( sourceProject.componentsPath() ) );
 		}
 
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
+			// FIXME: Flatten resources // Hugi 2021-07-08
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		}
 		else {
