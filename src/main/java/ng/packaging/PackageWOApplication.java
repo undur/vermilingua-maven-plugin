@@ -69,7 +69,7 @@ public class PackageWOApplication {
 		}
 
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
-			// FIXME: Flatten resources // Hugi 2021-07-08
+			// CHECKME: this would be where we would flatten resources, if we ever were to do that // Hugi 2021-07-08
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		}
 		else {
@@ -88,15 +88,18 @@ public class PackageWOApplication {
 		String classPathFileTemplateString = Util.readTemplate( "classpath" );
 		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", sourceProject.principalClassName() );
 		classPathFileTemplateString = classPathFileTemplateString.replace( "${JVMOptions}", sourceProject.jvmOptions() );
+
+		// Write out nice looking UNIX class paths
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSXServerClassPath.txt" ) );
 
-		final String windowsClassPathString = classPathFileTemplateString + String.join( "\r\n", classpathStrings ).replace( "/", "\\" ); //CHECKME: Nice pretzels. We can make this more understandable // Hugi 2021-07-08
+		// Write out Windows classpath file, with wrong line endings and wrong path separators
+		final String windowsClassPathString = classPathFileTemplateString + String.join( "\r\n", classpathStrings ).replace( "/", "\\" );
 		Util.writeStringToPath( windowsClassPathString, woa.windowsPath().resolve( "CLSSPATH.TXT" ) );
 
-		// FIXME: Figure out what the subpaths file does and document // Hugi 2022-09-28
+		// CHECKME: I have no idea what the subpaths file is for, but I'm still copying it in (to replicate the old build)  We need to figure that out and document it // Hugi 2022-09-28
 		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
 		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
 
@@ -222,7 +225,7 @@ public class PackageWOApplication {
 		}
 
 		/**
-		 * FIXME: Initial placeholder for this functionality, it's an outside task that I don't like having as a part of the WOA
+		 * CHECKME: Placeholder for this functionality. It's really an outside task that I don't like having part of the WOA // Hugi 2021-07-17
 		 */
 		public void extractWebServerResources() {
 			final Path splitPath = Util.folder( woaPath().getParent().resolve( woaPath().getFileName() + ".webserverresources" ) );

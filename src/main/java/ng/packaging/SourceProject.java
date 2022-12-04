@@ -113,7 +113,11 @@ public class SourceProject {
 	/**
 	 * @return String of arguments to pass on to the generated launch scripts' JVM
 	 *
-	 * FIXME: Check target Java version and append applicable parameters. Currently we assume JDK>=17 // Hugi 2022-09-28
+	 * CHECKME:
+	 * We're currently assuming JDK>=17 and adding the required parameters for that.
+	 * A nicer course of action might be to check the targeted java version and adding parameters as required.
+	 * Or not do anything at all and make the user do it. Explicit good, magic bad.
+	 * // Hugi 2022-09-28
 	 */
 	public String jvmOptions() {
 		String jvmOptions = _buildProperties.getProperty( "jvmOptions" );
@@ -122,7 +126,7 @@ public class SourceProject {
 			jvmOptions = "";
 		}
 
-		// We're injecting this into all apps, since WO won't run without it
+		// We're injecting this into all apps, since WO won't run without it. Not really great.
 		final String requiredParameter = "--add-exports java.base/sun.security.action=ALL-UNNAMED";
 
 		if( !jvmOptions.contains( requiredParameter ) ) {
