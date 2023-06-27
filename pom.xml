@@ -10,6 +10,51 @@
 
 	<name>vermilingua-maven-plugin</name>
 
+	<organization>
+		<name>Godur kodi</name>
+		<url>https://www.godurkodi.is/</url>
+	</organization>
+
+
+	<licenses>
+		<license>
+			<name>3-Clause BSD License</name>
+			<url>https://opensource.org/licenses/BSD-3-Clause</url>
+			<distribution>repo</distribution>
+			<comments>See LICENSE.txt in this project.</comments>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>hugith</id>
+			<name>Hugi Thordarson</name>
+			<email>hugi@godurkodi.is</email>
+			<organization>Godur kodi</organization>
+			<timezone>UTC</timezone>
+		</developer>
+		<developer>
+			<id>paulh</id>
+			<name>Paul Hoadley</name>
+			<email>paulh@logicsquad.net</email>
+			<organization>Logic Squad</organization>
+			<timezone>Australia/Adelaide</timezone>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git://github.com/undur/vermilingua-maven-plugin.git</connection>
+		<developerConnection>scm:git:ssh://github.com:undur/vermilingua-maven-plugin.git</developerConnection>
+		<url>https://github.com/undur/vermilingua-maven-plugin/tree/master</url>
+	</scm>
+
+	<distributionManagement>
+		<snapshotRepository>
+		<id>ossrh</id>
+		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
 	<properties>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
