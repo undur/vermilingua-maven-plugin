@@ -69,7 +69,7 @@ public class PackageMojo extends AbstractMojo {
 			new PackageWOFramework().execute( sourceProject );
 		}
 		else {
-			throw new MojoExecutionException( "I have no idea what you're asking me to build ('%s'? WTF??) but I don't know how to do it.".formatted( project.getPackaging() ) );
+			throw new MojoExecutionException( String.format( "I have no idea what you're asking me to build ('%s'? WTF??) but I don't know how to do it.", project.getPackaging() ) );
 		}
 	}
 }

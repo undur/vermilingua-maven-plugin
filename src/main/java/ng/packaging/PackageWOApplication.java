@@ -65,7 +65,7 @@ public class PackageWOApplication {
 			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath(), List.of( "wo" ) );
 		}
 		else {
-			logger.warn( "Not copying components. %s does not exist".formatted( sourceProject.componentsPath() ) );
+			logger.warn( String.format( "Not copying components. %s does not exist", sourceProject.componentsPath() ) );
 		}
 
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
@@ -73,14 +73,14 @@ public class PackageWOApplication {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		}
 		else {
-			logger.warn( "Not copying woresources. %s does not exist".formatted( sourceProject.woresourcesPath() ) );
+			logger.warn( String.format( "Not copying woresources. %s does not exist", sourceProject.woresourcesPath() ) );
 		}
 
 		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
 		}
 		else {
-			logger.warn( "Not copying WebServerResources. %s does not exist".formatted( sourceProject.webServerResourcesPath() ) );
+			logger.warn( String.format( "Not copying WebServerResources. %s does not exist", sourceProject.webServerResourcesPath() ) );
 		}
 
 		// The classpath files for MacOS, MacOSXServer and UNIX all look the same

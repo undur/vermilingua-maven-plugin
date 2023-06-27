@@ -180,7 +180,7 @@ public class SourceProject {
 		final String pathToBuildPropertiesFile = mavenProject().getBasedir() + "/build.properties";
 
 		if( !new File( pathToBuildPropertiesFile ).exists() ) {
-			throw new IllegalStateException( "build.properties not found in project root (%s). To build a project with vermilingua, a file called 'build.properties' file must exist in the root and must contain at least the properties %s".formatted( pathToBuildPropertiesFile, requiredBuildProperties() ) );
+			throw new IllegalStateException( String.format( "build.properties not found in project root (%s). To build a project with vermilingua, a file called 'build.properties' file must exist in the root and must contain at least the properties %s", pathToBuildPropertiesFile, requiredBuildProperties() ) );
 		}
 
 		try( FileInputStream fis = new FileInputStream( pathToBuildPropertiesFile )) {
@@ -201,7 +201,7 @@ public class SourceProject {
 	private void validateBuildProperties() {
 		for( final String propertyName : requiredBuildProperties() ) {
 			if( !_buildProperties.containsKey( propertyName ) ) {
-				throw new IllegalArgumentException( "%s must be present in build.properties".formatted( propertyName ) );
+				throw new IllegalArgumentException( String.format( "%s must be present in build.properties", propertyName ) );
 			}
 		}
 	}
