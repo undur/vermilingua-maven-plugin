@@ -9,6 +9,8 @@
 	<version>1.0.0</version>
 
 	<name>vermilingua-maven-plugin</name>
+	<description>A pure Maven plugin for building WebObjects and Project Wonder applications and frameworks.</description>
+	<url>https://github.com/undur/vermilingua-maven-plugin</url>
 
 	<organization>
 		<name>Godur kodi</name>
