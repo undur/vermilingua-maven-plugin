@@ -20,10 +20,8 @@ be considered stable and safe to use.
 
 ## Usage
 
-1. Clone this repository and run `mvn install` on it to install the
-   plugin locally.
-2. Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
-   `pom.xml` with:
+Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
+`pom.xml` with `vermilingua-maven-plugin`:
 
 ```xml
 <plugin>
@@ -31,7 +29,7 @@ be considered stable and safe to use.
 	<artifactId>vermilingua-maven-plugin</artifactId>
 	<version>1.0.0</version>
 	<extensions>true</extensions>
-	<configuration>
+	<configuration> <!-- Only include this if you're using the old 'resources' name for the resources folder -->
 		<woresourcesFolderName>resources</woresourcesFolderName>
 	</configuration>
 </plugin>
