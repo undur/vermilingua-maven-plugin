@@ -29,7 +29,7 @@ be considered stable and safe to use.
 <plugin>
 	<groupId>is.rebbi</groupId>
 	<artifactId>vermilingua-maven-plugin</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<extensions>true</extensions>
 	<configuration>
 		<woresourcesFolderName>resources</woresourcesFolderName>
