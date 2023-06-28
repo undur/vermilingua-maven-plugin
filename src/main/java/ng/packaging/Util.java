@@ -252,7 +252,12 @@ public class Util {
 		Objects.requireNonNull( destinationJarPath );
 
 		if( Files.exists( sourcePath ) ) {
-			final URI uri = URI.create( "jar:file:" + destinationJarPath.toString() );
+			String jarPath = destinationJarPath.toString();
+
+			// Eliminate windows style backslashes
+			jarPath = jarPath.replace( "\\", "/" );
+
+			final URI uri = URI.create( "jar:file:" + jarPath );
 
 			try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
 				Files.walk( sourcePath ).forEach( folderEntry -> {
