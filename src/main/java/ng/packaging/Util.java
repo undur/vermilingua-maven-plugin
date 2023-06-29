@@ -252,12 +252,9 @@ public class Util {
 		Objects.requireNonNull( destinationJarPath );
 
 		if( Files.exists( sourcePath ) ) {
-			String jarPath = destinationJarPath.toString();
+			final String jarPath = destinationJarPath.toUri().toString();
 
-			// Eliminate windows style backslashes
-			jarPath = jarPath.replace( "\\", "/" );
-
-			final URI uri = URI.create( "jar:file:" + jarPath );
+			final URI uri = URI.create( "jar:" + jarPath );
 
 			try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
 				Files.walk( sourcePath ).forEach( folderEntry -> {
@@ -293,7 +290,7 @@ public class Util {
 		Objects.requireNonNull( destinationFilePathInsideJar );
 		Objects.requireNonNull( destinationJarPath );
 
-		final URI uri = URI.create( "jar:file:" + destinationJarPath.toString() );
+		final URI uri = URI.create( "jar:" + destinationJarPath.toUri().toString() );
 
 		try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
 			final Path pathInZipFile = zipfs.getPath( destinationFilePathInsideJar );
