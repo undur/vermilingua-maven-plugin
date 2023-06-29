@@ -29,9 +29,11 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 	<artifactId>vermilingua-maven-plugin</artifactId>
 	<version>1.0.2</version>
 	<extensions>true</extensions>
-	<configuration> <!-- Only include this if you're using the old 'resources' name for the resources folder -->
+  <!-- Configuration only if you're using the old 'resources' name for the resources folder
+	<configuration>
 		<woresourcesFolderName>resources</woresourcesFolderName>
 	</configuration>
+  -->
 </plugin>
 ```
 
