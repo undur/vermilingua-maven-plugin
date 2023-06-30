@@ -34,11 +34,6 @@ public class PackageMojo extends AbstractMojo {
 	/**
 	 * Indicates that we want to extract webserver resources (for both the app and it's included frameworks)
 	 * to a separate folder alongside the WOA (for installation on a web server)
-	 *
-	 * FIXME: Parameter needs a better name // Hugi 2021-07-17
-	 * FIXME: Add a separate parameter for product/artifact compression // Hugi 2021-07-17
-	 * FIXME: Since this is a relatively lightweight task, it *could* be performed by default. It's the compression that takes time // Hugi 2021-07-17
-	 * FIXME: Decide on names for the final artifacts // Hugi 2021-07-17
 	 */
 	@Parameter(property = "performSplit", required = false)
 	boolean performSplit;
