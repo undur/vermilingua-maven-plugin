@@ -106,7 +106,7 @@ public class Util {
 			@Override
 			public FileVisitResult visitFile( Path file, BasicFileAttributes arg1 ) throws IOException {
 				// Regular standalone files just get copied. preVisitDirectory() will already have excluded and copied files inside bundles
-				copyFile( file, destinationDirectory.resolve( file.getFileName() ) );
+				copyFile( file, destinationDirectory.resolve( file.getFileName() ), StandardCopyOption.REPLACE_EXISTING );
 				return FileVisitResult.CONTINUE;
 			}
 		};
@@ -227,7 +227,7 @@ public class Util {
 					}
 					else {
 						try( final InputStream inStream = jarFile.getInputStream( entry )) {
-							Files.copy( inStream, targetPath );
+							Files.copy( inStream, targetPath, StandardCopyOption.REPLACE_EXISTING );
 						}
 					}
 				}

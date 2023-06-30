@@ -2,6 +2,7 @@ package ng.packaging;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +35,7 @@ public class PackageWOApplication {
 		final String appJarFilename = sourceProject.targetJarNameForWOA();
 
 		// Copy the app jar to the woa
-		Util.copyFile( sourceProject.jarPath(), woa.javaPath().resolve( appJarFilename ) );
+		Util.copyFile( sourceProject.jarPath(), woa.javaPath().resolve( appJarFilename ), StandardCopyOption.REPLACE_EXISTING );
 
 		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
@@ -47,7 +48,7 @@ public class PackageWOApplication {
 			final Path artifactPathInMavenRepository = dependency.file().toPath();
 			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( dependency.groupId().replace( ".", "/" ) + "/" + dependency.artifactId() + "/" + dependency.version() ) );
 			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( dependency.file().getName() );
-			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA );
+			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA, StandardCopyOption.REPLACE_EXISTING );
 
 			// Add the jar to the classpath
 			classpathStrings.add( "APPROOT/" + woa.contentsPath().relativize( artifactPathInWOA ) );
