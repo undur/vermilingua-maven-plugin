@@ -60,7 +60,10 @@ supported at all.
 * `.framework` bundles: only generates Maven-style JAR frameworks.
 * `flattenComponents` configuration parameter: any folder structure in
   `src/main/components` is flattened, as WebObjects doesn't know how
-  to locate components in sub-folders in production anyway.
+  to locate components in sub-folders at runtime anyway.
+* `flattenResources` configuration parameter: it's not clear what the
+  use case is for this parameter, as WebObjects _can_ find other
+  resources in sub-folders at runtime.
 
 Other differences include:
 
@@ -71,7 +74,3 @@ Other differences include:
   will only affect the name of the WOA folder. The insides of two WOAs
   made from the same project, but compiled with different
   `finalName`s, will look exactly the same.
-  
-## Work in progress
-
-* `flattenResources` has not yet been implemented.
