@@ -281,9 +281,6 @@ public class Util {
 	/**
 	 * Writes the contents of the folder specified by [sourcePath] into a folder named [folder] in the root of  [destinationJarPath]
 	 * Creates the folder in question if missing.
-	 *
-	 * FIXME: Should this overwrite existing files silently or fail on overwrite? // Hugi 2021-07-14
-	 * FIXME: Don't accept a string for the destination parameter, use a path if possible. // Hugi 2021-07-14
 	 */
 	public static void writeStringToPathInJar( final String string, final String destinationFilePathInsideJar, final Path destinationJarPath ) {
 		Objects.requireNonNull( string );
@@ -294,7 +291,6 @@ public class Util {
 
 		try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
 			final Path pathInZipFile = zipfs.getPath( destinationFilePathInsideJar );
-			//			Files.createDirectories( pathInZipFile ); // FIXME: We probably need to keep this, in case there are no resources copied beforehand
 			Files.writeString( pathInZipFile, string, StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
