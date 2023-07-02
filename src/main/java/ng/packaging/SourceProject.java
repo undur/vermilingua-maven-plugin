@@ -247,6 +247,6 @@ public class SourceProject {
 	 * @return The name of the JAR file that will contain the compiled application/framework sources (which was built by maven's own package goal before we started the WOA assembly)
 	 */
 	public String targetJarNameForWOA() {
-		return name() + ".jar";
+		return name().toLowerCase() + ".jar";
 	}
 }
