@@ -25,35 +25,48 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 
 ```xml
 <plugin>
-	<groupId>is.rebbi</groupId>
-	<artifactId>vermilingua-maven-plugin</artifactId>
-	<version>1.0.3</version>
-	<extensions>true</extensions>
+  <groupId>is.rebbi</groupId>
+  <artifactId>vermilingua-maven-plugin</artifactId>
+  <version>1.0.3</version>
+  <extensions>true</extensions>
   <!-- Configuration only if you're using the old 'resources' name for the resources folder
-	<configuration>
-		<woresourcesFolderName>resources</woresourcesFolderName>
-	</configuration>
+  <configuration>
+    <woresourcesFolderName>resources</woresourcesFolderName>
+  </configuration>
   -->
 </plugin>
 ```
 
-The `<woresourcesFolderName>` configuration parameter is for compatibility
-with `wolifecycle-maven-plugin`. Without it, `vermilingua` defaults to 
-`src/main/woresources` for WebObjects bundle resources, rather
-than `src/main/resources`, allowing that folder to serve it's designated standard
-maven purpose, which is to keep java classpath resources.
+### Configuration
 
+There are several optional parameters.
+
+* `woresourcesFolderName`: provided for compatibility with
+`wolifecycle-maven-plugin`. Without it, `vermilingua` defaults to
+`src/main/woresources` for WebObjects bundle resources, rather than
+`src/main/resources`, allowing that folder to serve it's designated
+standard Maven purpose, which is to keep Java classpath resources.
+* `performSplit`: when set `true`, `vermilingua` will generate an
+  additional "WebServerResources" bundle for "split deployments".
 
 ## Differences from `wolifecycle-maven-plugin`
 
-* Patternsets are not supported
-* No support for building WAR files (servlet projects).
-* Only generates Maven-style JAR frameworks (not a `.framework` folder
-  bundle for use with Ant).
+There are some features in `wolifecycle-maven-plugin` that are not
+supported at all.
+
+* Ant-style `.patternset` files: you can throw out your `woproject`
+  folders.
+* Building WAR files for servlet projects.
+* `.framework` bundles: only generates Maven-style JAR frameworks.
+* `flattenComponents` configuration parameter: any folder structure in
+  `src/main/components` is flattened, as WebObjects doesn't know how
+  to locate components in sub-folders in production anyway.
+
+Other differences include:
+
 * Default location for WebObjects bundle resources is
   `src/main/woresources` rather than `src/main/resources` (which is
   now reserved for Java classpath resources As God Intended).
-* `flattenComponents` defaults to true and cannot be changed (WO doesn't know how to locate components in sub-folders in production anyway).
 * When building applications, `${build.finalName}` (set in the POM)
   will only affect the name of the WOA folder. The insides of two WOAs
   made from the same project, but compiled with different
@@ -61,6 +74,4 @@ maven purpose, which is to keep java classpath resources.
   
 ## Work in progress
 
-* Currently only generates the WOA bundle for Applications (i.e. does not
-  generate split install artifacts/compressed artifacts).
 * `flattenResources` has not yet been implemented.
