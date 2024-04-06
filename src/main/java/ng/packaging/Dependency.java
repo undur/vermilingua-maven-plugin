@@ -5,6 +5,8 @@ import java.util.Objects;
 
 /**
  * A project dependency along with some metadata.
+ *
+ * FIXME: Remember to convert back to a record when we re-upgrade to JDK 17 (or more likely, 21)
  */
 
 public class Dependency {
