@@ -14,7 +14,7 @@ build process.  It's close to a drop-in alternative to the [WOLifecycle Maven
 Plugin](https://github.com/wocommunity/wolifecycle-maven-plugin),
 although with some differences (listed below).
 
-`vermilingua` has seen production use for over a year in multiple
+`vermilingua` has seen production use for years in multiple
 applications and frameworks (including a fork of Wonder) and can
 be considered stable and safe to use.
 
@@ -54,8 +54,7 @@ standard Maven purpose, which is to keep Java classpath resources.
 There are some features in `wolifecycle-maven-plugin` that are not
 supported at all.
 
-* Ant-style `.patternset` files: you can throw out your `woproject`
-  folders.
+* `.patternset` files (in the `woproject` folder).
 * Building WAR files for servlet projects.
 * `.framework` bundles: only generates Maven-style JAR frameworks.
 * `flattenComponents` configuration parameter: any folder structure in
