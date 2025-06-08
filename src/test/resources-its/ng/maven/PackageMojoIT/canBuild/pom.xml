@@ -11,7 +11,7 @@
 	<properties>
 		<!-- properties used for filtering and dependency management -->
 		<webobjects.version>5.4.3</webobjects.version>
-		<wonder.version>7.3</wonder.version>
+		<wonder.version>7.4</wonder.version>
 
 		<!-- encoding properties -->
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
