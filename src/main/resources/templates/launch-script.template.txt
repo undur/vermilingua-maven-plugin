@@ -151,8 +151,6 @@ if [ "${PLATFORM_TYPE}" = "Other" ]
 then
     if [ "${NEXT_ROOT}" = "" ]
     then
-#        echo ${SCRIPT_NAME}: NEXT_ROOT environment variable is not set!  Terminating.
-#        exit 1
          echo ${SCRIPT_NAME}: NEXT_ROOT environment variable is not set. Setting to '/tmp'.
          NEXT_ROOT="/tmp/nextroot"
     fi
