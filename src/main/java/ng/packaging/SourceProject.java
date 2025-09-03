@@ -127,7 +127,7 @@ public class SourceProject {
 		}
 
 		// We're injecting this into all apps, since WO won't run without it. Not really great.
-		final String requiredParameter = "--add-exports java.base/sun.security.action=ALL-UNNAMED";
+		final String requiredParameter = "--add-exports java.base/sun.security.action=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED";
 
 		if( !jvmOptions.contains( requiredParameter ) ) {
 			jvmOptions = jvmOptions + " " + requiredParameter;
