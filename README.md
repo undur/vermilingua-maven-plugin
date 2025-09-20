@@ -27,7 +27,7 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 <plugin>
   <groupId>is.rebbi</groupId>
   <artifactId>vermilingua-maven-plugin</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.4</version>
   <extensions>true</extensions>
   <!-- Configuration only if you're using the old 'resources' name for the resources folder
   <configuration>
