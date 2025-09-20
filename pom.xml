@@ -18,7 +18,6 @@
 		<url>https://www.godurkodi.is/</url>
 	</organization>
 
-
 	<licenses>
 		<license>
 			<name>The Apache Software License, Version 2.0</name>
@@ -132,36 +131,36 @@
 			<!--
 			<plugin>
 				<groupId>com.soebes.itf.jupiter.extension</groupId>
-			<artifactId>itf-maven-plugin</artifactId>
+				<artifactId>itf-maven-plugin</artifactId>
 				<version>0.11.0</version>
-			<executions>
+				<executions>
 					<execution>
 						<id>installing</id>
-			<phase>pre-integration-test</phase>
+						<phase>pre-integration-test</phase>
 						<goals>
-			<goal>install</goal>
+							<goal>install</goal>
 							<goal>resources-its</goal>
 						</goals>
-			</execution>
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-failsafe-plugin</artifactId>
-			<version>3.0.0-M5</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.0.0-M5</version>
 				<configuration>
 					<systemProperties>
-			<maven.version>${maven.version}</maven.version>
-			<maven.home>${maven.home}</maven.home>
+						<maven.version>${maven.version}</maven.version>
+						<maven.home>${maven.home}</maven.home>
 					</systemProperties>
-			</configuration>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
-			<goal>integration-test</goal>
+							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
-			</execution>
+					</execution>
 				</executions>
 			</plugin>
 			-->
