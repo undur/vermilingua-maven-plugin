@@ -10,19 +10,19 @@
 			<configuration>
 				<phases>
 					<process-resources>
-						org.apache.maven.plugins:maven-resources-plugin:2.6:resources
+						org.apache.maven.plugins:maven-resources-plugin:3.3.1:resources
 					</process-resources>
 					<compile>
-						org.apache.maven.plugins:maven-compiler-plugin:3.1:compile
+						org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile
 					</compile>
 					<process-test-resources>
-						org.apache.maven.plugins:maven-resources-plugin:2.6:testResources
+						org.apache.maven.plugins:maven-resources-plugin:3.3.1:testResources
 					</process-test-resources>
 					<test-compile>
-						org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile
+						org.apache.maven.plugins:maven-compiler-plugin:3.14.0:testCompile
 					</test-compile>
 					<test>
-						org.apache.maven.plugins:maven-surefire-plugin:2.12.4:test
+						org.apache.maven.plugins:maven-surefire-plugin:3.5.4:test
 					</test>
 					<prepare-package>
 						org.apache.maven.plugins:maven-jar-plugin:jar
@@ -31,10 +31,10 @@
 						is.rebbi:vermilingua-maven-plugin:1.0.4-SNAPSHOT:package
 					</package>
 					<install>
-						org.apache.maven.plugins:maven-install-plugin:2.4:install
+						org.apache.maven.plugins:maven-install-plugin:3.1.4:install
 					</install>
 					<deploy>
-						org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy
+						org.apache.maven.plugins:maven-deploy-plugin:3.1.4:deploy
 					</deploy>
 				</phases>
 			</configuration>
@@ -57,19 +57,19 @@
 			<configuration>
 				<phases>
 					<process-resources>
-						org.apache.maven.plugins:maven-resources-plugin:2.6:resources
+						org.apache.maven.plugins:maven-resources-plugin:3.3.1:resources
 					</process-resources>
 					<compile>
-						org.apache.maven.plugins:maven-compiler-plugin:3.1:compile
+						org.apache.maven.plugins:maven-compiler-plugin:3.14.0:compile
 					</compile>
 					<process-test-resources>
-						org.apache.maven.plugins:maven-resources-plugin:2.6:testResources
+						org.apache.maven.plugins:maven-resources-plugin:3.3.1:testResources
 					</process-test-resources>
 					<test-compile>
-						org.apache.maven.plugins:maven-compiler-plugin:3.1:testCompile
+						org.apache.maven.plugins:maven-compiler-plugin:3.14.0:testCompile
 					</test-compile>
 					<test>
-						org.apache.maven.plugins:maven-surefire-plugin:2.12.4:test
+						org.apache.maven.plugins:maven-surefire-plugin:3.5.4:test
 					</test>
 					<prepare-package>
 						org.apache.maven.plugins:maven-jar-plugin:jar
@@ -78,10 +78,10 @@
 						is.rebbi:vermilingua-maven-plugin:1.0.4-SNAPSHOT:package
 					</package>
 					<install>
-						org.apache.maven.plugins:maven-install-plugin:2.4:install
+						org.apache.maven.plugins:maven-install-plugin:3.1.4:install
 					</install>
 					<deploy>
-						org.apache.maven.plugins:maven-deploy-plugin:2.7:deploy
+						org.apache.maven.plugins:maven-deploy-plugin:3.1.4:deploy
 					</deploy>
 				</phases>
 			</configuration>
