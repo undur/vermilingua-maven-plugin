@@ -117,26 +117,6 @@ case "${PLATFORM_NAME}" in
 esac
 
 #
-# Depending upon the platform, provide default values for the path
-# abstractions (we call these values "shorthands").
-#
-if [ "${PLATFORM_TYPE}" = "Rhapsody" ]
-then
-    HOME_SHORTHAND=${HOME}
-    LOCAL_SHORTHAND=/Local
-    NR_SHORTHAND=/System
-elif [ "$PLATFORM_TYPE" = "Darwin" ]
-then
-    HOME_SHORTHAND=${HOME}
-    LOCAL_SHORTHAND=
-    NR_SHORTHAND=/System
-else
-    HOME_SHORTHAND=${HOME}
-    NR_SHORTHAND=${NEXT_ROOT}
-    LOCAL_SHORTHAND=${NEXT_ROOT}/Local
-fi
-
-#
 # Read the appropriate classpath file, perform path interpolations, and
 # configure the launch variables using values present in the classpath file
 # comment header.
@@ -154,6 +134,26 @@ then
          echo ${SCRIPT_NAME}: NEXT_ROOT environment variable is not set. Setting to '/tmp'.
          NEXT_ROOT="/tmp/nextroot"
     fi
+fi
+
+#
+# Depending upon the platform, provide default values for the path
+# abstractions (we call these values "shorthands").
+#
+if [ "${PLATFORM_TYPE}" = "Rhapsody" ]
+then
+    HOME_SHORTHAND=${HOME}
+    LOCAL_SHORTHAND=/Local
+    NR_SHORTHAND=/System
+elif [ "$PLATFORM_TYPE" = "Darwin" ]
+then
+    HOME_SHORTHAND=${HOME}
+    LOCAL_SHORTHAND=
+    NR_SHORTHAND=/System
+else
+    HOME_SHORTHAND=${HOME}
+    NR_SHORTHAND=${NEXT_ROOT}
+    LOCAL_SHORTHAND=${NEXT_ROOT}/Local
 fi
 
 if [ "${HOME}" = "" ]
