@@ -114,9 +114,9 @@ public class SourceProject {
 	 * @return String of arguments to pass on to the generated launch scripts' JVM
 	 *
 	 * CHECKME:
-	 * We're currently assuming JDK>=17 and adding the required parameters for that.
-	 * A nicer course of action might be to check the targeted java version and adding parameters as required.
-	 * Or not do anything at all and make the user do it. Explicit good, magic bad.
+	 * We currently assume the app will run on JDK >= 17 and add the parameters required for that to work.
+	 * It could be nicer to check the targeted java version and add parameters as required.
+	 * Or not do anything at all and make the user handle this in build.properties? Explicit good, magic bad.
 	 * // Hugi 2022-09-28
 	 */
 	public String jvmOptions() {
@@ -126,14 +126,15 @@ public class SourceProject {
 			jvmOptions = "";
 		}
 
-		// We're injecting this into all apps, since WO won't run without it. Not really great.
 		final List<String> requiredParameters = List.of(
-				"--add-exports java.base/sun.security.action=ALL-UNNAMED",
-				"--add-opens java.base/java.util=ALL-UNNAMED" );
+				"--add-exports java.base/sun.security.action=ALL-UNNAMED", // WO won't run without this one (required by NSTimezone)
+				"--add-opens java.base/java.util=ALL-UNNAMED" // And we need this one to (at least) access the private List implementations created all over the place by more recent JDKs
+		);
 
-		for( final String param : requiredParameters ) {
-			if( !jvmOptions.contains( param ) ) {
-				jvmOptions = jvmOptions + " " + param;
+		// We add the "forced" parameters only if they aren't already present in build.properties
+		for( final String requiredParameter : requiredParameters ) {
+			if( !jvmOptions.contains( requiredParameter ) ) {
+				jvmOptions = jvmOptions + " " + requiredParameter;
 			}
 		}
 
