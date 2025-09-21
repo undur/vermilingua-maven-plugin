@@ -127,10 +127,14 @@ public class SourceProject {
 		}
 
 		// We're injecting this into all apps, since WO won't run without it. Not really great.
-		final String requiredParameter = "--add-exports java.base/sun.security.action=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED";
+		final List<String> requiredParameters = List.of(
+				"--add-exports java.base/sun.security.action=ALL-UNNAMED",
+				"--add-opens java.base/java.util=ALL-UNNAMED" );
 
-		if( !jvmOptions.contains( requiredParameter ) ) {
-			jvmOptions = jvmOptions + " " + requiredParameter;
+		for( final String param : requiredParameters ) {
+			if( !jvmOptions.contains( param ) ) {
+				jvmOptions = jvmOptions + " " + param;
+			}
 		}
 
 		return jvmOptions;
@@ -212,7 +216,7 @@ public class SourceProject {
 
 		// No sense in building an application without a main class to run
 		// However, frameworks do not need one
-		if( type() == Type.Application ) {
+		if( type().isApp() ) {
 			requiredBuildProperties.add( "principalClass" );
 		}
 
