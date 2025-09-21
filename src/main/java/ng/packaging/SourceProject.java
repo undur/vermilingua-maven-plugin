@@ -157,16 +157,13 @@ public class SourceProject {
 	 * @return The type of the project
 	 */
 	public Type type() {
-		final String stringType = mavenProject().getPackaging();
+		final String packaging = mavenProject().getPackaging();
 
-		switch( stringType ) {
-		case "woapplication":
-			return Type.Application;
-		case "woframework":
-			return Type.Framework;
-		default:
-			throw new IllegalArgumentException( String.format( "I'm not familiar with packaging '%s'. The only packaging types I know are 'woapplication' and 'woframework'", stringType ) );
-		}
+		return switch( packaging ) {
+			case "woapplication" -> Type.Application;
+			case "woframework" -> Type.Framework;
+			default -> throw new IllegalArgumentException( "Unknown packaging '%s' (I onlu know 'woapplication' and 'woframework'".formatted( packaging ) );
+		};
 	}
 
 	/**
