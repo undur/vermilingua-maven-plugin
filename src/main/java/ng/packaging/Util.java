@@ -54,22 +54,19 @@ public class Util {
 		Objects.requireNonNull( sourceDirectory );
 		Objects.requireNonNull( destinationDirectory );
 
-		// FIXME: Remove that infernal string munging // Hugi 2021-07-08
-		final String sourceDirectoryLocationString = sourceDirectory.toString();
-		final String destinationDirectoryLocationString = destinationDirectory.toString();
-
 		try {
 			Files.walk( sourceDirectory )
 					.forEach( sourcePath -> {
-						final Path destinationPath = Path.of( destinationDirectoryLocationString, sourcePath.toString().substring( sourceDirectoryLocationString.length() ) );
+						final Path relativePath = sourceDirectory.relativize( sourcePath );
+						final Path targetPath = destinationDirectory.resolve( relativePath );
 
-						// If the target file already exists, we just don't copy and log a warning instead.
-						// We might want to change this to an error condition in the future since this could theoretically result in unexpected behaviour
-						if( !Files.exists( destinationPath ) ) {
-							copyFile( sourcePath, destinationPath );
+						// If the target file exists, we don't copy and log a warning.
+						// FIXME: We should change this to an error condition, it's just asking for trouble // Hugi 2025-09-27
+						if( !Files.exists( targetPath ) ) {
+							copyFile( sourcePath, targetPath );
 						}
 						else {
-							logger.warn( "File {} already exists at {}, not copying", sourcePath, destinationPath );
+							logger.warn( "File {} already exists at {}, not copying", sourcePath, targetPath );
 						}
 					} );
 		}
