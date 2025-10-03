@@ -16,11 +16,12 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.PosixFilePermissions;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Objects;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -147,6 +148,9 @@ public class Util {
 		}
 	}
 
+	/**
+	 * @return The value of the named string template resource (stored under src/main/resources/templates
+	 */
 	public static String readTemplate( final String name ) {
 		Objects.requireNonNull( name );
 
@@ -158,11 +162,16 @@ public class Util {
 		}
 	}
 
+	/**
+	 * Make file residing at path user executable (basically the equivalent of doing 'chmod u+x' on the shell)
+	 */
 	public static void makeUserExecutable( final Path path ) {
 		Objects.requireNonNull( path );
 
 		try {
-			Files.setPosixFilePermissions( path, PosixFilePermissions.fromString( "rwxr--r--" ) );
+			final Set<PosixFilePermission> existingPermissions = Files.getPosixFilePermissions( path );
+			existingPermissions.add( PosixFilePermission.OWNER_EXECUTE );
+			Files.setPosixFilePermissions( path, existingPermissions );
 		}
 		catch( final IOException e ) {
 			throw new UncheckedIOException( e );
@@ -274,8 +283,7 @@ public class Util {
 	}
 
 	/**
-	 * Writes the contents of the folder specified by [sourcePath] into a folder named [folder] in the root of  [destinationJarPath]
-	 * Creates the folder in question if missing.
+	 * Writes [string] as a file at [destinationFilePathInsideJar] to the jar file at [destinationJarPath]
 	 */
 	public static void writeStringToPathInJar( final String string, final String destinationFilePathInsideJar, final Path destinationJarPath ) {
 		Objects.requireNonNull( string );
