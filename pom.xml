@@ -6,7 +6,7 @@
 	<packaging>maven-plugin</packaging>
 	<groupId>is.rebbi</groupId>
 	<artifactId>vermilingua-maven-plugin</artifactId>
-	<version>1.0.5</version>
+	<version>1.0.6-SNAPSHOT</version>
 
 	<name>vermilingua-maven-plugin</name>
 	<description>A pure Maven plugin for building WebObjects and Project Wonder
