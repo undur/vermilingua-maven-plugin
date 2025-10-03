@@ -28,7 +28,7 @@
 						org.apache.maven.plugins:maven-jar-plugin:jar
 					</prepare-package>
 					<package>
-						is.rebbi:vermilingua-maven-plugin:1.0.5-SNAPSHOT:package
+						is.rebbi:vermilingua-maven-plugin:1.0.5:package
 					</package>
 					<install>
 						org.apache.maven.plugins:maven-install-plugin:3.1.4:install
@@ -75,7 +75,7 @@
 						org.apache.maven.plugins:maven-jar-plugin:jar
 					</prepare-package>
 					<package>
-						is.rebbi:vermilingua-maven-plugin:1.0.5-SNAPSHOT:package
+						is.rebbi:vermilingua-maven-plugin:1.0.5:package
 					</package>
 					<install>
 						org.apache.maven.plugins:maven-install-plugin:3.1.4:install
