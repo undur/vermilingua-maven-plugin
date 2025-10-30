@@ -1,15 +1,10 @@
 package ng.packaging;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
@@ -56,7 +51,7 @@ public class SourceProject {
 		Objects.requireNonNull( woresourcesFolderName );
 		_mavenProject = mavenProject;
 		_woresourcesFolderName = woresourcesFolderName;
-		_buildProperties = readBuildProperties();
+		_buildProperties = BuildProperties.of( mavenProject().getBasedir().toPath().resolve( "build.properties" ) );
 
 		validateBuildProperties();
 	}
@@ -169,30 +164,6 @@ public class SourceProject {
 			case "woframework" -> Type.Framework;
 			default -> throw new IllegalArgumentException( "Unknown packaging '%s' (I onlu know 'woapplication' and 'woframework'".formatted( packaging ) );
 		};
-	}
-
-	/**
-	 * @return The projects build.properties
-	 *
-	 * In theory, most of the stuff we actually _need_ from there could be derived from the pom.
-	 * But this is the mechanism we currently have and it works well, so let's stick with it,
-	 * at least until we start working on WOLips // Hugi 2021-07-14
-	 */
-	private BuildProperties readBuildProperties() {
-		final Path pathToBuildPropertiesFile = mavenProject().getBasedir().toPath().resolve( "build.properties" );
-
-		if( !Files.exists( pathToBuildPropertiesFile ) ) {
-			throw new IllegalStateException( String.format( "build.properties not found in project root (%s). To build a project with vermilingua, a file called 'build.properties' file must exist in the root and must contain at least the properties %s", pathToBuildPropertiesFile, requiredBuildProperties() ) );
-		}
-
-		try( final InputStream fis = Files.newInputStream( pathToBuildPropertiesFile )) {
-			final Properties buildProperties = new Properties();
-			buildProperties.load( fis );
-			return new BuildProperties( buildProperties );
-		}
-		catch( final IOException e ) {
-			throw new UncheckedIOException( e );
-		}
 	}
 
 	/**
