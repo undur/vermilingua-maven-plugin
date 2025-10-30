@@ -213,7 +213,6 @@ public class SourceProject {
 	 */
 	private List<String> requiredBuildProperties() {
 		final List<String> requiredBuildProperties = new ArrayList<>();
-		//		requiredBuildProperties.add( "project.name" ); // FIXME: Experimenting with making the project name a non-requirement // Hugi 2022-10-10
 
 		// No sense in building an application without a main class to run
 		// However, frameworks do not need one
