@@ -49,7 +49,7 @@ public class SourceProject {
 	/**
 	 * Contents of the build.properties file in the project root.
 	 */
-	private final Properties _buildProperties;
+	private final BuildProperties _buildProperties;
 
 	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName ) {
 		Objects.requireNonNull( mavenProject );
@@ -178,7 +178,7 @@ public class SourceProject {
 	 * But this is the mechanism we currently have and it works well, so let's stick with it,
 	 * at least until we start working on WOLips // Hugi 2021-07-14
 	 */
-	private Properties readBuildProperties() {
+	private BuildProperties readBuildProperties() {
 		final String pathToBuildPropertiesFile = mavenProject().getBasedir() + "/build.properties";
 
 		if( !new File( pathToBuildPropertiesFile ).exists() ) {
@@ -188,7 +188,7 @@ public class SourceProject {
 		try( FileInputStream fis = new FileInputStream( pathToBuildPropertiesFile )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
-			return buildProperties;
+			return new BuildProperties( buildProperties );
 		}
 		catch( final IOException e ) {
 			throw new UncheckedIOException( e );
