@@ -50,21 +50,20 @@ public class PackageMojo extends AbstractMojo {
 
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
 
-		if( sourceProject.type().isApp() ) {
-			final String finalName = project.getBuild().getFinalName();
-			final Path targetPath = Path.of( project.getBuild().getDirectory() ); // Maven's target directory
+		switch( sourceProject.type() ) {
+			case Application -> {
+				final String finalName = project.getBuild().getFinalName();
+				final Path targetPath = Path.of( project.getBuild().getDirectory() ); // Maven's target directory
 
-			final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath );
+				final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath );
 
-			if( performSplit ) {
-				woa.extractWebServerResources();
+				if( performSplit ) {
+					woa.extractWebServerResources();
+				}
 			}
-		}
-		else if( sourceProject.type().isFramework() ) {
-			new PackageWOFramework().execute( sourceProject );
-		}
-		else {
-			throw new MojoExecutionException( String.format( "I have no idea what you're asking me to build ('%s'? WTF??) but I don't know how to do it.", project.getPackaging() ) );
+			case Framework -> {
+				new PackageWOFramework().execute( sourceProject );
+			}
 		}
 	}
 }
