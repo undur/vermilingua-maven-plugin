@@ -1,9 +1,9 @@
 package ng.packaging;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -179,13 +179,13 @@ public class SourceProject {
 	 * at least until we start working on WOLips // Hugi 2021-07-14
 	 */
 	private BuildProperties readBuildProperties() {
-		final String pathToBuildPropertiesFile = mavenProject().getBasedir() + "/build.properties";
+		final Path pathToBuildPropertiesFile = mavenProject().getBasedir().toPath().resolve( "build.properties" );
 
-		if( !new File( pathToBuildPropertiesFile ).exists() ) {
+		if( !Files.exists( pathToBuildPropertiesFile ) ) {
 			throw new IllegalStateException( String.format( "build.properties not found in project root (%s). To build a project with vermilingua, a file called 'build.properties' file must exist in the root and must contain at least the properties %s", pathToBuildPropertiesFile, requiredBuildProperties() ) );
 		}
 
-		try( FileInputStream fis = new FileInputStream( pathToBuildPropertiesFile )) {
+		try( final InputStream fis = Files.newInputStream( pathToBuildPropertiesFile )) {
 			final Properties buildProperties = new Properties();
 			buildProperties.load( fis );
 			return new BuildProperties( buildProperties );
