@@ -37,6 +37,11 @@ public class SourceProject {
 	private final MavenProject _mavenProject;
 
 	/**
+	 * Base path of the project
+	 */
+	private final Path _basePath;
+
+	/**
 	 * Name of the bundle folder that contains WO resources.
 	 */
 	private final String _woresourcesFolderName;
@@ -51,8 +56,10 @@ public class SourceProject {
 		Objects.requireNonNull( woresourcesFolderName );
 		_mavenProject = mavenProject;
 		_woresourcesFolderName = woresourcesFolderName;
-		_buildProperties = BuildProperties.of( mavenProject().getBasedir().toPath().resolve( "build.properties" ) );
+		_basePath = mavenProject().getBasedir().toPath();
+		_buildProperties = BuildProperties.of( _basePath.resolve( "build.properties" ) );
 
+		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
 		validateBuildProperties();
 	}
 
@@ -195,24 +202,31 @@ public class SourceProject {
 	}
 
 	/**
+	 * @return base path of the project
+	 */
+	private Path basePath() {
+		return _basePath;
+	}
+
+	/**
 	 * @return Path to source components
 	 */
 	public Path componentsPath() {
-		return Path.of( mavenProject().getBasedir() + "/src/main/components" );
+		return basePath().resolve( "src/main/components" );
 	}
 
 	/**
 	 * @return Path to source woresources
 	 */
 	public Path woresourcesPath() {
-		return Path.of( mavenProject().getBasedir() + "/src/main/" + woresourcesFolderName() );
+		return basePath().resolve( "src/main/" + woresourcesFolderName() );
 	}
 
 	/**
 	 * @return Path to source webserver-resources
 	 */
 	public Path webServerResourcesPath() {
-		return Path.of( mavenProject().getBasedir() + "/src/main/webserver-resources" );
+		return basePath().resolve( "src/main/webserver-resources" );
 	}
 
 	/**
