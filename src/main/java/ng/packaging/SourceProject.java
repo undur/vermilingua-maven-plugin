@@ -94,7 +94,7 @@ public class SourceProject {
 	 * @return In the case of applications, this is the main class. In the case of frameworks, this is the framework's principalClass
 	 */
 	public String principalClassName() {
-		return _buildProperties.getProperty( "principalClass" );
+		return _buildProperties.principalClass();
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class SourceProject {
 	 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
 	 */
 	public String name() {
-		String projectName = _buildProperties.getProperty( "project.name" );
+		String projectName = _buildProperties.projectName();
 
 		if( projectName == null ) {
 			projectName = mavenProject().getName();
@@ -122,7 +122,7 @@ public class SourceProject {
 	 * // Hugi 2022-09-28
 	 */
 	public String jvmOptions() {
-		String jvmOptions = _buildProperties.getProperty( "jvmOptions" );
+		String jvmOptions = _buildProperties.jvmOptions();
 
 		if( jvmOptions == null ) {
 			jvmOptions = "";

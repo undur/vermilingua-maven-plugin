@@ -33,17 +33,29 @@ public record BuildProperties( Properties properties ) {
 	}
 
 	/**
-	 * FIXME: We should be getting this from the source project
+	 * FIXME: We should be getting this from the source project // Hugi 2025-10-30
 	 */
 	private static Object requiredBuildProperties() {
 		return null;
 	}
 
-	public String getProperty( String key ) {
-		return properties.getProperty( key );
+	private String get( String key ) {
+		return properties().getProperty( key );
 	}
 
 	public boolean containsKey( String key ) {
-		return properties.containsKey( key );
+		return properties().containsKey( key );
+	}
+
+	public String principalClass() {
+		return get( "principalClass" );
+	}
+
+	public String jvmOptions() {
+		return get( "jvmOptions" );
+	}
+
+	public String projectName() {
+		return get( "project.name" );
 	}
 }
