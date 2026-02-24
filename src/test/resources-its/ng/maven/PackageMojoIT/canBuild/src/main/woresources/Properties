@@ -97,7 +97,6 @@ log4j.appender.A1.layout.ConversionPattern=%d{MMM dd HH:mm:ss} %$[%#] %-5p %c %x
 # Base Category
 log4j.logger.er=INFO
 
-# ERExtensions
 # Transaction - Switching this to debug will start the sql ouputting.
 log4j.logger.er.transaction.adaptor.EOAdaptorDebugEnabled=DEBUG
 
