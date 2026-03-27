@@ -51,8 +51,20 @@ public record BuildProperties( Properties properties ) {
 		return get( "principalClass" );
 	}
 
+	public String jvm() {
+		return get( "jvm" );
+	}
+
 	public String jvmOptions() {
 		return get( "jvmOptions" );
+	}
+
+	public String jdb() {
+		return get( "jdb" );
+	}
+
+	public String jdbOptions() {
+		return get( "jdbOptions" );
 	}
 
 	public String projectName() {
