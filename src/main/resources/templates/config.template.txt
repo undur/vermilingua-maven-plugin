@@ -1,0 +1,5 @@
+ApplicationClass = ${ApplicationClass}
+JVM = java
+JVMOptions = ${JVMOptions}
+JDB = jdb
+JDBOptions =

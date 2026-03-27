@@ -1,6 +1,0 @@
-# JVM              == java
-# JVMOptions       == ${JVMOptions} 
-# JDB              == jdb
-# JDBOptions       == 
-# ApplicationClass == ${ApplicationClass}
-

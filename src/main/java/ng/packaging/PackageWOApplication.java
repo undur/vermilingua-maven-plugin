@@ -84,16 +84,15 @@ public class PackageWOApplication {
 			logger.warn( String.format( "Not copying WebServerResources. %s does not exist", sourceProject.webServerResourcesPath() ) );
 		}
 
-		// The classpath files for MacOS, MacOSXServer and UNIX all look the same
-		// CHECKME: MacOS, UNIX and MacOS X Server (Rhapsody?)... There be redundancies // Hugi 2021-07-08
-		String classPathFileTemplateString = Util.readTemplate( "classpath" );
-		classPathFileTemplateString = classPathFileTemplateString.replace( "${ApplicationClass}", sourceProject.principalClassName() );
-		classPathFileTemplateString = classPathFileTemplateString.replace( "${JVMOptions}", sourceProject.jvmOptions() );
+		// Write config.txt to the WOA root
+		String configString = Util.readTemplate( "config" );
+		configString = configString.replace( "${ApplicationClass}", sourceProject.principalClassName() );
+		configString = configString.replace( "${JVMOptions}", sourceProject.jvmOptions() );
+		Util.writeStringToPath( configString, woa.woaPath().resolve( "config.txt" ) );
 
-		// Write out nice looking UNIX class paths
-		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
-		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
-		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
+		// Write classpath.txt to the WOA root
+		final String classpathString = String.join( "\n", classpathStrings ) + "\n";
+		Util.writeStringToPath( classpathString, woa.woaPath().resolve( "classpath.txt" ) );
 
 		final String infoPlistString = InfoPlist.make( sourceProject );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
@@ -149,20 +148,6 @@ public class PackageWOApplication {
 		 */
 		public Path frameworksPath() {
 			return Util.folder( contentsPath().resolve( "Frameworks" ) );
-		}
-
-		/**
-		 * @return Destination path for macOS specific launch scripts/configuration
-		 */
-		public Path macosPath() {
-			return Util.folder( contentsPath().resolve( "MacOS" ) );
-		}
-
-		/**
-		 * @return Destination path for Unix/Linux specific launch scripts/configuration
-		 */
-		public Path unixPath() {
-			return Util.folder( contentsPath().resolve( "UNIX" ) );
 		}
 
 		/**

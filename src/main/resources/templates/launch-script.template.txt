@@ -5,19 +5,19 @@
 #
 
 #
-# Reads a value from the classpath file's comment header.
-# Header lines have the format: # Key == Value
+# Reads a value from config.txt.
+# Lines have the format: Key = Value
 #
-readHeaderValue() {
-    value="`awk '{print}' RS='\r*\n' < \"$3\" | sed -e \"/^# *$2 *==*/!d\" -e \"s/^\(# *$2 *==* *\)//\"`";
-    eval "$1=\${value}";
+readConfigValue() {
+    value="`sed -n \"s/^$2 *= *//p\" \"$3\"`"
+    eval "$1=\${value}"
 }
 
 CURRDIR="`pwd`"
 SCRIPT_NAME="`basename \"$0\" .sh`"
 
 #
-# Locate the .woa bundle's Contents directory.
+# Locate the .woa bundle root directory.
 #
 RELATIVE_WOADIR="`dirname \"$0\"`"
 WOA_TOP_LEVEL="`cd \"${RELATIVE_WOADIR}\"; pwd | sed -e 's%\/Contents.*$%%'`"
@@ -29,53 +29,49 @@ CONTENTS_DIR="${WOA_TOP_LEVEL}/Contents"
 #
 cd "${WOA_TOP_LEVEL}"
 
-#
-# Select the appropriate classpath file based on the platform.
-# The files are identical but placed in platform-specific directories by the
-# build, so we just need to pick the right path.
-#
-PLATFORM_NAME="`uname -s`"
-
-case "${PLATFORM_NAME}" in
-    "Darwin")   CLASSPATH_FILE="${CONTENTS_DIR}/MacOS/MacOSClassPath.txt" ;;
-    *)          CLASSPATH_FILE="${CONTENTS_DIR}/UNIX/UNIXClassPath.txt" ;;
-esac
+CONFIG_FILE="${WOA_TOP_LEVEL}/config.txt"
+CLASSPATH_FILE="${WOA_TOP_LEVEL}/classpath.txt"
 
 #
-# Read the classpath file: extract non-comment, non-empty lines and join them
-# with ':' to form the classpath. Replace the APPROOT token with the actual
-# Contents directory path.
+# Read the configuration file.
 #
-echo Reading `basename "${CLASSPATH_FILE}"` ...
-
-if [ -f "${CLASSPATH_FILE}" -a -r "${CLASSPATH_FILE}" ]
+if [ ! -f "${CONFIG_FILE}" -o ! -r "${CONFIG_FILE}" ]
 then
-    SCRIPT_CLASSPATH="`awk '{print}' RS='\r*\n' \"${CLASSPATH_FILE}\" | awk '$0~/^[^#]/ && $0!~/^$/{CLSPTH=CLSPTH\":\"$0} END{print CLSPTH}'`"
-    SCRIPT_CLASSPATH="`echo ${SCRIPT_CLASSPATH} | sed -e 's%^:%%' -e \"s%APPROOT%${CONTENTS_DIR}%g\"`"
+    echo ${SCRIPT_NAME}: Unable to read \"${CONFIG_FILE}\"!  Terminating.
+    exit 1
+fi
 
-    readHeaderValue APPLICATION_CLASS ApplicationClass "${CLASSPATH_FILE}"
-    readHeaderValue JDB_EXECUTABLE    JDB              "${CLASSPATH_FILE}"
-    readHeaderValue JDB_OPTIONS       JDBOptions       "${CLASSPATH_FILE}"
-    readHeaderValue JVM_EXECUTABLE    JVM              "${CLASSPATH_FILE}"
-    readHeaderValue JVM_OPTIONS       JVMOptions       "${CLASSPATH_FILE}"
+readConfigValue APPLICATION_CLASS ApplicationClass "${CONFIG_FILE}"
+readConfigValue JDB_EXECUTABLE    JDB              "${CONFIG_FILE}"
+readConfigValue JDB_OPTIONS       JDBOptions       "${CONFIG_FILE}"
+readConfigValue JVM_EXECUTABLE    JVM              "${CONFIG_FILE}"
+readConfigValue JVM_OPTIONS       JVMOptions       "${CONFIG_FILE}"
 
-    if [ "${APPLICATION_CLASS}" = "" ]
-    then
-        echo ${SCRIPT_NAME}: WARNING -- ApplicationClass header missing from classpath file, using default.
-        APPLICATION_CLASS=Application
-    fi
-    if [ "${JDB_EXECUTABLE}" = "" ]
-    then
-        JDB_EXECUTABLE=jdb
-    fi
-    if [ "${JVM_EXECUTABLE}" = "" ]
-    then
-        JVM_EXECUTABLE=java
-    fi
-else
+if [ "${APPLICATION_CLASS}" = "" ]
+then
+    echo ${SCRIPT_NAME}: WARNING -- ApplicationClass missing from config.txt, using default.
+    APPLICATION_CLASS=Application
+fi
+if [ "${JDB_EXECUTABLE}" = "" ]
+then
+    JDB_EXECUTABLE=jdb
+fi
+if [ "${JVM_EXECUTABLE}" = "" ]
+then
+    JVM_EXECUTABLE=java
+fi
+
+#
+# Read the classpath file: each non-empty line is a classpath entry.
+# Replace the APPROOT token with the actual Contents directory path.
+#
+if [ ! -f "${CLASSPATH_FILE}" -o ! -r "${CLASSPATH_FILE}" ]
+then
     echo ${SCRIPT_NAME}: Unable to read \"${CLASSPATH_FILE}\"!  Terminating.
     exit 1
 fi
+
+SCRIPT_CLASSPATH="`awk 'NF{CLSPTH=CLSPTH\":\"$0} END{print CLSPTH}' \"${CLASSPATH_FILE}\" | sed -e 's%^:%%' -e \"s%APPROOT%${CONTENTS_DIR}%g\"`"
 
 #
 # Append any pre-existing CLASSPATH from the environment.
@@ -91,7 +87,7 @@ fi
 JVM_ARGS="-DWOUserDirectory=\"${CURRDIR}\""
 
 #
-# Append JVMOptions from the classpath file header.
+# Append JVMOptions from config.txt.
 #
 if [ -n "${JVM_OPTIONS}" ]
 then
