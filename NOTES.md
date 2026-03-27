@@ -11,7 +11,7 @@ Just a few notes for the project.
 * Copy app components to `Contents/Resources/`
 * Copy app webserver-resources to `Contents/WebServerResources`
 * Process dependency jars to find those containing `WebServerResources`. Copy those from the jars to generate the content of `Contents/Frameworks/.../WebServerResources/` for each framework
-* Generate launch scripts for MacOS/UNIX/Windows
+* Generate launch scripts for MacOS/UNIX
 * Generate the Classpath files
 * Generate `Info.plist`
 * Post processing *TODO*
@@ -23,7 +23,6 @@ Just a few notes for the project.
 ```java
 AppName.woa
 	AppName
-	AppName.cmd
 	Contents
 		Frameworks
 			SomeFramework.framework
@@ -40,10 +39,6 @@ AppName.woa
 		UNIX
 			UNIXClassPath.txt
 		WebServerResources
-		Windows
-			CLSSPATH.TXT
-			AppName.cmd
-			SUBPATHS.cmd
 ```
 
 ### Build process (`woframework`)

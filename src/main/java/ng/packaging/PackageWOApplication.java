@@ -96,14 +96,6 @@ public class PackageWOApplication {
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSXServerClassPath.txt" ) );
 
-		// Write out Windows classpath file, with wrong line endings and wrong path separators
-		final String windowsClassPathString = classPathFileTemplateString + String.join( "\r\n", classpathStrings ).replace( "/", "\\" );
-		Util.writeStringToPath( windowsClassPathString, woa.windowsPath().resolve( "CLSSPATH.TXT" ) );
-
-		// CHECKME: I have no idea what the subpaths file is for, but I'm still copying it in (to replicate the old build)  We need to figure that out and document it // Hugi 2022-09-28
-		final String windowsSubPathsString = Util.readTemplate( "subpaths" );
-		Util.writeStringToPath( windowsSubPathsString, woa.windowsPath().resolve( "SUBPATHS.TXT" ) );
-
 		final String infoPlistString = InfoPlist.make( sourceProject );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
 
@@ -117,17 +109,6 @@ public class PackageWOApplication {
 		final Path redundantMacOSLaunchScriptPath = woa.macosPath().resolve( sourceProject.name() );
 		Util.writeStringToPath( unixLaunchScriptString, redundantMacOSLaunchScriptPath );
 		Util.makeUserExecutable( redundantMacOSLaunchScriptPath );
-
-		// Create the executable script for Windows
-		final String windowsLaunchScriptString = Util.readTemplate( "launch-script-cmd" );
-		final Path windowsLaunchScriptPath = woa.woaPath().resolve( sourceProject.name() + ".cmd" );
-		Util.writeStringToPath( windowsLaunchScriptString, windowsLaunchScriptPath );
-		Util.makeUserExecutable( windowsLaunchScriptPath );
-
-		// CHECKME: And of course Contents/Windows contains an exact copy of the Windows script from the WOA root // Hugi 2021-07-08
-		final Path redundantWindowsLaunchScriptPath = woa.windowsPath().resolve( sourceProject.name() + ".cmd" );
-		Util.writeStringToPath( windowsLaunchScriptString, redundantWindowsLaunchScriptPath );
-		Util.makeUserExecutable( redundantWindowsLaunchScriptPath );
 
 		return woa;
 	}
@@ -188,13 +169,6 @@ public class PackageWOApplication {
 		 */
 		public Path unixPath() {
 			return Util.folder( contentsPath().resolve( "UNIX" ) );
-		}
-
-		/**
-		 * @return Destination path for Windows specific launch scripts/configuration
-		 */
-		public Path windowsPath() {
-			return Util.folder( contentsPath().resolve( "Windows" ) );
 		}
 
 		/**
