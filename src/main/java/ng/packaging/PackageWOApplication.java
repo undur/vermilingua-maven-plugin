@@ -94,7 +94,6 @@ public class PackageWOApplication {
 		final String standardClassPathString = classPathFileTemplateString + String.join( "\n", classpathStrings );
 		Util.writeStringToPath( standardClassPathString, woa.unixPath().resolve( "UNIXClassPath.txt" ) );
 		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSClassPath.txt" ) );
-		Util.writeStringToPath( standardClassPathString, woa.macosPath().resolve( "MacOSXServerClassPath.txt" ) );
 
 		final String infoPlistString = InfoPlist.make( sourceProject );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
