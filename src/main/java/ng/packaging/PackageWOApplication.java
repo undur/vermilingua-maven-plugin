@@ -104,11 +104,6 @@ public class PackageWOApplication {
 		Util.writeStringToPath( unixLaunchScriptString, unixLaunchScriptPath );
 		Util.makeUserExecutable( unixLaunchScriptPath );
 
-		// CHECKME: For some reason, Contents/MacOS contains an exact copy of the launch script from the WOA root // Hugi 2021-07-08
-		final Path redundantMacOSLaunchScriptPath = woa.macosPath().resolve( sourceProject.name() );
-		Util.writeStringToPath( unixLaunchScriptString, redundantMacOSLaunchScriptPath );
-		Util.makeUserExecutable( redundantMacOSLaunchScriptPath );
-
 		return woa;
 	}
 
