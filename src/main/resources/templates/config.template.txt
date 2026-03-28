@@ -1,5 +1,5 @@
-ApplicationClass = ${ApplicationClass}
-JVM = ${JVM}
-JVMOptions = ${JVMOptions}
-JDB = ${JDB}
-JDBOptions = ${JDBOptions}
+principalClass = ${principalClass}
+jvm = ${jvm}
+jvmOptions = ${jvmOptions}
+jdb = ${jdb}
+jdbOptions = ${jdbOptions}

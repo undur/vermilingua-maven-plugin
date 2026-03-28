@@ -41,15 +41,15 @@ then
     exit 1
 fi
 
-readConfigValue APPLICATION_CLASS ApplicationClass "${CONFIG_FILE}"
-readConfigValue JDB_EXECUTABLE    JDB              "${CONFIG_FILE}"
-readConfigValue JDB_OPTIONS       JDBOptions       "${CONFIG_FILE}"
-readConfigValue JVM_EXECUTABLE    JVM              "${CONFIG_FILE}"
-readConfigValue JVM_OPTIONS       JVMOptions       "${CONFIG_FILE}"
+readConfigValue APPLICATION_CLASS principalClass "${CONFIG_FILE}"
+readConfigValue JDB_EXECUTABLE    jdb            "${CONFIG_FILE}"
+readConfigValue JDB_OPTIONS       jdbOptions     "${CONFIG_FILE}"
+readConfigValue JVM_EXECUTABLE    jvm            "${CONFIG_FILE}"
+readConfigValue JVM_OPTIONS       jvmOptions     "${CONFIG_FILE}"
 
 if [ "${APPLICATION_CLASS}" = "" ]
 then
-    echo ${SCRIPT_NAME}: WARNING -- ApplicationClass missing from config.txt, using default.
+    echo ${SCRIPT_NAME}: WARNING -- principalClass missing from config.txt, using default.
     APPLICATION_CLASS=Application
 fi
 if [ "${JDB_EXECUTABLE}" = "" ]
