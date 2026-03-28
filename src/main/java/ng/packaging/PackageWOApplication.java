@@ -40,7 +40,7 @@ public class PackageWOApplication {
 		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
 
-		classpathStrings.add( "APPROOT/Resources/Java/" ); // WOLifecycle includes the java folder itself on the classpath. I'm not sure why, but better replicate it // Hugi 2021-07-08
+		classpathStrings.add( "APPROOT/Resources/Java/" ); // FIXME: WOLifecycle includes the Java folder itself on the classpath. Allows us to drop class files in there, but I think we should probably just… don't // Hugi 2025-03-28
 		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
