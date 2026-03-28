@@ -211,18 +211,13 @@ public class SourceProject {
 	}
 
 	/**
-	 * @return The list of properties that _must_ be present in build.properties for a build to succeed
+	 * @return List of properties that must be present in build.properties for a build to succeed
 	 */
 	private List<String> requiredBuildProperties() {
-		final List<String> requiredBuildProperties = new ArrayList<>();
-
-		// No sense in building an application without a main class to run
-		// However, frameworks do not need one
-		if( type().isApp() ) {
-			requiredBuildProperties.add( "principalClass" );
-		}
-
-		return requiredBuildProperties;
+		return switch( type() ) {
+			case Application -> List.of( "principalClass" );
+			case Framework -> List.of();
+		};
 	}
 
 	/**
