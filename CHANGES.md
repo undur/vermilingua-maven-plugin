@@ -1,5 +1,55 @@
 # Changes
 
+## 1.1.0 (unreleased)
+
+### New bundle structure
+
+The platform-specific directories (`Contents/MacOS/`, `Contents/UNIX/`, `Contents/Windows/`) and their classpath files (`MacOSClassPath.txt`, `UNIXClassPath.txt`, `MacOSXServerClassPath.txt`, `CLSSPATH.TXT`) have been replaced by two simple files at the `.woa` root:
+
+- **`config.txt`** — launch configuration (application class, JVM executable, JVM options, JDB settings)
+- **`classpath.txt`** — one classpath entry per line
+
+The new bundle structure:
+
+```
+AppName.woa/
+    AppName          (launch script)
+    config.txt
+    classpath.txt
+    Contents/
+        Info.plist
+        Frameworks/
+        Resources/
+        WebServerResources/
+```
+
+### Configurable launch properties
+
+The `jvm`, `jvmOptions`, `jdb`, and `jdbOptions` properties in `build.properties` are now supported, matching `wolifecycle-maven-plugin` syntax:
+
+```properties
+jvm = /opt/jdk-26/bin/java
+jvmOptions = -Xmx2g
+jdb = /opt/jdk-26/bin/jdb
+jdbOptions = -sourcepath src
+```
+
+### Layered property resolution
+
+Build properties now support a layered override mechanism. Values are resolved in this order (first match wins):
+
+1. **System properties with `launch.` prefix** — passed on the command line, e.g. `mvn package -Dlaunch.jvm=/opt/jdk-26/bin/java`
+2. **Environment-specific properties file** — activated with `-Dbuild.env=<name>`, loads `build.properties.<name>` (e.g. `build.properties.prod`)
+3. **`build.properties`** — the base project defaults
+
+This allows environment-specific configuration without modifying committed files. For example, with a `build.properties.prod` containing only:
+
+```properties
+jvm = /opt/jdk-26/bin/java
+```
+
+Building with `mvn package -Dbuild.env=prod` will use that JVM path while inheriting all other values from `build.properties`. A one-off override via `mvn package -Dlaunch.jvm=/some/other/java` takes precedence over both files.
+
 ## 1.0.6
 
 The application launch script (the shell script generated at the root of your `.woa` bundle) has been significantly simplified, removing legacy platform support and obsolete configuration that dates back to the NeXTSTEP/OpenStep era.

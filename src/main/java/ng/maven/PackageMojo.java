@@ -40,6 +40,13 @@ public class PackageMojo extends AbstractMojo {
 	boolean performSplit;
 
 	/**
+	 * Selects an environment-specific properties overlay file (build.properties.{environment}).
+	 * For example, -Dbuild.env=prod will overlay values from build.properties.prod
+	 */
+	@Parameter(property = "build.env", required = false)
+	String environment;
+
+	/**
 	 * Entry point for the assembly process
 	 */
 	@Override
@@ -49,7 +56,7 @@ public class PackageMojo extends AbstractMojo {
 			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) );
 		}
 
-		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName );
+		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName, environment, System.getProperties() );
 
 		switch( sourceProject.type() ) {
 			case Application -> {
