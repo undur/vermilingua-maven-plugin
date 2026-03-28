@@ -193,7 +193,7 @@ public class SourceProject {
 		return switch( packaging ) {
 			case "woapplication" -> Type.Application;
 			case "woframework" -> Type.Framework;
-			default -> throw new IllegalArgumentException( "Unknown packaging '%s' (I onlu know 'woapplication' and 'woframework'".formatted( packaging ) );
+			default -> throw new IllegalArgumentException( "Unknown packaging '%s'. I only know 'woapplication' and 'woframework'".formatted( packaging ) );
 		};
 	}
 

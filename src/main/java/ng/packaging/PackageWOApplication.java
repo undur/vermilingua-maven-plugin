@@ -99,11 +99,11 @@ public class PackageWOApplication {
 		final String infoPlistString = InfoPlist.make( sourceProject );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
 
-		// Create the executable script for UNIX
-		final String unixLaunchScriptString = Util.readTemplate( "launch-script" );
-		final Path unixLaunchScriptPath = woa.woaPath().resolve( sourceProject.name() );
-		Util.writeStringToPath( unixLaunchScriptString, unixLaunchScriptPath );
-		Util.makeUserExecutable( unixLaunchScriptPath );
+		// Create the executable script
+		final String launchScriptString = Util.readTemplate( "launch-script" );
+		final Path launchScriptPath = woa.woaPath().resolve( sourceProject.name() );
+		Util.writeStringToPath( launchScriptString, launchScriptPath );
+		Util.makeUserExecutable( launchScriptPath );
 
 		return woa;
 	}

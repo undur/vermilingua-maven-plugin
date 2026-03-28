@@ -19,7 +19,7 @@ public record BuildProperties( Properties properties ) {
 	public static BuildProperties of( final Path path ) {
 
 		if( !Files.exists( path ) ) {
-			throw new IllegalStateException( "build.properties not found in project root (%s). To build a project with vermilingua, a file called 'build.properties' file must exist in the root and must contain at least the properties %s".formatted( path, requiredBuildProperties() ) );
+			throw new IllegalStateException( "build.properties not found in project root (%s). To build a project with vermilingua, this file must exist".formatted( path ) );
 		}
 
 		try( final InputStream is = Files.newInputStream( path )) {
@@ -30,13 +30,6 @@ public record BuildProperties( Properties properties ) {
 		catch( final IOException e ) {
 			throw new UncheckedIOException( e );
 		}
-	}
-
-	/**
-	 * FIXME: We should be getting this from the source project // Hugi 2025-10-30
-	 */
-	private static Object requiredBuildProperties() {
-		return null;
 	}
 
 	private String get( String key ) {
