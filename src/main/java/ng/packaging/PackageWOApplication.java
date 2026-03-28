@@ -83,7 +83,7 @@ public class PackageWOApplication {
 			logger.warn( String.format( "Not copying WebServerResources. %s does not exist", sourceProject.webServerResourcesPath() ) );
 		}
 
-		// Write config.txt to the WOA root
+		// Write config.txt
 		String configString = Util.readTemplate( "config" );
 		configString = configString.replace( "${ApplicationClass}", sourceProject.principalClassName() );
 		configString = configString.replace( "${JVM}", sourceProject.jvm() );
@@ -92,14 +92,15 @@ public class PackageWOApplication {
 		configString = configString.replace( "${JDBOptions}", sourceProject.jdbOptions() );
 		Util.writeStringToPath( configString, woa.woaPath().resolve( "config.txt" ) );
 
-		// Write classpath.txt to the WOA root
+		// Write classpath.txt
 		final String classpathString = String.join( "\n", classpathStrings ) + "\n";
 		Util.writeStringToPath( classpathString, woa.woaPath().resolve( "classpath.txt" ) );
 
+		// Write Info.plist
 		final String infoPlistString = InfoPlist.make( sourceProject );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
 
-		// Create the executable script
+		// Write executable launch script
 		final String launchScriptString = Util.readTemplate( "launch-script" );
 		final Path launchScriptPath = woa.woaPath().resolve( sourceProject.name() );
 		Util.writeStringToPath( launchScriptString, launchScriptPath );

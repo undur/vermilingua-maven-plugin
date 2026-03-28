@@ -1,12 +1,10 @@
 package ng.packaging;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.project.MavenProject;
 
 /**
@@ -74,13 +72,11 @@ public class SourceProject {
 	 * @return Dependencies of this project
 	 */
 	public Collection<Dependency> dependencies() {
-		List<Dependency> dependencies = new ArrayList<>();
-
-		for( final Artifact a : mavenProject().getArtifacts() ) {
-			dependencies.add( new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) );
-		}
-
-		return dependencies;
+		return mavenProject()
+				.getArtifacts()
+				.stream()
+				.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
+				.toList();
 	}
 
 	/**
