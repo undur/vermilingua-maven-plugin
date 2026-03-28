@@ -1,4 +1,4 @@
-package ng.packaging;
+package vermilingua.packaging;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package ng.packaging;
+package vermilingua.packaging;
 
 import java.util.LinkedHashMap;
 import java.util.List;

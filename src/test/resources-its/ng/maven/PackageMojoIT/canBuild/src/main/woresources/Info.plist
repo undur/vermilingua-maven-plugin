@@ -46,6 +46,6 @@
 	<key>NSJavaRoot</key>
 	<string>Resources/Java</string>
 	<key>NSPrincipalClass</key>
-	<string>ng.maven.app.Application</string>
+	<string>vermilingua.maven.app.Application</string>
 </dict>
 </plist>

@@ -1,4 +1,4 @@
-package ng.maven;
+package vermilingua.maven;
 
 import java.nio.file.Path;
 
@@ -11,11 +11,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 
-import ng.packaging.PackageWOApplication;
-import ng.packaging.PackageWOApplication.WOA;
-import ng.packaging.PackageWOFramework;
-import ng.packaging.SourceProject;
-import ng.packaging.Util;
+import vermilingua.packaging.PackageWOApplication;
+import vermilingua.packaging.PackageWOApplication.WOA;
+import vermilingua.packaging.PackageWOFramework;
+import vermilingua.packaging.SourceProject;
+import vermilingua.packaging.Util;
 
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class PackageMojo extends AbstractMojo {

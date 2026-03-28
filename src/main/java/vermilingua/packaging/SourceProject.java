@@ -1,4 +1,4 @@
-package ng.packaging;
+package vermilingua.packaging;
 
 import java.nio.file.Path;
 import java.util.Collection;

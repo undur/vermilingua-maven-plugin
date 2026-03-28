@@ -1,4 +1,4 @@
-package ng.maven;
+package vermilingua.maven;
 
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 

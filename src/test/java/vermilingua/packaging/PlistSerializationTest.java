@@ -1,4 +1,4 @@
-package ng.packaging;
+package vermilingua.packaging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import ng.AbstractTest;
+import vermilingua.AbstractTest;
 
 /**
  * Unit tests on {@link PlistSerialization} class.
