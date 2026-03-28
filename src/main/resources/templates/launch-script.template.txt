@@ -33,6 +33,44 @@ CONFIG_FILE="${WOA_TOP_LEVEL}/config.txt"
 CLASSPATH_FILE="${WOA_TOP_LEVEL}/classpath.txt"
 
 #
+# First pass: extract -launch.key=value arguments.
+# These override config.txt values and are stripped from the arguments
+# passed to the application.
+#
+LAUNCH_PRINCIPAL_CLASS=
+LAUNCH_JVM=
+LAUNCH_JVM_OPTIONS=
+LAUNCH_JDB=
+LAUNCH_JDB_OPTIONS=
+REMAINING_ARGS=
+
+for arg in "$@"
+do
+    case ${arg} in
+        -launch.principalClass=*)
+                  LAUNCH_PRINCIPAL_CLASS="${arg#-launch.principalClass=}"
+                  ;;
+        -launch.jvm=*)
+                  LAUNCH_JVM="${arg#-launch.jvm=}"
+                  ;;
+        -launch.jvmOptions=*)
+                  LAUNCH_JVM_OPTIONS="${arg#-launch.jvmOptions=}"
+                  ;;
+        -launch.jdb=*)
+                  LAUNCH_JDB="${arg#-launch.jdb=}"
+                  ;;
+        -launch.jdbOptions=*)
+                  LAUNCH_JDB_OPTIONS="${arg#-launch.jdbOptions=}"
+                  ;;
+        *)        REMAINING_ARGS="${REMAINING_ARGS:+${REMAINING_ARGS} }${arg}"
+                  ;;
+    esac
+done
+
+# Replace $@ with the remaining arguments (launch args stripped out)
+set -- ${REMAINING_ARGS}
+
+#
 # Read the configuration file.
 #
 if [ ! -f "${CONFIG_FILE}" -o ! -r "${CONFIG_FILE}" ]
@@ -46,6 +84,13 @@ readConfigValue JDB_EXECUTABLE    jdb            "${CONFIG_FILE}"
 readConfigValue JDB_OPTIONS       jdbOptions     "${CONFIG_FILE}"
 readConfigValue JVM_EXECUTABLE    jvm            "${CONFIG_FILE}"
 readConfigValue JVM_OPTIONS       jvmOptions     "${CONFIG_FILE}"
+
+# Apply -launch.* overrides
+if [ -n "${LAUNCH_PRINCIPAL_CLASS}" ]; then APPLICATION_CLASS="${LAUNCH_PRINCIPAL_CLASS}"; fi
+if [ -n "${LAUNCH_JVM}" ];             then JVM_EXECUTABLE="${LAUNCH_JVM}"; fi
+if [ -n "${LAUNCH_JVM_OPTIONS}" ];     then JVM_OPTIONS="${LAUNCH_JVM_OPTIONS}"; fi
+if [ -n "${LAUNCH_JDB}" ];             then JDB_EXECUTABLE="${LAUNCH_JDB}"; fi
+if [ -n "${LAUNCH_JDB_OPTIONS}" ];     then JDB_OPTIONS="${LAUNCH_JDB_OPTIONS}"; fi
 
 if [ "${APPLICATION_CLASS}" = "" ]
 then

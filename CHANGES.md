@@ -23,32 +23,54 @@ AppName.woa/
         WebServerResources/
 ```
 
-### Configurable launch properties
+### Unified `launch.*` configuration
 
-The `jvm`, `jvmOptions`, `jdb`, and `jdbOptions` properties in `build.properties` are now supported, matching `wolifecycle-maven-plugin` syntax:
+Launch properties (`jvm`, `jvmOptions`, `jdb`, `jdbOptions`) can be set at three levels, using a consistent `launch.` prefix:
+
+**In `build.properties`** (the new prefixed form is preferred; the old unprefixed form still works but logs a deprecation warning):
 
 ```properties
-jvm = /opt/jdk-26/bin/java
-jvmOptions = -Xmx2g
-jdb = /opt/jdk-26/bin/jdb
-jdbOptions = -sourcepath src
+launch.jvm = /opt/jdk-26/bin/java
+launch.jvmOptions = -Xmx2g
+launch.jdb = /opt/jdk-26/bin/jdb
+launch.jdbOptions = -sourcepath src
 ```
+
+**At build time** via system properties:
+
+```
+mvn package -Dlaunch.jvm=/opt/jdk-26/bin/java
+```
+
+**At runtime** via command line arguments to the launch script:
+
+```
+./MyApp.woa/MyApp "-launch.jvm=/opt/jdk-26/bin/java" "-launch.jvmOptions=-Xmx4g --add-exports java.base/sun.security.action=ALL-UNNAMED"
+```
+
+Runtime `-launch.*` arguments are consumed by the launch script and not passed through to the application. Values containing spaces must be quoted.
 
 ### Layered property resolution
 
-Build properties now support a layered override mechanism. Values are resolved in this order (first match wins):
+Build properties support a layered override mechanism. Values are resolved in this order (first match wins):
 
-1. **System properties with `launch.` prefix** — passed on the command line, e.g. `mvn package -Dlaunch.jvm=/opt/jdk-26/bin/java`
-2. **Environment-specific properties file** — activated with `-Dbuild.env=<name>`, loads `build.properties.<name>` (e.g. `build.properties.prod`)
-3. **`build.properties`** — the base project defaults
+1. **Runtime `-launch.*` arguments** — passed when launching the application
+2. **Build-time system properties** — e.g. `mvn package -Dlaunch.jvm=...`
+3. **Environment-specific properties file** — activated with `-Dbuild.env=<name>`, loads `build.properties.<name>`
+4. **`build.properties`** — the base project defaults (supports both `launch.jvm` and legacy `jvm` forms)
+5. **Built-in defaults** — `java`, `jdb`, empty strings
 
 This allows environment-specific configuration without modifying committed files. For example, with a `build.properties.prod` containing only:
 
 ```properties
-jvm = /opt/jdk-26/bin/java
+launch.jvm = /opt/jdk-26/bin/java
 ```
 
-Building with `mvn package -Dbuild.env=prod` will use that JVM path while inheriting all other values from `build.properties`. A one-off override via `mvn package -Dlaunch.jvm=/some/other/java` takes precedence over both files.
+Building with `mvn package -Dbuild.env=prod` will use that JVM path while inheriting all other values from `build.properties`.
+
+### Standardized config key naming
+
+Config keys are now consistent across `build.properties`, `config.txt`, and `launch.*` arguments: `principalClass`, `jvm`, `jvmOptions`, `jdb`, `jdbOptions`. The old mixed-case names (`ApplicationClass`, `JVM`, `JVMOptions`, etc.) in config.txt have been replaced.
 
 ## 1.0.6
 
