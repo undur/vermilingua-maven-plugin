@@ -70,7 +70,6 @@ public class PackageWOApplication {
 		}
 
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
-			// CHECKME: this would be where we would flatten resources, if we ever were to do that // Hugi 2021-07-08
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		}
 		else {
