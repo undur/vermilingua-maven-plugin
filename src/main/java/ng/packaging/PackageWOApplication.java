@@ -179,17 +179,5 @@ public class PackageWOApplication {
 		public Path infoPlistPath() {
 			return contentsPath().resolve( "Info.plist" );
 		}
-
-		/**
-		 * CHECKME: Placeholder for this functionality. It's really an outside task that I don't like having part of the WOA // Hugi 2021-07-17
-		 */
-		public void extractWebServerResources() {
-			final Path splitPath = Util.folder( woaPath().getParent().resolve( woaPath().getFileName() + ".webserverresources" ) );
-			final Path splitWebServerResourcesPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "WebServerResources" ) );
-			final Path splitFrameworksPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "Frameworks" ) );
-
-			Util.copyContentsOfDirectoryToDirectory( webServerResourcesPath(), splitWebServerResourcesPath );
-			Util.copyContentsOfDirectoryToDirectory( frameworksPath(), splitFrameworksPath );
-		}
 	}
 }

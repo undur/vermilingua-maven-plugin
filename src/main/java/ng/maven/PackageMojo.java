@@ -15,6 +15,7 @@ import ng.packaging.PackageWOApplication;
 import ng.packaging.PackageWOApplication.WOA;
 import ng.packaging.PackageWOFramework;
 import ng.packaging.SourceProject;
+import ng.packaging.Util;
 
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class PackageMojo extends AbstractMojo {
@@ -58,12 +59,31 @@ public class PackageMojo extends AbstractMojo {
 				final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath );
 
 				if( performSplit ) {
-					woa.extractWebServerResources();
+					extractWebServerResources( woa );
 				}
 			}
 			case Framework -> {
 				new PackageWOFramework().execute( sourceProject );
 			}
 		}
+	}
+
+	/**
+	 * Once the build is completed, copies the folders:
+	 *
+	 *  - App.woa/WebServerResources
+	 *  - App.woa/Frameworks
+	 *
+	 *  from the build product and places it in a new directory (Alongside the woa)
+	 *
+	 *  - App.woa.webserverresources
+	 */
+	private static void extractWebServerResources( final WOA woa ) {
+		final Path splitPath = Util.folder( woa.woaPath().getParent().resolve( woa.woaPath().getFileName() + ".webserverresources" ) );
+		final Path splitWebServerResourcesPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "WebServerResources" ) );
+		final Path splitFrameworksPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "Frameworks" ) );
+
+		Util.copyContentsOfDirectoryToDirectory( woa.webServerResourcesPath(), splitWebServerResourcesPath );
+		Util.copyContentsOfDirectoryToDirectory( woa.frameworksPath(), splitFrameworksPath );
 	}
 }
