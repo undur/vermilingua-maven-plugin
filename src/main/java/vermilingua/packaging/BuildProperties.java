@@ -7,6 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Wrapper for build properties with layered resolution.
  *
@@ -17,6 +20,10 @@ import java.util.Properties;
  */
 
 public class BuildProperties {
+
+	private static final Logger logger = LoggerFactory.getLogger( BuildProperties.class );
+
+	private static final String LAUNCH_PREFIX = "launch.";
 
 	private final Properties _baseProperties;
 	private final Properties _environmentProperties;
@@ -71,30 +78,56 @@ public class BuildProperties {
 	}
 
 	private String get( String key ) {
+		final String prefixedKey = LAUNCH_PREFIX + key;
+
 		// 1. Check system properties with "launch." prefix
-		final String launchValue = _systemProperties.getProperty( "launch." + key );
-		if( launchValue != null ) {
-			return launchValue;
+		final String systemValue = _systemProperties.getProperty( prefixedKey );
+		if( systemValue != null ) {
+			return systemValue;
 		}
 
-		// 2. Check environment-specific properties
-		final String envValue = _environmentProperties.getProperty( key );
-		if( envValue != null ) {
-			return envValue;
+		// 2. Check environment-specific properties (prefixed, then legacy unprefixed)
+		final String envPrefixedValue = _environmentProperties.getProperty( prefixedKey );
+		if( envPrefixedValue != null ) {
+			return envPrefixedValue;
 		}
 
-		// 3. Fall back to base build.properties
-		return _baseProperties.getProperty( key );
+		final String envLegacyValue = _environmentProperties.getProperty( key );
+		if( envLegacyValue != null ) {
+			logDeprecationWarning( key );
+			return envLegacyValue;
+		}
+
+		// 3. Check base build.properties (prefixed, then legacy unprefixed)
+		final String basePrefixedValue = _baseProperties.getProperty( prefixedKey );
+		if( basePrefixedValue != null ) {
+			return basePrefixedValue;
+		}
+
+		final String baseLegacyValue = _baseProperties.getProperty( key );
+		if( baseLegacyValue != null ) {
+			logDeprecationWarning( key );
+			return baseLegacyValue;
+		}
+
+		return null;
 	}
 
 	public boolean containsKey( String key ) {
-		return _systemProperties.containsKey( "launch." + key )
+		final String prefixedKey = LAUNCH_PREFIX + key;
+		return _systemProperties.containsKey( prefixedKey )
+			|| _environmentProperties.containsKey( prefixedKey )
 			|| _environmentProperties.containsKey( key )
+			|| _baseProperties.containsKey( prefixedKey )
 			|| _baseProperties.containsKey( key );
 	}
 
+	private static void logDeprecationWarning( String key ) {
+		logger.warn( "Property '{}' in build.properties is deprecated. Use 'launch.{}' instead.", key, key );
+	}
+
 	public String principalClass() {
-		return get( "principalClass" );
+		return _baseProperties.getProperty( "principalClass" );
 	}
 
 	public String jvm() {
@@ -114,6 +147,6 @@ public class BuildProperties {
 	}
 
 	public String projectName() {
-		return get( "project.name" );
+		return _baseProperties.getProperty( "project.name" );
 	}
 }
