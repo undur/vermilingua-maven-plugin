@@ -77,9 +77,9 @@ Config keys are now consistent across `build.properties`, `config.txt`, and `lau
 When `<createArchives>true</createArchives>` is set in the plugin configuration, the build will create tar.gz archives of the build products and attach them as Maven artifacts:
 
 - **`{finalName}.woapplication.tar.gz`** — the complete `.woa` bundle, attached as the project's primary artifact
-- **`{finalName}.wowebserverresources.tar.gz`** — the split webserver resources (only if `performSplit` is also enabled), attached as a secondary artifact
+- **`{finalName}.wowebserverresources.tar.gz`** — the split webserver resources (only if `performSplit` is also enabled), attached as a secondary artifact with classifier `wowebserverresources`
 
-This allows `mvn install` to place the archives in the local repository and `mvn deploy` to publish them to a remote repository. The archive format and artifact types (`woapplication.tar.gz`, `wowebserverresources.tar.gz`) are compatible with `wolifecycle-maven-plugin`. File permissions are preserved in the archive (executable bit on the launch script).
+This allows `mvn install` to place the archives in the local repository and `mvn deploy` to publish them to a remote repository.
 
 ```xml
 <plugin>
