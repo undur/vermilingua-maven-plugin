@@ -6,7 +6,7 @@
 
 #
 # Reads a value from config.txt.
-# Lines have the format: Key = Value
+# Lines have the format: Key=Value
 #
 readConfigValue() {
     value="`sed -n \"s/^$2 *= *//p\" \"$3\"`"

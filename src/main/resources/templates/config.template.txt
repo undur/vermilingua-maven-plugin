@@ -1,5 +1,5 @@
-principalClass = ${principalClass}
-jvm = ${jvm}
-jvmOptions = ${jvmOptions}
-jdb = ${jdb}
-jdbOptions = ${jdbOptions}
+principalClass=${principalClass}
+jvm=${jvm}
+jvmOptions=${jvmOptions}
+jdb=${jdb}
+jdbOptions=${jdbOptions}
