@@ -150,7 +150,9 @@ public class SourceProject {
 
 		final List<String> requiredParameters = List.of(
 				"--add-exports java.base/sun.security.action=ALL-UNNAMED", // WO won't run without this one (required by NSTimezone)
-				"--add-opens java.base/java.util=ALL-UNNAMED" // And we need this one to (at least) access the private List implementations created all over the place by more recent JDKs
+				"--add-opens java.base/java.util=ALL-UNNAMED", // And we need this one to (at least) access the private List implementations created all over the place by more recent JDKs
+				"--add-opens java.base/java.time=ALL-UNNAMED", // For accessing methods on java.time related objects (like LocalDate.year)
+				"--add-opens java.base/java.lang=ALL-UNNAMED" // Various classes in the lang package
 		);
 
 		// We add the "forced" parameters only if they aren't already present in build.properties
