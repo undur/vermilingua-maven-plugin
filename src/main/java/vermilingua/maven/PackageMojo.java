@@ -16,6 +16,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import vermilingua.packaging.ArchiveUtil;
+import vermilingua.packaging.BuildProperties;
 import vermilingua.packaging.PackageWOApplication;
 import vermilingua.packaging.PackageWOApplication.WOA;
 import vermilingua.packaging.PackageWOFramework;
@@ -66,7 +67,8 @@ public class PackageMojo extends AbstractMojo {
 		}
 
 		final String environment = System.getProperty( "build.env" );
-		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName, environment, System.getProperties() );
+		final BuildProperties buildProperties = BuildProperties.of( project.getBasedir().toPath(), environment, System.getProperties() );
+		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName, buildProperties );
 
 		switch( sourceProject.type() ) {
 			case Application -> {

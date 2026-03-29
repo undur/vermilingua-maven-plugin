@@ -49,13 +49,14 @@ public class SourceProject {
 	 */
 	private final BuildProperties _buildProperties;
 
-	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName, final String environment, final java.util.Properties systemProperties ) {
+	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName, final BuildProperties buildProperties ) {
 		Objects.requireNonNull( mavenProject );
 		Objects.requireNonNull( woresourcesFolderName );
+		Objects.requireNonNull( buildProperties );
 		_mavenProject = mavenProject;
 		_woresourcesFolderName = woresourcesFolderName;
 		_basePath = mavenProject().getBasedir().toPath();
-		_buildProperties = BuildProperties.of( _basePath, environment, systemProperties );
+		_buildProperties = buildProperties;
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
 		validateBuildProperties();
