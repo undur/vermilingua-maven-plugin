@@ -51,12 +51,6 @@ public class PackageMojo extends AbstractMojo {
 	@Parameter(property = "createArchives", required = false)
 	boolean createArchives;
 
-	/**
-	 * Selects an environment-specific properties overlay file (build.properties.{environment}).
-	 * For example, -Dbuild.env=prod will overlay values from build.properties.prod
-	 */
-	@Parameter(property = "build.env", required = false)
-	String environment;
 
 	@Component
 	MavenProjectHelper projectHelper;
@@ -71,6 +65,7 @@ public class PackageMojo extends AbstractMojo {
 			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) );
 		}
 
+		final String environment = System.getProperty( "build.env" );
 		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName, environment, System.getProperties() );
 
 		switch( sourceProject.type() ) {
