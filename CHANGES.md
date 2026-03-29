@@ -72,6 +72,27 @@ Building with `mvn package -Dbuild.env=prod` will use that JVM path while inheri
 
 Config keys are now consistent across `build.properties`, `config.txt`, and `launch.*` arguments: `principalClass`, `jvm`, `jvmOptions`, `jdb`, `jdbOptions`. The old mixed-case names (`ApplicationClass`, `JVM`, `JVMOptions`, etc.) in config.txt have been replaced.
 
+### Optional archive creation (`createArchives`)
+
+When `<createArchives>true</createArchives>` is set in the plugin configuration, the build will create tar.gz archives of the build products and attach them as Maven artifacts:
+
+- **`{finalName}.woapplication.tar.gz`** — the complete `.woa` bundle, attached as the project's primary artifact
+- **`{finalName}.wowebserverresources.tar.gz`** — the split webserver resources (only if `performSplit` is also enabled), attached as a secondary artifact
+
+This allows `mvn install` to place the archives in the local repository and `mvn deploy` to publish them to a remote repository. The archive format and artifact types (`woapplication.tar.gz`, `wowebserverresources.tar.gz`) are compatible with `wolifecycle-maven-plugin`. File permissions are preserved in the archive (executable bit on the launch script).
+
+```xml
+<plugin>
+    <groupId>is.rebbi</groupId>
+    <artifactId>vermilingua-maven-plugin</artifactId>
+    <version>1.1.0</version>
+    <extensions>true</extensions>
+    <configuration>
+        <createArchives>true</createArchives>
+    </configuration>
+</plugin>
+```
+
 ## 1.0.6
 
 The application launch script (the shell script generated at the root of your `.woa` bundle) has been significantly simplified, removing legacy platform support and obsolete configuration that dates back to the NeXTSTEP/OpenStep era.

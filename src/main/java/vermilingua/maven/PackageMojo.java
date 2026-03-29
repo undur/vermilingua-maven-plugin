@@ -2,15 +2,20 @@ package vermilingua.maven;
 
 import java.nio.file.Path;
 
+import org.apache.maven.artifact.DefaultArtifact;
+import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 
+import vermilingua.packaging.ArchiveUtil;
 import vermilingua.packaging.PackageWOApplication;
 import vermilingua.packaging.PackageWOApplication.WOA;
 import vermilingua.packaging.PackageWOFramework;
@@ -40,11 +45,21 @@ public class PackageMojo extends AbstractMojo {
 	boolean performSplit;
 
 	/**
+	 * Creates tar.gz archives of the build products and attaches them as Maven artifacts,
+	 * making them available to mvn install and mvn deploy.
+	 */
+	@Parameter(property = "createArchives", required = false)
+	boolean createArchives;
+
+	/**
 	 * Selects an environment-specific properties overlay file (build.properties.{environment}).
 	 * For example, -Dbuild.env=prod will overlay values from build.properties.prod
 	 */
 	@Parameter(property = "build.env", required = false)
 	String environment;
+
+	@Component
+	MavenProjectHelper projectHelper;
 
 	/**
 	 * Entry point for the assembly process
@@ -68,9 +83,44 @@ public class PackageMojo extends AbstractMojo {
 				if( performSplit ) {
 					extractWebServerResources( woa );
 				}
+
+				if( createArchives ) {
+					createAndAttachArchives( woa, finalName, targetPath );
+				}
 			}
 			case Framework -> {
 				new PackageWOFramework().execute( sourceProject );
+			}
+		}
+	}
+
+	/**
+	 * Creates tar.gz archives of the WOA (and optionally the split webserver resources)
+	 * and attaches them as Maven artifacts.
+	 */
+	private void createAndAttachArchives( final WOA woa, final String finalName, final Path targetPath ) {
+		// Archive the .woa bundle
+		final Path woaArchive = targetPath.resolve( finalName + ".woapplication.tar.gz" );
+		getLog().info( "Creating " + woaArchive.getFileName() );
+		ArchiveUtil.createTarGz( woa.woaPath(), woaArchive );
+
+		// Set as primary artifact
+		final DefaultArtifactHandler handler = new DefaultArtifactHandler( "woapplication.tar.gz" );
+		final DefaultArtifact artifact = new DefaultArtifact(
+			project.getGroupId(), project.getArtifactId(), project.getVersion(),
+			null, "woapplication.tar.gz", null, handler
+		);
+		artifact.setFile( woaArchive.toFile() );
+		project.setArtifact( artifact );
+
+		// If split was performed, archive the webserver resources too
+		if( performSplit ) {
+			final Path splitPath = woa.woaPath().getParent().resolve( woa.woaPath().getFileName() + ".webserverresources" );
+			if( splitPath.toFile().isDirectory() ) {
+				final Path wsrArchive = targetPath.resolve( finalName + ".wowebserverresources.tar.gz" );
+				getLog().info( "Creating " + wsrArchive.getFileName() );
+				ArchiveUtil.createTarGz( splitPath, wsrArchive );
+				projectHelper.attachArtifact( project, "tar.gz", "wowebserverresources", wsrArchive.toFile() );
 			}
 		}
 	}

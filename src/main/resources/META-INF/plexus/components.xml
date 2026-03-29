@@ -88,6 +88,28 @@
 		</component>
 		<component>
 			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>woapplication.tar.gz</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>woapplication.tar.gz</type>
+				<extension>tar.gz</extension>
+				<language>java</language>
+				<includesDependencies>true</includesDependencies>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>wowebserverresources.tar.gz</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>wowebserverresources.tar.gz</type>
+				<extension>tar.gz</extension>
+				<language>html</language>
+				<includesDependencies>true</includesDependencies>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
 			<role-hint>woframework</role-hint>
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
