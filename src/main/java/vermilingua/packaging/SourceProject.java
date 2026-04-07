@@ -118,22 +118,6 @@ public class SourceProject {
 	}
 
 	/**
-	 * @return The JDB executable to use for debugging
-	 */
-	public String jdb() {
-		final String jdb = _buildProperties.jdb();
-		return jdb != null ? jdb : "jdb";
-	}
-
-	/**
-	 * @return Options to pass to JDB when debugging
-	 */
-	public String jdbOptions() {
-		final String jdbOptions = _buildProperties.jdbOptions();
-		return jdbOptions != null ? jdbOptions : "";
-	}
-
-	/**
 	 * @return String of arguments to pass on to the generated launch scripts' JVM
 	 *
 	 * CHECKME:

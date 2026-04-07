@@ -40,8 +40,6 @@ CLASSPATH_FILE="${WOA_TOP_LEVEL}/classpath.txt"
 LAUNCH_PRINCIPAL_CLASS=
 LAUNCH_JVM=
 LAUNCH_JVM_OPTIONS=
-LAUNCH_JDB=
-LAUNCH_JDB_OPTIONS=
 REMAINING_ARGS=
 
 for arg in "$@"
@@ -55,12 +53,6 @@ do
                   ;;
         -launch.jvmOptions=*)
                   LAUNCH_JVM_OPTIONS="${arg#-launch.jvmOptions=}"
-                  ;;
-        -launch.jdb=*)
-                  LAUNCH_JDB="${arg#-launch.jdb=}"
-                  ;;
-        -launch.jdbOptions=*)
-                  LAUNCH_JDB_OPTIONS="${arg#-launch.jdbOptions=}"
                   ;;
         *)        REMAINING_ARGS="${REMAINING_ARGS:+${REMAINING_ARGS} }${arg}"
                   ;;
@@ -80,8 +72,6 @@ then
 fi
 
 readConfigValue APPLICATION_CLASS principalClass "${CONFIG_FILE}"
-readConfigValue JDB_EXECUTABLE    jdb            "${CONFIG_FILE}"
-readConfigValue JDB_OPTIONS       jdbOptions     "${CONFIG_FILE}"
 readConfigValue JVM_EXECUTABLE    jvm            "${CONFIG_FILE}"
 readConfigValue JVM_OPTIONS       jvmOptions     "${CONFIG_FILE}"
 
@@ -89,17 +79,11 @@ readConfigValue JVM_OPTIONS       jvmOptions     "${CONFIG_FILE}"
 if [ -n "${LAUNCH_PRINCIPAL_CLASS}" ]; then APPLICATION_CLASS="${LAUNCH_PRINCIPAL_CLASS}"; fi
 if [ -n "${LAUNCH_JVM}" ];             then JVM_EXECUTABLE="${LAUNCH_JVM}"; fi
 if [ -n "${LAUNCH_JVM_OPTIONS}" ];     then JVM_OPTIONS="${LAUNCH_JVM_OPTIONS}"; fi
-if [ -n "${LAUNCH_JDB}" ];             then JDB_EXECUTABLE="${LAUNCH_JDB}"; fi
-if [ -n "${LAUNCH_JDB_OPTIONS}" ];     then JDB_OPTIONS="${LAUNCH_JDB_OPTIONS}"; fi
 
 if [ "${APPLICATION_CLASS}" = "" ]
 then
     echo ${SCRIPT_NAME}: WARNING -- principalClass missing from config.txt, using default.
     APPLICATION_CLASS=Application
-fi
-if [ "${JDB_EXECUTABLE}" = "" ]
-then
-    JDB_EXECUTABLE=jdb
 fi
 if [ "${JVM_EXECUTABLE}" = "" ]
 then
@@ -139,30 +123,7 @@ then
     JVM_ARGS="${JVM_ARGS} ${JVM_OPTIONS}"
 fi
 
-#
-# Configure the executable based on whether we're debugging.
-#
-DEBUG_MODE=false
-
-if [ "`echo $* | grep -e '-NSPBDebug' -e '-NSJavaDebugging *YES'`" != "" ]
-then
-    DEBUG_MODE=true
-    JAVA_EXECUTABLE=${JDB_EXECUTABLE}
-elif [ "`echo ${_JAVA_OPTIONS} | grep -e '-Xrunjdwp' -e '-agentlib:jdwp'`" != "" ]
-then
-    DEBUG_MODE=true
-    JAVA_EXECUTABLE=${JVM_EXECUTABLE}
-fi
-
-if [ "${DEBUG_MODE}" = "true" ]
-then
-    if [ -n "${JDB_OPTIONS}" ]
-    then
-        JVM_ARGS="${JVM_ARGS} ${JDB_OPTIONS}"
-    fi
-else
-    JAVA_EXECUTABLE=${JVM_EXECUTABLE}
-fi
+JAVA_EXECUTABLE=${JVM_EXECUTABLE}
 
 #
 # Process command line arguments:

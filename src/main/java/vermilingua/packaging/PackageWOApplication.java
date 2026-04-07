@@ -88,8 +88,6 @@ public class PackageWOApplication {
 		configString = configString.replace( "${principalClass}", sourceProject.principalClassName() );
 		configString = configString.replace( "${jvm}", sourceProject.jvm() );
 		configString = configString.replace( "${jvmOptions}", sourceProject.jvmOptions() );
-		configString = configString.replace( "${jdb}", sourceProject.jdb() );
-		configString = configString.replace( "${jdbOptions}", sourceProject.jdbOptions() );
 		Util.writeStringToPath( configString, woa.woaPath().resolve( "config.txt" ) );
 
 		// Write classpath.txt

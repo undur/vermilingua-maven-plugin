@@ -1,5 +1,13 @@
 # Changes
 
+## 1.1.1
+
+### Removed: jdb support and debug mode detection
+
+The launch script no longer has built-in support for `jdb` (the Java command-line debugger). The `jdb` and `jdbOptions` configuration keys have been removed from `config.txt`, `build.properties`, and the `-launch.*` runtime arguments. The debug mode detection that checked for `-NSPBDebug` and `-NSJavaDebugging YES` command-line flags has also been removed.
+
+Nobody uses `jdb` directly anymore — modern debugging is done via JDWP remote debugging (`-agentlib:jdwp=...`) with an IDE. If you need a different executable, the `jvm` / `-launch.jvm` override already covers that case.
+
 ## 1.1.0
 
 ### New bundle structure

@@ -138,14 +138,6 @@ public class BuildProperties {
 		return get( "jvmOptions" );
 	}
 
-	public String jdb() {
-		return get( "jdb" );
-	}
-
-	public String jdbOptions() {
-		return get( "jdbOptions" );
-	}
-
 	public String projectName() {
 		return _baseProperties.getProperty( "project.name" );
 	}
