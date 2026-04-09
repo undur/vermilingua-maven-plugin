@@ -1,4 +1,4 @@
-package vermilingua.maven;
+package vermilingua.maven.it;
 
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
