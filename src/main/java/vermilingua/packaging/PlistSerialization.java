@@ -84,19 +84,12 @@ public class PlistSerialization {
 	}
 
 	private static String elementNameFromObject( final Object object ) {
-		if( object instanceof List ) {
-			return "array";
-		}
-
-		if( object instanceof Map ) {
-			return "dict";
-		}
-
-		if( object instanceof String ) {
-			return "string";
-		}
-
-		throw new IllegalArgumentException( "I don't know how to serialize " + object.getClass() );
+		return switch( object ) {
+			case List<?> __ -> "array";
+			case Map<?, ?> __ -> "dict";
+			case String __ -> "string";
+			default -> throw new IllegalArgumentException( "I don't know how to serialize " + object.getClass() );
+		};
 	}
 
 	@Override
