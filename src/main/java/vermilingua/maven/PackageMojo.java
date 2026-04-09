@@ -2,12 +2,13 @@ package vermilingua.maven;
 
 import java.nio.file.Path;
 
+import javax.inject.Inject;
+
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -52,8 +53,7 @@ public class PackageMojo extends AbstractMojo {
 	@Parameter(property = "createArchives", required = false)
 	boolean createArchives;
 
-
-	@Component
+	@Inject
 	MavenProjectHelper projectHelper;
 
 	/**
