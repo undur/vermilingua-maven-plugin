@@ -6,6 +6,10 @@
 
 Component flattening now respects localization folders. Any directory ending in `.lproj` under `src/main/components/` is preserved at the destination, and its contents are flattened into it using the same rules as the root components folder. This means components inside `English.lproj/` (optionally nested in subfolders) end up flattened to `English.lproj/` in the built bundle, enabling WebObjects localization to locate them.
 
+### Component flattening in framework builds
+
+Framework builds (JAR packaging) now flatten components the same way application builds do. Previously, the folder structure under `src/main/components/` was preserved inside the framework's jar `Resources/` directory, which meant WebObjects couldn't locate components in subfolders at runtime. Components are now flattened — and `.lproj` folders are respected — giving framework and application builds consistent behavior.
+
 ## 1.1.1
 
 ### Removed: jdb support and debug mode detection

@@ -314,6 +314,36 @@ public class Util {
 	}
 
 	/**
+	 * Recursively deletes the directory at [path] and all its contents. Does nothing if the path does not exist.
+	 */
+	public static void deleteRecursively( final Path path ) {
+		Objects.requireNonNull( path );
+
+		if( !Files.exists( path ) ) {
+			return;
+		}
+
+		try {
+			Files.walkFileTree( path, new SimpleFileVisitor<>() {
+				@Override
+				public FileVisitResult visitFile( Path file, BasicFileAttributes attrs ) throws IOException {
+					Files.delete( file );
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult postVisitDirectory( Path dir, IOException exc ) throws IOException {
+					Files.delete( dir );
+					return FileVisitResult.CONTINUE;
+				}
+			} );
+		}
+		catch( final IOException e ) {
+			throw new UncheckedIOException( e );
+		}
+	}
+
+	/**
 	 * @return The folder at the given path. Creates the folder if missing, throws an exception if the path exists but is not a folder.
 	 */
 	public static Path folder( final Path path ) {
