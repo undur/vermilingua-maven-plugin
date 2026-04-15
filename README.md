@@ -42,12 +42,15 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 There are several optional parameters.
 
 * `woresourcesFolderName`: provided for compatibility with
-`wolifecycle-maven-plugin`. Without it, `vermilingua` defaults to
-`src/main/woresources` for WebObjects bundle resources, rather than
-`src/main/resources`, allowing that folder to serve it's designated
-standard Maven purpose, which is to keep Java classpath resources.
+  `wolifecycle-maven-plugin`. Without it, `vermilingua` defaults to
+  `src/main/woresources` for WebObjects bundle resources, rather than
+  `src/main/resources`, allowing that folder to serve it's designated
+  standard Maven purpose, which is to keep Java classpath resources.
 * `performSplit`: when set `true`, `vermilingua` will generate an
-  additional "WebServerResources" bundle for "split deployments".
+  additional "WebServerResources" bundle for "split deployments".  
+* `createArchives`: when set `true`, `vermilingua` will generate
+  compressed archives of the build products (application bundle, and
+  "WebServerResources" bundle if created) using `tar` and `gzip`.
 
 ## Differences from `wolifecycle-maven-plugin`
 
