@@ -80,20 +80,32 @@ public class Util {
 	 * Copy files in the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory], not maintaining the hierarchy, i.e. "flattening" the structure.
 	 *
 	 * Directories with names ending with [directorySuffixesToNotFlatten] are considered "bundles", i.e. they're essentially treated like files and copied in their entirety.
+	 *
+	 * Directories with names ending with [directorySuffixesToFlattenInto] are preserved at the destination, but their contents are then flattened into them (using the same rules). This is used for localization folders (`.lproj`) where components need to live under a preserved parent folder but still have their internal structure flattened.
 	 */
-	public static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory, final Collection<String> directorySuffixesToNotFlatten ) {
+	public static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory, final Collection<String> directorySuffixesToNotFlatten, final Collection<String> directorySuffixesToFlattenInto ) {
 		Objects.requireNonNull( sourceDirectory );
 		Objects.requireNonNull( destinationDirectory );
 		Objects.requireNonNull( directorySuffixesToNotFlatten );
+		Objects.requireNonNull( directorySuffixesToFlattenInto );
 
 		final FileVisitor<? super Path> visitor = new SimpleFileVisitor<>() {
 
 			@Override
 			public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes arg1 ) throws IOException {
 
+				final String dirName = dir.getFileName().toString();
+
 				// If this is a bundle/folder we should not flatten, copy it in it's entirety (with all it's contents) and don't walk deeper into it
-				if( hasAnyOfSuffixes( dir.getFileName().toString(), directorySuffixesToNotFlatten ) ) {
-					copyContentsOfDirectoryToDirectory( dir, destinationDirectory.resolve( dir.getFileName() ) );
+				if( hasAnyOfSuffixes( dirName, directorySuffixesToNotFlatten ) ) {
+					copyContentsOfDirectoryToDirectory( dir, destinationDirectory.resolve( dirName ) );
+					return FileVisitResult.SKIP_SUBTREE;
+				}
+
+				// If this is a folder that acts as a flatten target (e.g. `.lproj`), create it at the destination and recursively flatten its contents into it
+				if( hasAnyOfSuffixes( dirName, directorySuffixesToFlattenInto ) ) {
+					final Path nestedDestination = folder( destinationDirectory.resolve( dirName ) );
+					copyContentsOfDirectoryToDirectoryFlatten( dir, nestedDestination, directorySuffixesToNotFlatten, directorySuffixesToFlattenInto );
 					return FileVisitResult.SKIP_SUBTREE;
 				}
 

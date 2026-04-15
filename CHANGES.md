@@ -1,5 +1,11 @@
 # Changes
 
+## 1.1.2
+
+### Localization folder support in component flattening
+
+Component flattening now respects localization folders. Any directory ending in `.lproj` under `src/main/components/` is preserved at the destination, and its contents are flattened into it using the same rules as the root components folder. This means components inside `English.lproj/` (optionally nested in subfolders) end up flattened to `English.lproj/` in the built bundle, enabling WebObjects localization to locate them.
+
 ## 1.1.1
 
 ### Removed: jdb support and debug mode detection

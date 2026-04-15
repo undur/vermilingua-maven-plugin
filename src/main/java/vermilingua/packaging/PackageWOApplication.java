@@ -63,7 +63,7 @@ public class PackageWOApplication {
 		}
 
 		if( Files.exists( sourceProject.componentsPath() ) ) {
-			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath(), List.of( "wo" ) );
+			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath(), List.of( "wo" ), List.of( "lproj" ) );
 		}
 		else {
 			logger.warn( String.format( "Not copying components. %s does not exist", sourceProject.componentsPath() ) );
