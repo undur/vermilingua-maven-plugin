@@ -94,6 +94,12 @@ public class Util {
 			@Override
 			public FileVisitResult preVisitDirectory( Path dir, BasicFileAttributes arg1 ) throws IOException {
 
+				// Don't match the source directory itself against our suffix rules — we want to flatten its contents into the destination.
+				// Without this guard, if the source directory's name happens to end in a flatten-into suffix (e.g. recursing into an `.lproj`), we'd recurse into it infinitely.
+				if( dir.equals( sourceDirectory ) ) {
+					return FileVisitResult.CONTINUE;
+				}
+
 				final String dirName = dir.getFileName().toString();
 
 				// If this is a bundle/folder we should not flatten, copy it in it's entirety (with all it's contents) and don't walk deeper into it

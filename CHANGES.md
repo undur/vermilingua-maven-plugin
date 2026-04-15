@@ -1,5 +1,9 @@
 # Changes
 
+## 1.1.3
+
+Fix for flattening of nested `.lproj` folders.
+
 ## 1.1.2
 
 ### Localization folder support in component flattening
