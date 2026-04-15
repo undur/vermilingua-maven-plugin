@@ -50,6 +50,8 @@ public class Util {
 
 	/**
 	 * Copy the contents of the directory specified by [sourceDirectory] into the directory specified by [destinationDirectory], maintaining the directory tree/hierarchy.
+	 *
+	 * Only files are copied. Parent directories at the destination are created on demand as needed. Empty directories in the source are not reproduced at the destination.
 	 */
 	public static void copyContentsOfDirectoryToDirectory( final Path sourceDirectory, final Path destinationDirectory ) {
 		Objects.requireNonNull( sourceDirectory );
@@ -57,17 +59,24 @@ public class Util {
 
 		try {
 			Files.walk( sourceDirectory )
+					.filter( sourcePath -> !Files.isDirectory( sourcePath ) )
 					.forEach( sourcePath -> {
 						final Path relativePath = sourceDirectory.relativize( sourcePath );
 						final Path targetPath = destinationDirectory.resolve( relativePath );
 
 						// If the target file exists, we don't copy and log a warning.
 						// FIXME: We should change this to an error condition, it's just asking for trouble // Hugi 2025-09-27
-						if( !Files.exists( targetPath ) ) {
-							copyFile( sourcePath, targetPath );
+						if( Files.exists( targetPath ) ) {
+							logger.warn( "File {} already exists at {}, not copying", sourcePath, targetPath );
 						}
 						else {
-							logger.warn( "File {} already exists at {}, not copying", sourcePath, targetPath );
+							try {
+								Files.createDirectories( targetPath.getParent() );
+							}
+							catch( final IOException e ) {
+								throw new UncheckedIOException( e );
+							}
+							copyFile( sourcePath, targetPath );
 						}
 					} );
 		}

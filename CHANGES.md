@@ -1,5 +1,9 @@
 # Changes
 
+## 1.1.4-SNAPSHOT
+
+Empty directories from source folders are no longer reproduced in the built bundle. Directory structure is recreated on demand when files are copied, so only directories that actually contain content end up in the output.
+
 ## 1.1.3
 
 Fix for flattening of nested `.lproj` folders.
