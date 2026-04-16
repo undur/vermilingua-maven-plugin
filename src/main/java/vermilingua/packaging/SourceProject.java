@@ -29,10 +29,29 @@ public class SourceProject {
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
 
 	/**
-	 * Note: We're currently including the maven project to get references to the resolved dependencies (.getArtifacts()).
-	 * This isn't a huge problem now, but Eventually this should probably be abstracted away removed to make building possible outside of a maven context
+	 * The project's type (Application vs. framework)
 	 */
-	private final MavenProject _mavenProject;
+	private final Type _type;
+
+	/**
+	 * The project's name
+	 */
+	private final String _name;
+
+	/**
+	 * The project's version
+	 */
+	private final String _version;
+
+	/**
+	 * The path to the project's primary jar file
+	 */
+	private final Path _jarPath;
+
+	/**
+	 * The project's list of dependencies
+	 */
+	private final Collection<Dependency> _dependencies;
 
 	/**
 	 * Base path of the project
@@ -49,13 +68,21 @@ public class SourceProject {
 	 */
 	private final BuildProperties _buildProperties;
 
+	/**
+	 * Constructs a new SourceProject from the given project data
+	 */
 	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName, final BuildProperties buildProperties ) {
 		Objects.requireNonNull( mavenProject );
 		Objects.requireNonNull( woresourcesFolderName );
 		Objects.requireNonNull( buildProperties );
-		_mavenProject = mavenProject;
+
+		_type = ProjectUtil.type( mavenProject );
+		_name = ProjectUtil.nameFromProject( buildProperties, mavenProject );
+		_version = mavenProject.getVersion();
+		_jarPath = mavenProject.getArtifact().getFile().toPath();
+		_dependencies = ProjectUtil.dependenciesFromMaven( mavenProject );
 		_woresourcesFolderName = woresourcesFolderName;
-		_basePath = mavenProject().getBasedir().toPath();
+		_basePath = mavenProject.getBasedir().toPath();
 		_buildProperties = buildProperties;
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
@@ -63,21 +90,10 @@ public class SourceProject {
 	}
 
 	/**
-	 * @return The maven project used this SourceProject was constructed from
-	 */
-	private MavenProject mavenProject() {
-		return _mavenProject;
-	}
-
-	/**
 	 * @return Dependencies of this project
 	 */
 	public Collection<Dependency> dependencies() {
-		return mavenProject()
-				.getArtifacts()
-				.stream()
-				.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
-				.toList();
+		return _dependencies;
 	}
 
 	/**
@@ -100,13 +116,7 @@ public class SourceProject {
 	 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
 	 */
 	public String name() {
-		String projectName = _buildProperties.projectName();
-
-		if( projectName == null ) {
-			projectName = mavenProject().getName();
-		}
-
-		return projectName;
+		return _name;
 	}
 
 	/**
@@ -154,7 +164,7 @@ public class SourceProject {
 	 * @return Version of the project, as specified in the pom file.
 	 */
 	public String version() {
-		return mavenProject().getVersion();
+		return _version;
 	}
 
 	/**
@@ -164,20 +174,14 @@ public class SourceProject {
 	 * SourceProject represents a WO project after maven's jar plugin has done it's job.
 	 */
 	public Path jarPath() {
-		return mavenProject().getArtifact().getFile().toPath();
+		return _jarPath;
 	}
 
 	/**
 	 * @return The type of the project
 	 */
 	public Type type() {
-		final String packaging = mavenProject().getPackaging();
-
-		return switch( packaging ) {
-			case "woapplication" -> Type.Application;
-			case "woframework" -> Type.Framework;
-			default -> throw new IllegalArgumentException( "Unknown packaging '%s'. I only know 'woapplication' and 'woframework'".formatted( packaging ) );
-		};
+		return _type;
 	}
 
 	/**
@@ -236,5 +240,50 @@ public class SourceProject {
 	 */
 	public String targetJarNameForWOA() {
 		return name().toLowerCase() + ".jar";
+	}
+
+	/**
+	 * Container class for some utility methods to obtain data about the project
+	 */
+	private static class ProjectUtil {
+
+		/**
+		 * @return Dependencies of the given project
+		 */
+		private static Collection<Dependency> dependenciesFromMaven( final MavenProject mavenProject ) {
+			return mavenProject
+					.getArtifacts()
+					.stream()
+					.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
+					.toList();
+		}
+
+		/**
+		 * @return Name of the WebObjects project as specified in build.properties
+		 *
+		 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
+		 */
+		private static String nameFromProject( final BuildProperties buildProperties, final MavenProject mavenProject ) {
+			String projectName = buildProperties.projectName();
+
+			if( projectName == null ) {
+				projectName = mavenProject.getName();
+			}
+
+			return projectName;
+		}
+
+		/**
+		 * @return The type of the project
+		 */
+		private static Type type( final MavenProject mavenProject ) {
+			final String packaging = mavenProject.getPackaging();
+
+			return switch( packaging ) {
+				case "woapplication" -> Type.Application;
+				case "woframework" -> Type.Framework;
+				default -> throw new IllegalArgumentException( "Unknown packaging '%s'. I only know 'woapplication' and 'woframework'".formatted( packaging ) );
+			};
+		}
 	}
 }
