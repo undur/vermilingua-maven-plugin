@@ -64,6 +64,11 @@ public class SourceProject {
 	private final String _woresourcesFolderName;
 
 	/**
+	 * Fully qualified name of the principal class (Application class for application, principalClass for frameworks)
+	 */
+	private final String _principalClassName;
+
+	/**
 	 * Contents of the build.properties file in the project root.
 	 */
 	private final BuildProperties _buildProperties;
@@ -83,6 +88,7 @@ public class SourceProject {
 		_dependencies = ProjectUtil.dependenciesFromMaven( mavenProject );
 		_woresourcesFolderName = woresourcesFolderName;
 		_basePath = mavenProject.getBasedir().toPath();
+		_principalClassName = buildProperties.principalClass();
 		_buildProperties = buildProperties;
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
@@ -107,7 +113,7 @@ public class SourceProject {
 	 * @return In the case of applications, this is the main class. In the case of frameworks, this is the framework's principalClass
 	 */
 	public String principalClassName() {
-		return _buildProperties.principalClass();
+		return _principalClassName;
 	}
 
 	/**
