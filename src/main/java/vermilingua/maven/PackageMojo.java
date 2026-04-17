@@ -31,7 +31,7 @@ public class PackageMojo extends AbstractMojo {
 	 * The maven project. This gets injected by Maven during the build
 	 */
 	@Parameter(property = "project", required = true, readonly = true)
-	MavenProject project;
+	MavenProject mavenProject;
 
 	/**
 	 * Allows the user to specify an alternative name for the source project's WO bundle resources folder (probably "resources", since that's the old wolifecycle default)
@@ -67,13 +67,13 @@ public class PackageMojo extends AbstractMojo {
 		}
 
 		final String environment = System.getProperty( "build.env" );
-		final BuildProperties buildProperties = BuildProperties.of( project.getBasedir().toPath(), environment, System.getProperties() );
-		final SourceProject sourceProject = new SourceProject( project, woresourcesFolderName, buildProperties );
+		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, System.getProperties() );
+		final SourceProject sourceProject = new SourceProject( mavenProject, woresourcesFolderName, buildProperties );
 
 		switch( sourceProject.type() ) {
 			case Application -> {
-				final String finalName = project.getBuild().getFinalName();
-				final Path targetPath = Path.of( project.getBuild().getDirectory() ); // Maven's target directory
+				final String finalName = mavenProject.getBuild().getFinalName();
+				final Path targetPath = Path.of( mavenProject.getBuild().getDirectory() ); // Maven's target directory
 
 				final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath );
 
@@ -104,11 +104,10 @@ public class PackageMojo extends AbstractMojo {
 		// Set as primary artifact
 		final DefaultArtifactHandler handler = new DefaultArtifactHandler( "woapplication.tar.gz" );
 		final DefaultArtifact artifact = new DefaultArtifact(
-			project.getGroupId(), project.getArtifactId(), project.getVersion(),
-			null, "woapplication.tar.gz", null, handler
-		);
+				mavenProject.getGroupId(), mavenProject.getArtifactId(), mavenProject.getVersion(),
+				null, "woapplication.tar.gz", null, handler );
 		artifact.setFile( woaArchive.toFile() );
-		project.setArtifact( artifact );
+		mavenProject.setArtifact( artifact );
 
 		// If split was performed, archive the webserver resources too
 		if( performSplit ) {
@@ -117,7 +116,7 @@ public class PackageMojo extends AbstractMojo {
 				final Path wsrArchive = targetPath.resolve( finalName + ".wowebserverresources.tar.gz" );
 				getLog().info( "Creating " + wsrArchive.getFileName() );
 				ArchiveUtil.createTarGz( splitPath, wsrArchive );
-				projectHelper.attachArtifact( project, "tar.gz", "wowebserverresources", wsrArchive.toFile() );
+				projectHelper.attachArtifact( mavenProject, "tar.gz", "wowebserverresources", wsrArchive.toFile() );
 			}
 		}
 	}
