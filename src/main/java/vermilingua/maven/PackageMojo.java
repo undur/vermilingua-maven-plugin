@@ -1,6 +1,7 @@
 package vermilingua.maven;
 
 import java.nio.file.Path;
+import java.util.Properties;
 
 import javax.inject.Inject;
 
@@ -66,8 +67,14 @@ public class PackageMojo extends AbstractMojo {
 			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) );
 		}
 
+		// Environment used for loading additional environment specific build.properties files
 		final String environment = System.getProperty( "build.env" );
-		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, System.getProperties() );
+
+		// Properties passed to the maven builder, potentially used to override any values present in build.properties (like -Dlaunch.jvm=/some/java)
+		final Properties mavenProperties = System.getProperties();
+
+		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, mavenProperties );
+
 		final SourceProject sourceProject = new SourceProject( mavenProject, woresourcesFolderName, buildProperties );
 
 		switch( sourceProject.type() ) {
