@@ -44,7 +44,7 @@ public class SourceProject {
 	private final String _version;
 
 	/**
-	 * The path to the project's primary jar file
+	 * Path to project's primary jar file
 	 */
 	private final Path _jarPath;
 
@@ -54,14 +54,19 @@ public class SourceProject {
 	private final Collection<Dependency> _dependencies;
 
 	/**
-	 * Base path of the project
+	 * Path to folder containing WO resources
 	 */
-	private final Path _basePath;
+	private final Path _woresourcesPath;
 
 	/**
-	 * Name of the bundle folder that contains WO resources.
+	 * Path to folder containing component templates and API files
 	 */
-	private final String _woresourcesFolderName;
+	private final Path _componentsPath;
+
+	/**
+	 * Path to folder containing WebServerResources
+	 */
+	private final Path _webServerResourcesPath;
 
 	/**
 	 * Fully qualified name of the principal class (Application class for application, principalClass for frameworks)
@@ -84,10 +89,14 @@ public class SourceProject {
 		_type = ProjectUtil.type( mavenProject );
 		_name = ProjectUtil.nameFromProject( buildProperties, mavenProject );
 		_version = mavenProject.getVersion();
-		_jarPath = mavenProject.getArtifact().getFile().toPath();
 		_dependencies = ProjectUtil.dependenciesFromMaven( mavenProject );
-		_woresourcesFolderName = woresourcesFolderName;
-		_basePath = mavenProject.getBasedir().toPath();
+		_jarPath = mavenProject.getArtifact().getFile().toPath();
+
+		final Path basePath = mavenProject.getBasedir().toPath();
+		_woresourcesPath = basePath.resolve( "src/main/" + woresourcesFolderName );
+		_componentsPath = basePath.resolve( "src/main/components" );
+		_webServerResourcesPath = basePath.resolve( "src/main/webserver-resources" );
+
 		_principalClassName = buildProperties.principalClass();
 		_buildProperties = buildProperties;
 
@@ -100,13 +109,6 @@ public class SourceProject {
 	 */
 	public Collection<Dependency> dependencies() {
 		return _dependencies;
-	}
-
-	/**
-	 * @return The name of the WO bundle resources folder
-	 */
-	public String woresourcesFolderName() {
-		return _woresourcesFolderName;
 	}
 
 	/**
@@ -214,31 +216,24 @@ public class SourceProject {
 	}
 
 	/**
-	 * @return base path of the project
-	 */
-	private Path basePath() {
-		return _basePath;
-	}
-
-	/**
 	 * @return Path to source components
 	 */
 	public Path componentsPath() {
-		return basePath().resolve( "src/main/components" );
+		return _componentsPath;
 	}
 
 	/**
 	 * @return Path to source woresources
 	 */
 	public Path woresourcesPath() {
-		return basePath().resolve( "src/main/" + woresourcesFolderName() );
+		return _woresourcesPath;
 	}
 
 	/**
 	 * @return Path to source webserver-resources
 	 */
 	public Path webServerResourcesPath() {
-		return basePath().resolve( "src/main/webserver-resources" );
+		return _webServerResourcesPath;
 	}
 
 	/**
