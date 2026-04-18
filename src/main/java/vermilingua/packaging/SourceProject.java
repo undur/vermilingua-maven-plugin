@@ -101,7 +101,7 @@ public class SourceProject {
 		_buildProperties = buildProperties;
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
-		validateBuildProperties();
+		ProjectUtil.validateBuildProperties( _type, buildProperties );
 	}
 
 	/**
@@ -119,12 +119,57 @@ public class SourceProject {
 	}
 
 	/**
+	 * @return The type of the project
+	 */
+	public Type type() {
+		return _type;
+	}
+
+	/**
 	 * @return Name of the WebObjects project as specified in build.properties
 	 *
-	 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
+	 * CHECKME: Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
 	 */
 	public String name() {
 		return _name;
+	}
+
+	/**
+	 * @return Version of the project, as specified in the pom file.
+	 */
+	public String version() {
+		return _version;
+	}
+
+	/**
+	 * @return The path to the jar file from the inital compilation/packaging of the project java sources
+	 *
+	 * Including this as a part of "SourceProject" might look strange but note that
+	 * SourceProject represents a WO project after maven's jar plugin has done it's job.
+	 */
+	public Path jarPath() {
+		return _jarPath;
+	}
+
+	/**
+	 * @return Path to source components
+	 */
+	public Path componentsPath() {
+		return _componentsPath;
+	}
+
+	/**
+	 * @return Path to source woresources
+	 */
+	public Path woresourcesPath() {
+		return _woresourcesPath;
+	}
+
+	/**
+	 * @return Path to source webserver-resources
+	 */
+	public Path webServerResourcesPath() {
+		return _webServerResourcesPath;
 	}
 
 	/**
@@ -166,74 +211,6 @@ public class SourceProject {
 		}
 
 		return jvmOptions;
-	}
-
-	/**
-	 * @return Version of the project, as specified in the pom file.
-	 */
-	public String version() {
-		return _version;
-	}
-
-	/**
-	 * @return The path to the jar file from the inital compilation/packaging of the project java sources
-	 *
-	 * Including this as a part of "SourceProject" might look strange but note that
-	 * SourceProject represents a WO project after maven's jar plugin has done it's job.
-	 */
-	public Path jarPath() {
-		return _jarPath;
-	}
-
-	/**
-	 * @return The type of the project
-	 */
-	public Type type() {
-		return _type;
-	}
-
-	/**
-	 * Ensure all required properties are present
-	 *
-	 * @throws IllegalArgumentException If a required build property is not present
-	 */
-	private void validateBuildProperties() {
-		for( final String propertyName : requiredBuildProperties() ) {
-			if( !_buildProperties.containsKey( propertyName ) ) {
-				throw new IllegalArgumentException( String.format( "%s must be present in build.properties", propertyName ) );
-			}
-		}
-	}
-
-	/**
-	 * @return List of properties that must be present in build.properties for a build to succeed
-	 */
-	private List<String> requiredBuildProperties() {
-		return switch( type() ) {
-			case Application -> List.of( "principalClass" );
-			case Framework -> List.of();
-		};
-	}
-
-	/**
-	 * @return Path to source components
-	 */
-	public Path componentsPath() {
-		return _componentsPath;
-	}
-
-	/**
-	 * @return Path to source woresources
-	 */
-	public Path woresourcesPath() {
-		return _woresourcesPath;
-	}
-
-	/**
-	 * @return Path to source webserver-resources
-	 */
-	public Path webServerResourcesPath() {
-		return _webServerResourcesPath;
 	}
 
 	/**
@@ -284,6 +261,29 @@ public class SourceProject {
 				case "woapplication" -> Type.Application;
 				case "woframework" -> Type.Framework;
 				default -> throw new IllegalArgumentException( "Unknown packaging '%s'. I only know 'woapplication' and 'woframework'".formatted( packaging ) );
+			};
+		}
+
+		/**
+		 * Ensure all required properties are present
+		 *
+		 * @throws IllegalArgumentException If a required build property is not present
+		 */
+		private static void validateBuildProperties( final Type type, final BuildProperties buildProperties ) {
+			for( final String propertyName : requiredBuildProperties( type ) ) {
+				if( !buildProperties.containsKey( propertyName ) ) {
+					throw new IllegalArgumentException( String.format( "%s must be present in build.properties", propertyName ) );
+				}
+			}
+		}
+
+		/**
+		 * @return List of properties that must be present in build.properties for a build to succeed
+		 */
+		private static List<String> requiredBuildProperties( final Type type ) {
+			return switch( type ) {
+				case Application -> List.of( "principalClass" );
+				case Framework -> List.of();
 			};
 		}
 	}
