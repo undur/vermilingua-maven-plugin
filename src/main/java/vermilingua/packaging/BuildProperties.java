@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  * Wrapper for build properties with layered resolution.
  *
  * Values are resolved in this order (first match wins):
- * 1. System properties with "launch." prefix (e.g. -Dlaunch.jvm=/opt/jdk/bin/java)
+ * 1. Overrides. Usually system properties with "launch." prefix (e.g. -Dlaunch.jvm=/opt/jdk/bin/java)
  * 2. Environment-specific properties file (e.g. build.properties.prod)
  * 3. The base build.properties file
  */
@@ -27,18 +27,18 @@ public class BuildProperties {
 
 	private final Properties _baseProperties;
 	private final Properties _environmentProperties;
-	private final Properties _systemProperties;
+	private final Properties _overriddes;
 
-	private BuildProperties( final Properties baseProperties, final Properties environmentProperties, final Properties systemProperties ) {
+	private BuildProperties( final Properties baseProperties, final Properties environmentProperties, final Properties overrides ) {
 		_baseProperties = baseProperties;
 		_environmentProperties = environmentProperties;
-		_systemProperties = systemProperties;
+		_overriddes = overrides;
 	}
 
 	/**
 	 * @return BuildProperties by parsing build.properties at the given path, with optional environment overlay and system property overrides
 	 */
-	public static BuildProperties of( final Path basePath, final String environment, final Properties systemProperties ) {
+	public static BuildProperties of( final Path basePath, final String environment, final Properties overrides ) {
 
 		final Path baseFile = basePath.resolve( "build.properties" );
 
@@ -56,7 +56,7 @@ public class BuildProperties {
 			}
 		}
 
-		return new BuildProperties( baseProperties, environmentProperties, systemProperties );
+		return new BuildProperties( baseProperties, environmentProperties, overrides );
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class BuildProperties {
 	}
 
 	private static Properties loadProperties( final Path path ) {
-		try( final InputStream is = Files.newInputStream( path ) ) {
+		try( final InputStream is = Files.newInputStream( path )) {
 			final Properties properties = new Properties();
 			properties.load( is );
 			return properties;
@@ -81,7 +81,7 @@ public class BuildProperties {
 		final String prefixedKey = LAUNCH_PREFIX + key;
 
 		// 1. Check system properties with "launch." prefix
-		final String systemValue = _systemProperties.getProperty( prefixedKey );
+		final String systemValue = _overriddes.getProperty( prefixedKey );
 		if( systemValue != null ) {
 			return systemValue;
 		}
@@ -115,11 +115,11 @@ public class BuildProperties {
 
 	public boolean containsKey( String key ) {
 		final String prefixedKey = LAUNCH_PREFIX + key;
-		return _systemProperties.containsKey( prefixedKey )
-			|| _environmentProperties.containsKey( prefixedKey )
-			|| _environmentProperties.containsKey( key )
-			|| _baseProperties.containsKey( prefixedKey )
-			|| _baseProperties.containsKey( key );
+		return _overriddes.containsKey( prefixedKey )
+				|| _environmentProperties.containsKey( prefixedKey )
+				|| _environmentProperties.containsKey( key )
+				|| _baseProperties.containsKey( prefixedKey )
+				|| _baseProperties.containsKey( key );
 	}
 
 	private static void logDeprecationWarning( String key ) {
