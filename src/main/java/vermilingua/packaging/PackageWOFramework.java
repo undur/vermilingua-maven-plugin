@@ -29,11 +29,11 @@ public class PackageWOFramework {
 				Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), stagingDir );
 			}
 
-			Util.copyContentsOfFolderAtPathToFolderInJar( stagingDir, "Resources", sourceProject.jarPath() );
-			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", sourceProject.jarPath() );
+			Util.copyContentsOfFolderAtPathToFolderInJar( stagingDir, "Resources", sourceProject.principalJarPath() );
+			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", sourceProject.principalJarPath() );
 
 			final String infoPlistString = InfoPlist.make( sourceProject );
-			Util.writeStringToPathInJar( infoPlistString, "Resources/Info.plist", sourceProject.jarPath() );
+			Util.writeStringToPathInJar( infoPlistString, "Resources/Info.plist", sourceProject.principalJarPath() );
 		}
 		finally {
 			Util.deleteRecursively( stagingDir );

@@ -13,10 +13,10 @@ import org.apache.maven.project.MavenProject;
  * @param type The project's type (Application vs. framework)
  * @param name The project's name // CHECKME: Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
  * @param version The project's version, currently as specified in the pom file.
- * @param jarPath The path to the jar file from the inital compilation/packaging of the project java sources. Including this as a part of "SourceProject" might look strange but note that SourceProject represents a WO project after maven's jar plugin has done it's job.
  * @param woresourcesPath Path to folder containing WO resources
  * @param componentsPath Path to folder containing component templates and API files
  * @param webServerResourcesPath Path to folder containing WebServerResources
+ * @param principalJarPath Path to the main jar file from the inital compilation/packaging of the project java sources. Including this in "SourceProject" might look strange, but is actually intentional since SourceProject represents a WO project _after_ maven's jar plugin has done it's job
  * @param principalClassName Fully qualified name of the principal class (Application/main class for application, principalClass for frameworks)
  * @param dependencies The project's list of dependencies
  * @param buildProperties The project's build.properties
@@ -26,10 +26,10 @@ public record SourceProject(
 		Type type,
 		String name,
 		String version,
-		Path jarPath,
 		Path woresourcesPath,
 		Path componentsPath,
 		Path webServerResourcesPath,
+		Path principalJarPath,
 		String principalClassName,
 		Collection<Dependency> dependencies,
 		BuildProperties buildProperties ) {
@@ -60,20 +60,20 @@ public record SourceProject(
 		final Type type = ProjectUtil.type( mavenProject );
 		final String name = ProjectUtil.nameFromProject( buildProperties, mavenProject );
 		final String version = mavenProject.getVersion();
-		final Path jarPath = mavenProject.getArtifact().getFile().toPath();
 
 		final Path projectBasePath = mavenProject.getBasedir().toPath();
 		final Path woresourcesPath = projectBasePath.resolve( "src/main/" + woresourcesFolderName );
 		final Path componentsPath = projectBasePath.resolve( "src/main/components" );
 		final Path webServerResourcesPath = projectBasePath.resolve( "src/main/webserver-resources" );
 
+		final Path principalJarPath = mavenProject.getArtifact().getFile().toPath();
 		final String principalClassName = buildProperties.principalClass();
 		final Collection<Dependency> dependencies = ProjectUtil.dependenciesFromMavenProject( mavenProject );
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
 		ProjectUtil.validateBuildProperties( type, buildProperties );
 
-		return new SourceProject( type, name, version, jarPath, woresourcesPath, componentsPath, webServerResourcesPath, principalClassName, dependencies, buildProperties );
+		return new SourceProject( type, name, version, woresourcesPath, componentsPath, webServerResourcesPath, principalJarPath, principalClassName, dependencies, buildProperties );
 	}
 
 	/**

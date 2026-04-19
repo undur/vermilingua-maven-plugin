@@ -35,7 +35,7 @@ public class PackageWOApplication {
 		final String appJarFilename = sourceProject.targetJarNameForWOA();
 
 		// Copy the app jar to the woa
-		Util.copyFile( sourceProject.jarPath(), woa.javaPath().resolve( appJarFilename ), StandardCopyOption.REPLACE_EXISTING );
+		Util.copyFile( sourceProject.principalJarPath(), woa.javaPath().resolve( appJarFilename ), StandardCopyOption.REPLACE_EXISTING );
 
 		// Start working on that list of jars to add to the classpath
 		final List<String> classpathStrings = new ArrayList<>();
