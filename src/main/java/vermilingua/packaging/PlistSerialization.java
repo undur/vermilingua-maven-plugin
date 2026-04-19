@@ -47,7 +47,13 @@ public class PlistSerialization {
 				}
 			}
 			else {
-				final String elementName = elementNameFromObject( object );
+				final String elementName = switch( object ) {
+					case List<?> __ -> "array";
+					case Map<?, ?> __2 -> "dict";
+					case String __1 -> "string";
+					default -> throw new IllegalArgumentException( "I only handle Lists, Maps, Strings and Booleans. I don't know how to serialize " + object.getClass() );
+				};
+
 				append( indent, "<" + elementName + ">" );
 
 				if( object instanceof String ) {
@@ -81,15 +87,6 @@ public class PlistSerialization {
 				}
 			}
 		}
-	}
-
-	private static String elementNameFromObject( final Object object ) {
-		return switch( object ) {
-			case List<?> __ -> "array";
-			case Map<?, ?> __ -> "dict";
-			case String __ -> "string";
-			default -> throw new IllegalArgumentException( "I don't know how to serialize " + object.getClass() );
-		};
 	}
 
 	@Override
