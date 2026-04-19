@@ -77,47 +77,6 @@ public record SourceProject(
 	}
 
 	/**
-	 * @return The JVM executable to use for launching the application
-	 */
-	public String jvm() {
-		final String jvm = buildProperties().jvm();
-		return jvm != null ? jvm : "java";
-	}
-
-	/**
-	 * @return String of arguments to pass on to the generated launch scripts' JVM
-	 *
-	 * CHECKME:
-	 * We currently assume the app will run on JDK >= 17 and add the parameters required for that to work.
-	 * It could be nicer to check the targeted java version and add parameters as required.
-	 * Or not do anything at all and make the user handle this in build.properties? Explicit good, magic bad.
-	 * // Hugi 2022-09-28
-	 */
-	public String jvmOptions() {
-		String jvmOptions = buildProperties().jvmOptions();
-
-		if( jvmOptions == null ) {
-			jvmOptions = "";
-		}
-
-		final List<String> requiredParameters = List.of(
-				"--add-exports java.base/sun.security.action=ALL-UNNAMED", // WO won't run without this one (required by NSTimezone)
-				"--add-opens java.base/java.util=ALL-UNNAMED", // And we need this one to (at least) access the private List implementations created all over the place by more recent JDKs
-				"--add-opens java.base/java.time=ALL-UNNAMED", // For accessing methods on java.time related objects (like LocalDate.year)
-				"--add-opens java.base/java.lang=ALL-UNNAMED" // Various classes in the lang package
-		);
-
-		// We add the "forced" parameters only if they aren't already present in build.properties
-		for( final String requiredParameter : requiredParameters ) {
-			if( !jvmOptions.contains( requiredParameter ) ) {
-				jvmOptions = jvmOptions + " " + requiredParameter;
-			}
-		}
-
-		return jvmOptions;
-	}
-
-	/**
 	 * @return The name of the JAR file that will contain the compiled application/framework sources (which was built by maven's own package goal before we started the WOA assembly)
 	 */
 	public String targetJarNameForWOA() {
