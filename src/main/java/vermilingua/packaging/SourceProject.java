@@ -62,13 +62,13 @@ public record SourceProject(
 		final String version = mavenProject.getVersion();
 		final Path jarPath = mavenProject.getArtifact().getFile().toPath();
 
-		final Path basePath = mavenProject.getBasedir().toPath();
-		final Path woresourcesPath = basePath.resolve( "src/main/" + woresourcesFolderName );
-		final Path componentsPath = basePath.resolve( "src/main/components" );
-		final Path webServerResourcesPath = basePath.resolve( "src/main/webserver-resources" );
+		final Path projectBasePath = mavenProject.getBasedir().toPath();
+		final Path woresourcesPath = projectBasePath.resolve( "src/main/" + woresourcesFolderName );
+		final Path componentsPath = projectBasePath.resolve( "src/main/components" );
+		final Path webServerResourcesPath = projectBasePath.resolve( "src/main/webserver-resources" );
 
 		final String principalClassName = buildProperties.principalClass();
-		final Collection<Dependency> dependencies = ProjectUtil.dependenciesFromMaven( mavenProject );
+		final Collection<Dependency> dependencies = ProjectUtil.dependenciesFromMavenProject( mavenProject );
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
 		ProjectUtil.validateBuildProperties( type, buildProperties );
@@ -78,6 +78,8 @@ public record SourceProject(
 
 	/**
 	 * @return The name of the JAR file that will contain the compiled application/framework sources (which was built by maven's own package goal before we started the WOA assembly)
+	 *
+	 * CHECKME: Really belongs in packaging, not the source project // Hugi 2026-04-19
 	 */
 	public String targetJarNameForWOA() {
 		return name().toLowerCase() + ".jar";
@@ -91,7 +93,7 @@ public record SourceProject(
 		/**
 		 * @return Dependencies of the given project
 		 */
-		private static Collection<Dependency> dependenciesFromMaven( final MavenProject mavenProject ) {
+		private static Collection<Dependency> dependenciesFromMavenProject( final MavenProject mavenProject ) {
 			return mavenProject
 					.getArtifacts()
 					.stream()
@@ -100,18 +102,16 @@ public record SourceProject(
 		}
 
 		/**
-		 * @return Name of the WebObjects project as specified in build.properties
-		 *
-		 * Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
+		 * @return Name of the WebObjects project. From build.properties, if specified, otherwise the maven project's name
 		 */
 		private static String nameFromProject( final BuildProperties buildProperties, final MavenProject mavenProject ) {
-			String projectName = buildProperties.projectName();
+			final String buildPropertiesProjectName = buildProperties.projectName();
 
-			if( projectName == null ) {
-				projectName = mavenProject.getName();
+			if( buildPropertiesProjectName != null ) {
+				return buildPropertiesProjectName;
 			}
 
-			return projectName;
+			return mavenProject.getName();
 		}
 
 		/**
