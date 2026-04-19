@@ -75,7 +75,7 @@ public class PackageMojo extends AbstractMojo {
 
 		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, mavenProperties );
 
-		final SourceProject sourceProject = new SourceProject( mavenProject, woresourcesFolderName, buildProperties );
+		final SourceProject sourceProject = SourceProject.forMavenProject( mavenProject, buildProperties, woresourcesFolderName );
 
 		switch( sourceProject.type() ) {
 			case Application -> {

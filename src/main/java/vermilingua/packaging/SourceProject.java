@@ -9,9 +9,30 @@ import org.apache.maven.project.MavenProject;
 
 /**
  * Source for packaging of a WO build (Application or framework)
+ *
+ * @param type The project's type (Application vs. framework)
+ * @param name The project's name // CHECKME: Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
+ * @param version The project's version, currently as specified in the pom file.
+ * @param jarPath The path to the jar file from the inital compilation/packaging of the project java sources. Including this as a part of "SourceProject" might look strange but note that SourceProject represents a WO project after maven's jar plugin has done it's job.
+ * @param woresourcesPath Path to folder containing WO resources
+ * @param componentsPath Path to folder containing component templates and API files
+ * @param webServerResourcesPath Path to folder containing WebServerResources
+ * @param principalClassName Fully qualified name of the principal class (Application/main class for application, principalClass for frameworks)
+ * @param dependencies The project's list of dependencies
+ * @param buildProperties The project's build.properties
  */
 
-public class SourceProject {
+public record SourceProject(
+		Type type,
+		String name,
+		String version,
+		Path jarPath,
+		Path woresourcesPath,
+		Path componentsPath,
+		Path webServerResourcesPath,
+		String principalClassName,
+		Collection<Dependency> dependencies,
+		BuildProperties buildProperties ) {
 
 	public static enum Type {
 		Application,
@@ -29,154 +50,37 @@ public class SourceProject {
 	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
 
 	/**
-	 * The project's type (Application vs. framework)
-	 */
-	private final Type _type;
-
-	/**
-	 * The project's name
-	 */
-	private final String _name;
-
-	/**
-	 * The project's version
-	 */
-	private final String _version;
-
-	/**
-	 * Path to project's primary jar file
-	 */
-	private final Path _jarPath;
-
-	/**
-	 * The project's list of dependencies
-	 */
-	private final Collection<Dependency> _dependencies;
-
-	/**
-	 * Path to folder containing WO resources
-	 */
-	private final Path _woresourcesPath;
-
-	/**
-	 * Path to folder containing component templates and API files
-	 */
-	private final Path _componentsPath;
-
-	/**
-	 * Path to folder containing WebServerResources
-	 */
-	private final Path _webServerResourcesPath;
-
-	/**
-	 * Fully qualified name of the principal class (Application class for application, principalClass for frameworks)
-	 */
-	private final String _principalClassName;
-
-	/**
-	 * Contents of the build.properties file in the project root.
-	 */
-	private final BuildProperties _buildProperties;
-
-	/**
 	 * Constructs a new SourceProject from the given project data
 	 */
-	public SourceProject( final MavenProject mavenProject, final String woresourcesFolderName, final BuildProperties buildProperties ) {
+	public static SourceProject forMavenProject( final MavenProject mavenProject, final BuildProperties buildProperties, final String woresourcesFolderName ) {
 		Objects.requireNonNull( mavenProject );
 		Objects.requireNonNull( woresourcesFolderName );
 		Objects.requireNonNull( buildProperties );
 
-		_type = ProjectUtil.type( mavenProject );
-		_name = ProjectUtil.nameFromProject( buildProperties, mavenProject );
-		_version = mavenProject.getVersion();
-		_dependencies = ProjectUtil.dependenciesFromMaven( mavenProject );
-		_jarPath = mavenProject.getArtifact().getFile().toPath();
+		final Type type = ProjectUtil.type( mavenProject );
+		final String name = ProjectUtil.nameFromProject( buildProperties, mavenProject );
+		final String version = mavenProject.getVersion();
+		final Path jarPath = mavenProject.getArtifact().getFile().toPath();
 
 		final Path basePath = mavenProject.getBasedir().toPath();
-		_woresourcesPath = basePath.resolve( "src/main/" + woresourcesFolderName );
-		_componentsPath = basePath.resolve( "src/main/components" );
-		_webServerResourcesPath = basePath.resolve( "src/main/webserver-resources" );
+		final Path woresourcesPath = basePath.resolve( "src/main/" + woresourcesFolderName );
+		final Path componentsPath = basePath.resolve( "src/main/components" );
+		final Path webServerResourcesPath = basePath.resolve( "src/main/webserver-resources" );
 
-		_principalClassName = buildProperties.principalClass();
-		_buildProperties = buildProperties;
+		final String principalClassName = buildProperties.principalClass();
+		final Collection<Dependency> dependencies = ProjectUtil.dependenciesFromMaven( mavenProject );
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
-		ProjectUtil.validateBuildProperties( _type, buildProperties );
-	}
+		ProjectUtil.validateBuildProperties( type, buildProperties );
 
-	/**
-	 * @return Dependencies of this project
-	 */
-	public Collection<Dependency> dependencies() {
-		return _dependencies;
-	}
-
-	/**
-	 * @return In the case of applications, this is the main class. In the case of frameworks, this is the framework's principalClass
-	 */
-	public String principalClassName() {
-		return _principalClassName;
-	}
-
-	/**
-	 * @return The type of the project
-	 */
-	public Type type() {
-		return _type;
-	}
-
-	/**
-	 * @return Name of the WebObjects project as specified in build.properties
-	 *
-	 * CHECKME: Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
-	 */
-	public String name() {
-		return _name;
-	}
-
-	/**
-	 * @return Version of the project, as specified in the pom file.
-	 */
-	public String version() {
-		return _version;
-	}
-
-	/**
-	 * @return The path to the jar file from the inital compilation/packaging of the project java sources
-	 *
-	 * Including this as a part of "SourceProject" might look strange but note that
-	 * SourceProject represents a WO project after maven's jar plugin has done it's job.
-	 */
-	public Path jarPath() {
-		return _jarPath;
-	}
-
-	/**
-	 * @return Path to source components
-	 */
-	public Path componentsPath() {
-		return _componentsPath;
-	}
-
-	/**
-	 * @return Path to source woresources
-	 */
-	public Path woresourcesPath() {
-		return _woresourcesPath;
-	}
-
-	/**
-	 * @return Path to source webserver-resources
-	 */
-	public Path webServerResourcesPath() {
-		return _webServerResourcesPath;
+		return new SourceProject( type, name, version, jarPath, woresourcesPath, componentsPath, webServerResourcesPath, principalClassName, dependencies, buildProperties );
 	}
 
 	/**
 	 * @return The JVM executable to use for launching the application
 	 */
 	public String jvm() {
-		final String jvm = _buildProperties.jvm();
+		final String jvm = buildProperties().jvm();
 		return jvm != null ? jvm : "java";
 	}
 
@@ -190,7 +94,7 @@ public class SourceProject {
 	 * // Hugi 2022-09-28
 	 */
 	public String jvmOptions() {
-		String jvmOptions = _buildProperties.jvmOptions();
+		String jvmOptions = buildProperties().jvmOptions();
 
 		if( jvmOptions == null ) {
 			jvmOptions = "";
