@@ -17,7 +17,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
-import vermilingua.packaging.ArchiveUtil;
 import vermilingua.packaging.BuildProperties;
 import vermilingua.packaging.PackageWOApplication;
 import vermilingua.packaging.PackageWOApplication.WOA;
@@ -106,7 +105,7 @@ public class PackageMojo extends AbstractMojo {
 		// Archive the .woa bundle
 		final Path woaArchive = targetPath.resolve( finalName + ".woapplication.tar.gz" );
 		getLog().info( "Creating " + woaArchive.getFileName() );
-		ArchiveUtil.createTarGz( woa.woaPath(), woaArchive );
+		Util.createTarGz( woa.woaPath(), woaArchive );
 
 		// Set as primary artifact
 		final DefaultArtifactHandler handler = new DefaultArtifactHandler( "woapplication.tar.gz" );
@@ -122,7 +121,7 @@ public class PackageMojo extends AbstractMojo {
 			if( splitPath.toFile().isDirectory() ) {
 				final Path wsrArchive = targetPath.resolve( finalName + ".wowebserverresources.tar.gz" );
 				getLog().info( "Creating " + wsrArchive.getFileName() );
-				ArchiveUtil.createTarGz( splitPath, wsrArchive );
+				Util.createTarGz( splitPath, wsrArchive );
 				projectHelper.attachArtifact( mavenProject, "tar.gz", "wowebserverresources", wsrArchive.toFile() );
 			}
 		}
