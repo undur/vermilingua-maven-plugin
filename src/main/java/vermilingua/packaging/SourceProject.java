@@ -11,12 +11,12 @@ import org.apache.maven.project.MavenProject;
  * Source for packaging of a WO build (Application or framework)
  *
  * @param type The project's type (Application vs. framework)
- * @param name The project's name // CHECKME: Note that if we eventually want to support projects without build.properties, mavenProject().getArtifactId() might be an acceptable replacement value here
+ * @param name The project's name
  * @param version The project's version, currently as specified in the pom file.
  * @param woresourcesPath Path to folder containing WO resources
  * @param componentsPath Path to folder containing component templates and API files
- * @param webServerResourcesPath Path to folder containing WebServerResources
- * @param principalJarPath Path to the main jar file from the inital compilation/packaging of the project java sources. Including this in "SourceProject" might look strange, but is actually intentional since SourceProject represents a WO project _after_ maven's jar plugin has done it's job
+ * @param webServerResourcesPath Path to folder containing webserver resources
+ * @param principalJarPath Path to the main jar file from the initial compilation/packaging of the project java sources. Including this in "SourceProject" might look strange, but is actually intentional since SourceProject represents a WO project _after_ maven's jar plugin has done it's job
  * @param principalClassName Fully qualified name of the principal class (Application/main class for application, principalClass for frameworks)
  * @param dependencies The project's list of dependencies
  * @param buildProperties The project's build.properties
@@ -96,6 +96,8 @@ public record SourceProject(
 
 		/**
 		 * @return Name of the WebObjects project. From build.properties, if specified, otherwise the maven project's name
+		 *
+		 * CHECKME: mavenProject().getArtifactId() might be more appropriate than the project's name? // Hugi 2026-04-20
 		 */
 		private static String nameFromProject( final BuildProperties buildProperties, final MavenProject mavenProject ) {
 			final String buildPropertiesProjectName = buildProperties.projectName();
