@@ -68,7 +68,11 @@ public record SourceProject(
 
 		final Path principalJarPath = mavenProject.getArtifact().getFile().toPath();
 		final String principalClassName = buildProperties.principalClass();
-		final Collection<Dependency> dependencies = ProjectUtil.dependenciesFromMavenProject( mavenProject );
+		final Collection<Dependency> dependencies = mavenProject
+				.getArtifacts()
+				.stream()
+				.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
+				.toList();
 
 		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
 		ProjectUtil.validateBuildProperties( type, buildProperties );
@@ -89,17 +93,6 @@ public record SourceProject(
 	 * Container class for some utility methods to obtain data about the project
 	 */
 	private static class ProjectUtil {
-
-		/**
-		 * @return Dependencies of the given project
-		 */
-		private static Collection<Dependency> dependenciesFromMavenProject( final MavenProject mavenProject ) {
-			return mavenProject
-					.getArtifacts()
-					.stream()
-					.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
-					.toList();
-		}
 
 		/**
 		 * @return Name of the WebObjects project. From build.properties, if specified, otherwise the maven project's name
