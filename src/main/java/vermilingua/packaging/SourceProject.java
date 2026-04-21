@@ -2,7 +2,6 @@ package vermilingua.packaging;
 
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
@@ -74,10 +73,22 @@ public record SourceProject(
 				.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
 				.toList();
 
-		// FIXME: We should allow the construction of a broken SourceProject, for proper validation. Breaking validation happens at build time // Hugi 2025-10-30
-		ProjectUtil.validateBuildProperties( type, buildProperties );
+		final SourceProject sp = new SourceProject( type, name, version, woresourcesPath, componentsPath, webServerResourcesPath, principalJarPath, principalClassName, dependencies, buildProperties );
 
-		return new SourceProject( type, name, version, woresourcesPath, componentsPath, webServerResourcesPath, principalJarPath, principalClassName, dependencies, buildProperties );
+		sp.validate();
+
+		return sp;
+	}
+
+	/**
+	 * Validates the project
+	 *
+	 * CHECKME: Allow full validation of a broken SourceProject, showing all problems at once. Failing on validation should only happen at build time // Hugi 2025-10-30
+	 */
+	public void validate() {
+		if( type == Type.Application && principalClassName == null ) {
+			throw new IllegalArgumentException( "'principalClass' must be declared in build.properties when building an application" );
+		}
 	}
 
 	/**
@@ -119,29 +130,6 @@ public record SourceProject(
 				case "woapplication" -> Type.Application;
 				case "woframework" -> Type.Framework;
 				default -> throw new IllegalArgumentException( "Unknown packaging '%s'. I only know 'woapplication' and 'woframework'".formatted( packaging ) );
-			};
-		}
-
-		/**
-		 * Ensure all required properties are present
-		 *
-		 * @throws IllegalArgumentException If a required build property is not present
-		 */
-		private static void validateBuildProperties( final Type type, final BuildProperties buildProperties ) {
-			for( final String propertyName : requiredBuildProperties( type ) ) {
-				if( !buildProperties.containsKey( propertyName ) ) {
-					throw new IllegalArgumentException( String.format( "%s must be present in build.properties", propertyName ) );
-				}
-			}
-		}
-
-		/**
-		 * @return List of properties that must be present in build.properties for a build to succeed
-		 */
-		private static List<String> requiredBuildProperties( final Type type ) {
-			return switch( type ) {
-				case Application -> List.of( "principalClass" );
-				case Framework -> List.of();
 			};
 		}
 	}
