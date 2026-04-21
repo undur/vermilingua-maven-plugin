@@ -32,7 +32,7 @@ public class PackageWOApplication {
 		final WOA woa = WOA.create( targetPath, woaName );
 
 		// The eventual name of the app's JAR file
-		final String appJarFilename = sourceProject.targetJarNameForWOA();
+		final String appJarFilename = sourceProject.name().toLowerCase() + ".jar";
 
 		// Copy the app jar to the woa
 		Util.copyFile( sourceProject.principalJarPath(), woa.javaPath().resolve( appJarFilename ), StandardCopyOption.REPLACE_EXISTING );
@@ -95,7 +95,7 @@ public class PackageWOApplication {
 		Util.writeStringToPath( classpathString, woa.woaPath().resolve( "classpath.txt" ) );
 
 		// Write Info.plist
-		final String infoPlistString = InfoPlist.make( sourceProject );
+		final String infoPlistString = InfoPlist.make( sourceProject, appJarFilename );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
 
 		// Write executable launch script

@@ -90,15 +90,6 @@ public record SourceProject(
 	}
 
 	/**
-	 * @return The name of the JAR file that will contain the compiled application/framework sources (which was built by maven's own package goal before we started the WOA assembly)
-	 *
-	 * CHECKME: Really belongs in packaging, not the source project // Hugi 2026-04-19
-	 */
-	public String targetJarNameForWOA() {
-		return name().toLowerCase() + ".jar";
-	}
-
-	/**
 	 * Container class for some utility methods to obtain data about the project
 	 */
 	private static class ProjectUtil {
