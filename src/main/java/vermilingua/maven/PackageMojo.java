@@ -27,6 +27,8 @@ import vermilingua.packaging.Util;
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class PackageMojo extends AbstractMojo {
 
+	private static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
+
 	/**
 	 * The maven project. This gets injected by Maven during the build
 	 */
@@ -36,7 +38,7 @@ public class PackageMojo extends AbstractMojo {
 	/**
 	 * Allows the user to specify an alternative name for the source project's WO bundle resources folder (probably "resources", since that's the old wolifecycle default)
 	 */
-	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME)
+	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = PackageMojo.DEFAULT_WORESOURCES_FOLDER_NAME)
 	String woresourcesFolderName;
 
 	/**
@@ -62,8 +64,8 @@ public class PackageMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		if( !woresourcesFolderName.equals( SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) ) {
-			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, SourceProject.DEFAULT_WORESOURCES_FOLDER_NAME ) );
+		if( !woresourcesFolderName.equals( DEFAULT_WORESOURCES_FOLDER_NAME ) ) {
+			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, DEFAULT_WORESOURCES_FOLDER_NAME ) );
 		}
 
 		// Environment used for loading additional environment specific build.properties files

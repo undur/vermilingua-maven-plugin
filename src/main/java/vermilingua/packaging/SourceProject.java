@@ -46,8 +46,6 @@ public record SourceProject(
 		}
 	}
 
-	public static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
-
 	/**
 	 * Constructs a new SourceProject from the given project data
 	 */
