@@ -21,6 +21,7 @@ import vermilingua.packaging.BuildProperties;
 import vermilingua.packaging.PackageWOApplication;
 import vermilingua.packaging.PackageWOApplication.WOA;
 import vermilingua.packaging.PackageWOFramework;
+import vermilingua.packaging.ProjectUtil;
 import vermilingua.packaging.SourceProject;
 import vermilingua.packaging.Util;
 
@@ -76,7 +77,7 @@ public class PackageMojo extends AbstractMojo {
 
 		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, mavenProperties );
 
-		final SourceProject sourceProject = SourceProject.forMavenProject( mavenProject, buildProperties, woresourcesFolderName );
+		final SourceProject sourceProject = ProjectUtil.sourceProjectFromMavenProject( mavenProject, buildProperties, woresourcesFolderName );
 
 		switch( sourceProject.type() ) {
 			case Application -> {
