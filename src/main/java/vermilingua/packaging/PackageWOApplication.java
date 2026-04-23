@@ -165,12 +165,11 @@ public class PackageWOApplication {
 			Objects.requireNonNull( containingDirectory );
 			Objects.requireNonNull( applicationName );
 			final Path woaPath = containingDirectory.resolve( applicationName + ".woa" );
-			return new WOA( woaPath, applicationName );
+			return new WOA( woaPath );
 		}
 
-		private WOA( final Path woaPath, final String applicationName ) {
+		private WOA( final Path woaPath ) {
 			Objects.requireNonNull( woaPath );
-			Objects.requireNonNull( applicationName );
 			_woaPath = Util.folder( woaPath );
 		}
 
