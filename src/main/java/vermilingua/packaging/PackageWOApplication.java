@@ -37,11 +37,11 @@ public class PackageWOApplication {
 		// Copy the app jar to the woa
 		Util.copyFile( sourceProject.principalJarPath(), woa.javaPath().resolve( appJarFilename ), StandardCopyOption.REPLACE_EXISTING );
 
-		// Start working on that list of jars to add to the classpath
-		final List<String> classpathStrings = new ArrayList<>();
+		// Start collection the list of jars for the classpath
+		final List<String> classpath = new ArrayList<>();
 
-		classpathStrings.add( "APPROOT/Resources/Java/" ); // FIXME: WOLifecycle includes the Java folder itself on the classpath. Allows us to drop class files in there, but I think we should probably just… don't // Hugi 2025-03-28
-		classpathStrings.add( "APPROOT/Resources/Java/" + appJarFilename );
+		classpath.add( "APPROOT/Resources/Java/" ); // We include the Java folder on the classpath because WOLifecycle does. Allows the user to drop class files in there, but I don't think anyone ever does. Remove?
+		classpath.add( "APPROOT/Resources/Java/" + appJarFilename );
 
 		// Copy the app's resolved dependencies (direct and transient) to the WOA
 		for( final Dependency dependency : sourceProject.dependencies() ) {
@@ -51,7 +51,7 @@ public class PackageWOApplication {
 			Util.copyFile( artifactPathInMavenRepository, artifactPathInWOA, StandardCopyOption.REPLACE_EXISTING );
 
 			// Add the jar to the classpath
-			classpathStrings.add( "APPROOT/" + woa.contentsPath().relativize( artifactPathInWOA ) );
+			classpath.add( "APPROOT/" + woa.contentsPath().relativize( artifactPathInWOA ) );
 		}
 
 		// Copy WebServerResources from framework jars to the WOA
@@ -62,6 +62,7 @@ public class PackageWOApplication {
 			}
 		}
 
+		// Copy components
 		if( Files.exists( sourceProject.componentsPath() ) ) {
 			Util.copyContentsOfDirectoryToDirectoryFlatten( sourceProject.componentsPath(), woa.woresourcesPath(), List.of( "wo" ), List.of( "lproj" ) );
 		}
@@ -69,6 +70,7 @@ public class PackageWOApplication {
 			logger.warn( String.format( "Not copying components. %s does not exist", sourceProject.componentsPath() ) );
 		}
 
+		// Copy woresources
 		if( Files.exists( sourceProject.woresourcesPath() ) ) {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.woresourcesPath(), woa.woresourcesPath() );
 		}
@@ -76,6 +78,7 @@ public class PackageWOApplication {
 			logger.warn( String.format( "Not copying woresources. %s does not exist", sourceProject.woresourcesPath() ) );
 		}
 
+		// Copy webserverresources
 		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
 			Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
 		}
@@ -91,7 +94,7 @@ public class PackageWOApplication {
 		Util.writeStringToPath( configString, woa.woaPath().resolve( "config.txt" ) );
 
 		// Write classpath.txt
-		final String classpathString = String.join( "\n", classpathStrings ) + "\n";
+		final String classpathString = String.join( "\n", classpath ) + "\n";
 		Util.writeStringToPath( classpathString, woa.woaPath().resolve( "classpath.txt" ) );
 
 		// Write Info.plist
