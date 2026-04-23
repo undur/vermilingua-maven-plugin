@@ -134,9 +134,9 @@ public class PackageMojo extends AbstractMojo {
 	 * Once the build is completed, copies the folders:
 	 *
 	 *  - App.woa/WebServerResources
-	 *  - App.woa/Frameworks
+	 *  - App.woa/Contents/Frameworks
 	 *
-	 *  from the build product and places it in a new directory (Alongside the woa)
+	 *  from the build product into a new directory created adjacent to the WOA
 	 *
 	 *  - App.woa.webserverresources
 	 */
