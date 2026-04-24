@@ -27,30 +27,25 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 <plugin>
   <groupId>is.rebbi</groupId>
   <artifactId>vermilingua-maven-plugin</artifactId>
-  <version>1.1.3</version>
+  <version>1.1.4</version>
   <extensions>true</extensions>
-  <!-- Configuration only if you're using the old 'resources' name for the resources folder
-  <configuration>
-    <woresourcesFolderName>resources</woresourcesFolderName>
-  </configuration>
-  -->
 </plugin>
 ```
 
 ### Configuration
 
-There are several optional parameters.
+There are several optional configuration parameters.
 
-* `woresourcesFolderName`: provided for compatibility with
-  `wolifecycle-maven-plugin`. Without it, `vermilingua` defaults to
-  `src/main/woresources` for WebObjects bundle resources, rather than
-  `src/main/resources`, allowing that folder to serve it's designated
-  standard Maven purpose, which is to keep Java classpath resources.
-* `performSplit`: when set `true`, `vermilingua` will generate an
-  additional "WebServerResources" bundle for "split deployments".  
-* `createArchives`: when set `true`, `vermilingua` will generate
-  compressed archives of the build products (application bundle, and
-  "WebServerResources" bundle if created) using `tar` and `gzip`.
+* **woresourcesPath**  
+  Project-relative path to the WebObjects bundle resources folder. Defaults to `src/main/woresources`.
+* **componentsPath**  
+  Project-relative path to the components folder. Defaults to `src/main/components`.
+* **webserverResourcesPath**  
+  Project-relative path to the webserver resources folder. Defaults to `src/main/webserver-resources`.
+* **performSplit**  
+  When set `true`, `vermilingua` will generate an additional "WebServerResources" bundle for "split deployments".
+* **createArchives**  
+  When set `true`, `vermilingua` will generate compressed archives of the build products (application bundle, and "WebServerResources" bundle if created) using `tar` and `gzip`.
 
 ## Differences from `wolifecycle-maven-plugin`
 
@@ -91,3 +86,26 @@ Other differences include:
   removed from the launch script.
 * No `MacOSXServerClassPath.txt` is generated (it was identical to
   `MacOSClassPath.txt` and only used by the Rhapsody platform path).
+  
+## Building a "Fluffy Bunny" project
+
+While we encourage everyone to use the standard maven project layout, `vermilingua` allows you to build "Fluffy Bunny" layout projects (sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`). To do this, just configure the plugin with the location of your resource directories and and set Maven's `<sourceDirectory>` to `Sources`:
+
+```xml
+<build>
+  <sourceDirectory>Sources</sourceDirectory>
+  <plugins>
+    <plugin>
+      <groupId>is.rebbi</groupId>
+      <artifactId>vermilingua-maven-plugin</artifactId>
+      <version>1.1.4</version>
+      <extensions>true</extensions>
+      <configuration>
+        <woresourcesPath>Resources</woresourcesPath>
+        <componentsPath>Components</componentsPath>
+        <webserverResourcesPath>WebServerResources</webserverResourcesPath>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+```

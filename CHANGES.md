@@ -1,8 +1,22 @@
 # Changes
 
-## 1.1.4-SNAPSHOT
+## 1.1.4
 
-Empty directories from source folders are no longer reproduced in the built bundle. Directory structure is recreated on demand when files are copied, so only directories that actually contain content end up in the output.
+### Configurable paths for WebObjects resource folders
+
+The locations of the three WebObjects resource folders (`woresources`, `components`, and `webserver-resources`) are now individually configurable via three new plugin parameters: `woresourcesPath`, `componentsPath`, and `webserverResourcesPath`. Paths are resolved relative to the project's base directory, and the previous defaults (`src/main/woresources`, `src/main/components`, `src/main/webserver-resources`) are unchanged.
+
+This makes it possible to build projects using WebObjects' original "Fluffy Bunny" layout (sources in `Sources/`, resources at the project root). See the README for a full example.
+
+The `woresourcesFolderName` parameter has been removed. If it is set in an existing POM, the build will fail with a message pointing at the replacement.
+
+### Empty directories from source folders are no longer reproduced in the built bundle
+
+Directory structure is recreated on demand when files are copied, so only directories that actually contain content end up in the output.
+
+### Internal
+
+Substantial refactoring of the build process to reduce coupling between the packaging logic and Maven's internals. This paves the way for potentially driving the build from other systems in the future, and has no user-facing effect.
 
 ## 1.1.3
 
