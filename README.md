@@ -68,28 +68,26 @@ Other differences include:
   made from the same project, but compiled with different
   `finalName`s, will look exactly the same.
 * The launch script no longer requires or reads the `NEXT_ROOT`
-  environment variable.
-* The launch script no longer passes `-DWORootDirectory` or
-  `-DWOLocalRootDirectory` to the JVM, as applications are now
+  environment variable and thus no longer passes `-DWORootDirectory`
+  or `-DWOLocalRootDirectory` to the JVM, since applications are now
   self-contained bundles with no dependency on a system-wide
   WebObjects installation.
 * The launch script no longer sets default heap sizes (`-Xms32m`,
   `-Xmx64m`, `-XX:NewSize=2m`) on macOS, deferring to the JVM's
   built-in ergonomics which select appropriate defaults based on
-  available system memory.
-* No Windows launch script (`.cmd`) or Windows-specific files
-  (`CLSSPATH.TXT`, `SUBPATHS.TXT`, `Contents/Windows/`) are generated.
-  If deploying on Windows, use the standard launch script via WSL or Git Bash.
-* The `Contents/MacOS/` directory no longer contains a redundant copy
-  of the launch script.
-* Support for the Rhapsody and classic Mac OS platforms has been
-  removed from the launch script.
-* No `MacOSXServerClassPath.txt` is generated (it was identical to
-  `MacOSClassPath.txt` and only used by the Rhapsody platform path).
+  available system memory. Or memory settings specified by yourself.
+* No platform-specific files are generated and custom logic for legacy
+  platforms (Rhapsody, classic Mac OS, Windows) has been removed from
+  the launch script. This means no Windows launch script (`.cmd`) or
+  Windows-specific files (`CLSSPATH.TXT`, `SUBPATHS.TXT`,
+  `Contents/Windows/`), no `MacOSXServerClassPath.txt`, and no
+  redundant copy of the launch script in `Contents/MacOS/`. If
+  deploying on Windows, use the standard launch script via WSL or
+  Git Bash.
   
 ## Building a "Fluffy Bunny" project
 
-While we encourage everyone to use the standard maven project layout, `vermilingua` allows you to build "Fluffy Bunny" layout projects (sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`). To do this, just configure the plugin with the location of your resource directories and and set Maven's `<sourceDirectory>` to `Sources`:
+While we encourage everyone to use the standard maven project layout, `vermilingua` allows you to build "Fluffy Bunny" layout projects with sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`. To do this, just configure the plugin with the location of your resource directories and and set Maven's `<sourceDirectory>` to `Sources`:
 
 ```xml
 <build>
