@@ -11,7 +11,7 @@ import java.util.Collection;
  * @param version The project's version, currently as specified in the pom file.
  * @param woresourcesPath Path to folder containing WO resources
  * @param componentsPath Path to folder containing component templates and API files
- * @param webServerResourcesPath Path to folder containing webserver resources
+ * @param webserverResourcesPath Path to folder containing webserver resources
  * @param principalJarPath Path to the main jar file from the initial compilation/packaging of the project java sources. Including this in "SourceProject" might look strange, but is actually intentional since SourceProject represents a WO project _after_ maven's jar plugin has done it's job
  * @param principalClassName Fully qualified name of the principal class (Application/main class for application, principalClass for frameworks)
  * @param dependencies The project's list of dependencies
@@ -24,7 +24,7 @@ public record SourceProject(
 		String version,
 		Path woresourcesPath,
 		Path componentsPath,
-		Path webServerResourcesPath,
+		Path webserverResourcesPath,
 		Path principalJarPath,
 		String principalClassName,
 		Collection<Dependency> dependencies,

@@ -30,7 +30,7 @@ public class PackageWOFramework {
 			}
 
 			Util.copyContentsOfFolderAtPathToFolderInJar( stagingDir, "Resources", sourceProject.principalJarPath() );
-			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webServerResourcesPath(), "WebServerResources", sourceProject.principalJarPath() );
+			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webserverResourcesPath(), "WebServerResources", sourceProject.principalJarPath() );
 
 			// FIXME: This is currently only here to make Info.plist generation happy. Will get removed once Info.plist gets The Treatment // Hugi 2026-04-21
 			final String appJarFilename = sourceProject.name().toLowerCase() + ".jar";

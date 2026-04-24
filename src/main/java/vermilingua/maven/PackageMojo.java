@@ -28,7 +28,11 @@ import vermilingua.packaging.Util;
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class PackageMojo extends AbstractMojo {
 
-	private static final String DEFAULT_WORESOURCES_FOLDER_NAME = "woresources";
+	private static final String DEFAULT_WORESOURCES_PATH = "src/main/woresources";
+
+	private static final String DEFAULT_COMPONENTS_PATH = "src/main/components";
+
+	private static final String DEFAULT_WEB_SERVER_RESOURCES_PATH = "src/main/webserver-resources";
 
 	/**
 	 * The maven project. This gets injected by Maven during the build
@@ -37,10 +41,29 @@ public class PackageMojo extends AbstractMojo {
 	MavenProject mavenProject;
 
 	/**
-	 * Allows the user to specify an alternative name for the source project's WO bundle resources folder (probably "resources", since that's the old wolifecycle default)
+	 * Old method of declaring the  woresources folder name
 	 */
-	@Parameter(property = "woresourcesFolderName", required = false, defaultValue = PackageMojo.DEFAULT_WORESOURCES_FOLDER_NAME)
+	@Parameter(property = "woresourcesFolderName", required = false)
+	@Deprecated
 	String woresourcesFolderName;
+
+	/**
+	 * Project-relative path to woresources folder
+	 */
+	@Parameter(property = "woresourcesPath", required = false, defaultValue = DEFAULT_WORESOURCES_PATH)
+	String woresourcesPath;
+
+	/**
+	 * Project-relative path to components folder
+	 */
+	@Parameter(property = "componentsPath", required = false, defaultValue = DEFAULT_COMPONENTS_PATH)
+	String componentsPath;
+
+	/**
+	 * Project-relative path to webserver-resources folder
+	 */
+	@Parameter(property = "webserverResourcesPath", required = false, defaultValue = DEFAULT_WEB_SERVER_RESOURCES_PATH)
+	String webserverResourcesPath;
 
 	/**
 	 * Indicates that we want to extract webserver resources (for both the app and it's included frameworks)
@@ -65,8 +88,9 @@ public class PackageMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
-		if( !woresourcesFolderName.equals( DEFAULT_WORESOURCES_FOLDER_NAME ) ) {
-			getLog().warn( String.format( "Using non-standard woresources folder name '%s'. Using the standard name '%s' is recommended", woresourcesFolderName, DEFAULT_WORESOURCES_FOLDER_NAME ) );
+		// FIXME: Delete soon, probably not many people using this // Hugi 2026-04-24
+		if( woresourcesFolderName != null ) {
+			throw new MojoFailureException( "The 'woresourcesFolderName' maven plugin configuration property is deprecated. Use 'woresourcesPath' instead" );
 		}
 
 		// Environment used for loading additional environment specific build.properties files
@@ -77,7 +101,12 @@ public class PackageMojo extends AbstractMojo {
 
 		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, mavenProperties );
 
-		final SourceProject sourceProject = ProjectUtil.sourceProjectFromMavenProject( mavenProject, buildProperties, woresourcesFolderName );
+		final SourceProject sourceProject = ProjectUtil.sourceProjectFromMavenProject(
+				mavenProject,
+				buildProperties,
+				woresourcesPath,
+				componentsPath,
+				webserverResourcesPath );
 
 		switch( sourceProject.type() ) {
 			case Application -> {
@@ -145,7 +174,7 @@ public class PackageMojo extends AbstractMojo {
 		final Path splitWebServerResourcesPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "WebServerResources" ) );
 		final Path splitFrameworksPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "Frameworks" ) );
 
-		Util.copyContentsOfDirectoryToDirectory( woa.webServerResourcesPath(), splitWebServerResourcesPath );
+		Util.copyContentsOfDirectoryToDirectory( woa.webserverResourcesPath(), splitWebServerResourcesPath );
 		Util.copyContentsOfDirectoryToDirectory( woa.frameworksPath(), splitFrameworksPath );
 	}
 }

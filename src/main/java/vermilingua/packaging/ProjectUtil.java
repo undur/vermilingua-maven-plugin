@@ -16,19 +16,27 @@ public class ProjectUtil {
 	/**
 	 * Constructs a new SourceProject from the given project data
 	 */
-	public static SourceProject sourceProjectFromMavenProject( final MavenProject mavenProject, final BuildProperties buildProperties, final String woresourcesFolderName ) {
+	public static SourceProject sourceProjectFromMavenProject(
+			final MavenProject mavenProject,
+			final BuildProperties buildProperties,
+			final String woresourcesPathString,
+			final String componentsPathString,
+			final String webserverResourcesPathString ) {
+
 		Objects.requireNonNull( mavenProject );
-		Objects.requireNonNull( woresourcesFolderName );
 		Objects.requireNonNull( buildProperties );
+		Objects.requireNonNull( woresourcesPathString );
+		Objects.requireNonNull( componentsPathString );
+		Objects.requireNonNull( webserverResourcesPathString );
 
 		final SourceProject.Type type = ProjectUtil.type( mavenProject );
 		final String name = ProjectUtil.nameFromProject( buildProperties, mavenProject );
 		final String version = mavenProject.getVersion();
 
 		final Path projectBasePath = mavenProject.getBasedir().toPath();
-		final Path woresourcesPath = projectBasePath.resolve( "src/main/" + woresourcesFolderName );
-		final Path componentsPath = projectBasePath.resolve( "src/main/components" );
-		final Path webServerResourcesPath = projectBasePath.resolve( "src/main/webserver-resources" );
+		final Path woresourcesPath = projectBasePath.resolve( woresourcesPathString );
+		final Path componentsPath = projectBasePath.resolve( componentsPathString );
+		final Path webserverResourcesPath = projectBasePath.resolve( webserverResourcesPathString );
 
 		final Path principalJarPath = mavenProject.getArtifact().getFile().toPath();
 		final String principalClassName = buildProperties.principalClass();
@@ -38,7 +46,7 @@ public class ProjectUtil {
 				.map( a -> new Dependency( a.getGroupId(), a.getArtifactId(), a.getVersion(), a.getFile() ) )
 				.toList();
 
-		final SourceProject sp = new SourceProject( type, name, version, woresourcesPath, componentsPath, webServerResourcesPath, principalJarPath, principalClassName, dependencies, buildProperties );
+		final SourceProject sp = new SourceProject( type, name, version, woresourcesPath, componentsPath, webserverResourcesPath, principalJarPath, principalClassName, dependencies, buildProperties );
 
 		sp.validate();
 

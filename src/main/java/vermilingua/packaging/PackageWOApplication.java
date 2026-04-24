@@ -79,11 +79,11 @@ public class PackageWOApplication {
 		}
 
 		// Copy webserverresources
-		if( Files.exists( sourceProject.webServerResourcesPath() ) ) {
-			Util.copyContentsOfDirectoryToDirectory( sourceProject.webServerResourcesPath(), woa.webServerResourcesPath() );
+		if( Files.exists( sourceProject.webserverResourcesPath() ) ) {
+			Util.copyContentsOfDirectoryToDirectory( sourceProject.webserverResourcesPath(), woa.webserverResourcesPath() );
 		}
 		else {
-			logger.warn( String.format( "Not copying WebServerResources. %s does not exist", sourceProject.webServerResourcesPath() ) );
+			logger.warn( String.format( "Not copying WebServerResources. %s does not exist", sourceProject.webserverResourcesPath() ) );
 		}
 
 		// Write config.txt
@@ -204,7 +204,7 @@ public class PackageWOApplication {
 		/**
 		 * @return Destination path for WO's webserver resources
 		 */
-		public Path webServerResourcesPath() {
+		public Path webserverResourcesPath() {
 			return Util.folder( contentsPath().resolve( "WebServerResources" ) );
 		}
 
