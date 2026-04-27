@@ -1,22 +1,14 @@
 ![](https://github.com/undur/vermilingua-maven-plugin/workflows/build/badge.svg)
-<img align="right" src="https://www.hugi.io/github/img/antkiller2.png" width="60">
 
-## What is This? A Center for Ants? 
+## 🦡 Vermilingua
 
-No, it's a pure Maven plugin for building
-[WebObjects](https://en.wikipedia.org/wiki/WebObjects) and [Project
-Wonder](https://github.com/wocommunity/wonder) applications and
+Vermilingua is a Maven plugin for building WebObjects applications and
 frameworks.
 
-"Pure Maven" means it does not use the [WOProject Ant Tasks](https://wiki.wocommunity.org/display/WOL/WOProject-Ant)
-which means it runs faster and makes it easier to improve both the plugin and the
-build process.  It's close to a drop-in alternative to the [WOLifecycle Maven
-Plugin](https://github.com/wocommunity/wolifecycle-maven-plugin),
-although with some differences (listed below).
+It's close to a drop-in alternative to the [WOLifecycle Maven
+Plugin](https://github.com/wocommunity/wolifecycle-maven-plugin) (with some differences listed below), but unlike `wolifecycle` it's written from scratch instead of being a wrapper around the old [WOProject Ant Tasks](https://wiki.wocommunity.org/display/WOL/WOProject-Ant). This means it performs faster builds and it's easier to improve the plugin and the build process.
 
-`vermilingua` has seen production use for years in multiple
-applications and frameworks (including a fork of Wonder) and can
-be considered stable and safe to use.
+`vermilingua` has been used for years to build dozens of applications and frameworks (including a fork of Wonder) and is under active development.
 
 ## Usage
 
@@ -32,9 +24,7 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 </plugin>
 ```
 
-### Configuration
-
-There are several optional configuration parameters.
+### Optional `<configuration>` parameters
 
 * **woresourcesPath**  
   Project-relative path to the WebObjects bundle resources folder. Defaults to `src/main/woresources`.
@@ -49,17 +39,20 @@ There are several optional configuration parameters.
 
 ## Differences from `wolifecycle-maven-plugin`
 
-`vermilingua` does _not_ support:
+### Vermilingua does not support
 
 * Building of `.war` files (servlet deployment).
-* Building of `.framework` bundles. We only build Maven-style JAR frameworks.
-* `flattenComponents` configuration parameter. Any folder structure in
-  `src/main/components` is flattened, as WebObjects can't locate components in sub-folders at runtime anyway.
-* `flattenResources` configuration parameter. Unsupported since it's use case is unclear.
+* Building of old style `.framework` bundles. We only build Maven-style JAR frameworks.
+* `flattenResources` configuration parameter.
+* `.patternset` files. The build relies entirely on using a standard folder structure.
 
-Other differences include:
+### Other differences
 
-* `.patternset` files from the `woproject` folder aren't used at all. Instead, the build relies on the source project using the standard folder structure.
+* `flattenComponents` is not required. Any folder structure in `src/main/components` is flattened since WO can't locate components in subfolders when deployed.
+* The launch script no longer requires or reads the `NEXT_ROOT`
+  environment variable and thus no longer passes the derived `-DWORootDirectory`
+  or `-DWOLocalRootDirectory` parameters to the JVM. Since applications are now
+  self-contained bundles, there's no need for a system-wide WebObjects installation.
 * Default location for WebObjects bundle resources is
   `src/main/woresources` instead of `src/main/resources` (which is
   now reserved for Java classpath resources As God Intended).
@@ -67,27 +60,49 @@ Other differences include:
   will only affect the name of the WOA folder. The insides of two WOAs
   made from the same project, but compiled with different
   `finalName`s, will look exactly the same.
-* The launch script no longer requires or reads the `NEXT_ROOT`
-  environment variable and thus no longer passes `-DWORootDirectory`
-  or `-DWOLocalRootDirectory` to the JVM, since applications are now
-  self-contained bundles with no dependency on a system-wide
-  WebObjects installation.
-* The launch script no longer sets default heap sizes (`-Xms32m`,
-  `-Xmx64m`, `-XX:NewSize=2m`) on macOS, deferring to the JVM's
-  built-in ergonomics which select appropriate defaults based on
-  available system memory. Or memory settings specified by yourself.
-* No platform-specific files are generated and custom logic for legacy
-  platforms (Rhapsody, classic Mac OS, Windows) has been removed from
-  the launch script. This means no Windows launch script (`.cmd`) or
-  Windows-specific files (`CLSSPATH.TXT`, `SUBPATHS.TXT`,
-  `Contents/Windows/`), no `MacOSXServerClassPath.txt`, and no
-  redundant copy of the launch script in `Contents/MacOS/`. If
-  deploying on Windows, use the standard launch script via WSL or
-  Git Bash.
-  
+* The launch script no longer provides any specific provisions for running `jdb`. If you _need_ to run your application using `jdb` you can use `launch.java=jdb`.
+* `jvmOptions` includes by default the `--add-opens` clauses required to run WO applications on modern JDKs.
+* Split webserver-resources archives and compressed artifacts are not generated by default. If you need those, check the `performSplit` and `createArchives` configuration parameters.
+
+### Simplified bundle structure
+
+Vermilingua builds simpler bundles than `wolifecycle`. Platform-specific logic and files have been eliminated and the built bundle is simply:
+
+```
+📁 MyApp.woa
+  📄 MyApp
+  📄 config.txt
+  📄 classpath.txt
+  📁 Contents
+    📄 Info.plist
+    📁 WebServerResources
+    📁 Frameworks
+      📁 SomeFramework.framework
+        📁 WebServerResources
+    📁 Resources
+      📁 Java
+        📄 myapp.jar
+        📄 ... [other jars/dependencies]
+```
+
+If deploying on Windows, you can use the standard launch script via WSL or Git Bash.
+
+### Modifying launch configuration at build- or runtime
+
+`config.txt` contains the configuration parameters `java` and `jvmOptions`. By default, they contain the same values `wolifecycle` used, but can also be set:
+
+1. In the project's `build.properties` using `launch.java=something`
+2. At build time using a property: `mvn package -Dlaunch.java=something`
+3. At app launch time using a property: `./MyApp -launch.java=something`
+
+This is nice when:
+
+* you need to use a different java installation/version.
+* you need to add JVM arguments, in which case you use `launch.jvmOptions`.
+
 ## Building a "Fluffy Bunny" project
 
-While we encourage everyone to use the standard maven project layout, `vermilingua` allows you to build "Fluffy Bunny" layout projects with sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`. To do this, just configure the plugin with the location of your resource directories and and set Maven's `<sourceDirectory>` to `Sources`:
+While we prefer and encourage use of the standard maven project layout, `vermilingua` can build "Fluffy Bunny" layout projects with sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`. To do this, configure the plugin with the location of your resource directories and and set Maven's `<sourceDirectory>` to `Sources`:
 
 ```xml
 <build>
