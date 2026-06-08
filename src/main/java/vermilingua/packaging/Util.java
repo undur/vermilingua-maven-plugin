@@ -31,12 +31,8 @@ import java.util.stream.Stream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Util {
-
-	private static final Logger logger = LoggerFactory.getLogger( Util.class );
 
 	/**
 	 * Copy the file at [sourcePath] to a new file specified by [destinationPath]
@@ -70,20 +66,13 @@ public class Util {
 						final Path relativePath = sourceDirectory.relativize( sourcePath );
 						final Path targetPath = destinationDirectory.resolve( relativePath );
 
-						// If the target file exists, we don't copy and log a warning.
-						// FIXME: We should change this to an error condition, it's just asking for trouble // Hugi 2025-09-27
-						if( Files.exists( targetPath ) ) {
-							logger.warn( "File {} already exists at {}, not copying", sourcePath, targetPath );
+						try {
+							Files.createDirectories( targetPath.getParent() );
 						}
-						else {
-							try {
-								Files.createDirectories( targetPath.getParent() );
-							}
-							catch( final IOException e ) {
-								throw new UncheckedIOException( e );
-							}
-							copyFile( sourcePath, targetPath );
+						catch( final IOException e ) {
+							throw new UncheckedIOException( e );
 						}
+						copyFile( sourcePath, targetPath, StandardCopyOption.REPLACE_EXISTING );
 					} );
 		}
 		catch( final IOException e ) {
