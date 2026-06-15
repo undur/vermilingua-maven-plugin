@@ -1,5 +1,15 @@
 # Changes
 
+## 1.1.5
+
+### Resources are now overwritten when building over a previous build
+
+When building without `clean`, files in an already-existing `.woa` are now overwritten instead of being skipped. Previously, existing destination files were left in place (and logged with a warning per file), which meant a non-clean rebuild could leave stale resources in the bundle — and produced a wall of warnings for projects with many resources. The build now reflects the current source on every run.
+
+### Internal
+
+Dependency and build-plugin updates (maven-core, slf4j, junit, surefire/failsafe).
+
 ## 1.1.4
 
 ### Configurable paths for WebObjects resource folders

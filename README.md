@@ -19,7 +19,7 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 <plugin>
   <groupId>is.rebbi</groupId>
   <artifactId>vermilingua-maven-plugin</artifactId>
-  <version>1.1.4</version>
+  <version>1.1.5</version>
   <extensions>true</extensions>
 </plugin>
 ```
@@ -111,7 +111,7 @@ While we prefer and encourage use of the standard maven project layout, `vermili
     <plugin>
       <groupId>is.rebbi</groupId>
       <artifactId>vermilingua-maven-plugin</artifactId>
-      <version>1.1.4</version>
+      <version>1.1.5</version>
       <extensions>true</extensions>
       <configuration>
         <woresourcesPath>Resources</woresourcesPath>
