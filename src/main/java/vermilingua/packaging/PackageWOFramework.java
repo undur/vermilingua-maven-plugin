@@ -32,10 +32,7 @@ public class PackageWOFramework {
 			Util.copyContentsOfFolderAtPathToFolderInJar( stagingDir, "Resources", sourceProject.principalJarPath() );
 			Util.copyContentsOfFolderAtPathToFolderInJar( sourceProject.webserverResourcesPath(), "WebServerResources", sourceProject.principalJarPath() );
 
-			// FIXME: This is currently only here to make Info.plist generation happy. Will get removed once Info.plist gets The Treatment // Hugi 2026-04-21
-			final String appJarFilename = sourceProject.name().toLowerCase() + ".jar";
-
-			final String infoPlistString = InfoPlist.make( sourceProject, appJarFilename );
+			final String infoPlistString = InfoPlist.make( sourceProject );
 			Util.writeStringToPathInJar( infoPlistString, "Resources/Info.plist", sourceProject.principalJarPath() );
 		}
 		finally {

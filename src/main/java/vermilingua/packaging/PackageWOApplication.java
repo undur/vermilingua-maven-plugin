@@ -98,7 +98,7 @@ public class PackageWOApplication {
 		Util.writeStringToPath( classpathString, woa.woaPath().resolve( "classpath.txt" ) );
 
 		// Write Info.plist
-		final String infoPlistString = InfoPlist.make( sourceProject, appJarFilename );
+		final String infoPlistString = InfoPlist.make( sourceProject );
 		Util.writeStringToPath( infoPlistString, woa.infoPlistPath() );
 
 		// Write executable launch script
