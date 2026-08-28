@@ -15,6 +15,7 @@ public class InfoPlist {
 	 * - CFBundlePackageType: "FMWK" is what makes NSBundle treat a jar bundle as a framework
 	 *   (NSLegacyBundle.couldBeAFramework()), including it in frameworkBundles() and properties loading
 	 * - NSPrincipalClass: Loaded and initialized by NSBundle, the hook used for framework initialization
+	 * - Has_WOComponents: Marks the framework for inclusion in component definition search
 	 * - CFBundleShortVersionString/CFBundleVersion: Only used for version reporting, but kept since they're nice to have
 	 */
 	public static String make( final SourceProject sourceProject ) {
@@ -29,6 +30,8 @@ public class InfoPlist {
 		infoPlist.put( "CFBundleVersion", version );
 
 		if( type.isFramework() ) {
+			infoPlist.put( "Has_WOComponents", true );
+
 			final var principalClassName = sourceProject.principalClassName();
 
 			if( principalClassName != null && !principalClassName.isEmpty() ) {
