@@ -1,5 +1,19 @@
 # Changes
 
+## 1.1.6
+
+### Minimal Info.plist generation
+
+The generated `Info.plist` now contains only the keys actually read by WebObjects: `NSExecutable` (the bundle name), `CFBundlePackageType` (what makes NSBundle treat a jar as a framework), `NSPrincipalClass` (for frameworks that declare one) and the version keys `CFBundleShortVersionString`/`CFBundleVersion`.
+
+The removed keys (`NSJavaPath`, `NSJavaRoot`, `NSJavaClientRoot`, `NSJavaPathClient`, `NSJavaNeeded`, `Java/JVMVersion`, `Has_WOComponents`, `CFBundleIconFile`, `CFBundleIdentifier`, `CFBundleName`, `CFBundleSignature`, `CFBundleDevelopmentRegion`, `CFBundleGetInfoString`, `CFBundleInfoDictionaryVersion`) are relics from the NeXT/early-macOS era, consumed by launcher machinery and build tooling that no longer exists. No code in WebObjects 5.4.x or Wonder reads them.
+
+One behavioral note: framework detection now relies on `CFBundlePackageType=FMWK` instead of `Has_WOComponents`. Dropping `Has_WOComponents` means WebObjects falls back to scanning the bundle for `.wo` resources when checking for components — a negligible one-time cost at startup.
+
+### Internal
+
+Dependency updates (junit, central-publishing-maven-plugin).
+
 ## 1.1.5
 
 ### Resources are now overwritten when building over a previous build
