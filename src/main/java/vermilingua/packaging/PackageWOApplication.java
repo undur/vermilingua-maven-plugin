@@ -105,7 +105,7 @@ public class PackageWOApplication {
 		final String launchScriptString = Util.readTemplate( "launch-script" );
 		final Path launchScriptPath = woa.woaPath().resolve( sourceProject.name() );
 		Util.writeStringToPath( launchScriptString, launchScriptPath );
-		Util.makeUserExecutable( launchScriptPath );
+		Util.makeExecutable( launchScriptPath );
 
 		return woa;
 	}

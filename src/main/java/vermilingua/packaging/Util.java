@@ -185,14 +185,20 @@ public class Util {
 	}
 
 	/**
-	 * Make file residing at path user executable (basically the equivalent of doing 'chmod u+x' on the shell)
+	 * Make file residing at path executable for everyone (basically the equivalent of doing 'chmod a+x' on the shell).
+	 *
+	 * Everyone, not just the owner: a deployed bundle is often owned by whoever copied it
+	 * to the server (root, typically) while the application runs as an unprivileged user —
+	 * an owner-only execute bit makes the launch fail with EACCES in exactly that setup.
 	 */
-	public static void makeUserExecutable( final Path path ) {
+	public static void makeExecutable( final Path path ) {
 		Objects.requireNonNull( path );
 
 		try {
 			final Set<PosixFilePermission> existingPermissions = Files.getPosixFilePermissions( path );
 			existingPermissions.add( PosixFilePermission.OWNER_EXECUTE );
+			existingPermissions.add( PosixFilePermission.GROUP_EXECUTE );
+			existingPermissions.add( PosixFilePermission.OTHERS_EXECUTE );
 			Files.setPosixFilePermissions( path, existingPermissions );
 		}
 		catch( final IOException e ) {
