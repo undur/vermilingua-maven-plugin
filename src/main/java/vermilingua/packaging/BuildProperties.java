@@ -113,6 +113,28 @@ public class BuildProperties {
 		return null;
 	}
 
+	/**
+	 * Deploy-time configuration ("deploy."-prefixed keys, e.g. deploy.monitorHost),
+	 * resolved with the same layering as launch properties: system properties
+	 * override the environment-specific file, which overrides the base file.
+	 * No legacy unprefixed fallback — these keys were born prefixed.
+	 */
+	public String deployProperty( final String key ) {
+		final String prefixedKey = "deploy." + key;
+
+		final String systemValue = _overriddes.getProperty( prefixedKey );
+		if( systemValue != null ) {
+			return systemValue;
+		}
+
+		final String envValue = _environmentProperties.getProperty( prefixedKey );
+		if( envValue != null ) {
+			return envValue;
+		}
+
+		return _baseProperties.getProperty( prefixedKey );
+	}
+
 	public boolean containsKey( String key ) {
 		final String prefixedKey = LAUNCH_PREFIX + key;
 		return _overriddes.containsKey( prefixedKey )
