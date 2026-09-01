@@ -22,7 +22,7 @@ The execute bit on the generated launch script is now set for owner, group and o
 
 ### Other
 
-`Has_WOComponents` is again included in the generated framework `Info.plist`, marking the framework for inclusion in the component definition search.
+`Has_WOComponents` is again included in the generated framework `Info.plist`, marking the framework for inclusion in the component definition search and preventing potential problems when running a vermilingua-built `.woa` on Windows.
 
 ## 1.1.6
 
