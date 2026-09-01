@@ -1,5 +1,29 @@
 # Changes
 
+## 1.1.7
+
+### New (experimental) goal: `vermilingua:deploy`
+
+Deploys the packaged application through JavaMonitor: creates a tar.gz of the built `.woa` and POSTs it to JavaMonitor's deploy endpoint, which hands it to `wotaskd` on every host the application runs on. Configured like the launch parameters — in `build.properties` or via `-D` overrides, with the same layering:
+
+```properties
+deploy.appName      # defaults to the bundle name
+deploy.monitorHost  # host or host:port (port defaults to 56789)
+deploy.password     # typically passed as -D, keeping secrets out of repos
+```
+
+Usage: `mvn package vermilingua:deploy -Ddeploy.password=...`
+
+The goal is functional and has seen real use, but should be considered experimental for now — details may change in coming releases.
+
+### Launch script is now executable for everyone
+
+The execute bit on the generated launch script is now set for owner, group and others (the equivalent of `chmod a+x`), not just the owner. A deployed bundle is often owned by whoever copied it to the server (typically root) while the app runs as an unprivileged user — with an owner-only execute bit, that combination fails with `EACCES` at launch (`status=203/EXEC` under systemd).
+
+### Other
+
+`Has_WOComponents` is again included in the generated framework `Info.plist`, marking the framework for inclusion in the component definition search.
+
 ## 1.1.6
 
 ### Minimal Info.plist generation
