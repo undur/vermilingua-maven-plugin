@@ -51,6 +51,13 @@ public class DeployMojo extends AbstractMojo {
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 
+		// In a reactor build the CLI goal visits every module; only an actual
+		// app bundle is deployable, so anything else is quietly skipped.
+		if( !"woapplication".equals( mavenProject.getPackaging() ) ) {
+			getLog().info( "Skipping %s — packaging '%s' is not a woapplication".formatted( mavenProject.getArtifactId(), mavenProject.getPackaging() ) );
+			return;
+		}
+
 		// Same property sources and layering as the package goal's launch parameters
 		final String environment = System.getProperty( "build.env" );
 		final BuildProperties buildProperties = BuildProperties.of( mavenProject.getBasedir().toPath(), environment, System.getProperties() );
