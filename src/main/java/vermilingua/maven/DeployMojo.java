@@ -31,7 +31,9 @@ import vermilingua.packaging.Util;
  * overridden per-build with -D system properties:
  *
  *   deploy.appName       the name JavaMonitor knows the app by (defaults to the bundle name)
- *   deploy.monitorHost   the JavaMonitor host, host or host:port (port defaults to 56789)
+ *   deploy.monitorHost   the JavaMonitor host — host, host:port (port defaults to 56789),
+ *                        or a full http(s):// base URL to deploy through a front end
+ *                        proxying JavaMonitor (e.g. https://javamonitor.example.com)
  *   deploy.password      the monitor password (typically NOT in build.properties —
  *                        pass -Ddeploy.password=... so public repos carry no secrets)
  *
@@ -81,19 +83,30 @@ public class DeployMojo extends AbstractMojo {
 		final Path archive = targetPath.resolve( finalName + ".woapplication-deploy.tar.gz" );
 		Util.createTarGz( woa, archive );
 
-		final String hostAndPort = monitorHost.contains( ":" ) ? monitorHost : monitorHost + ":" + DEFAULT_MONITOR_PORT;
+		// monitorHost takes a bare hostname (port defaults to 56789), host:port, or a
+		// full http(s):// base URL — the latter deploys through a front end proxying
+		// JavaMonitor (e.g. -Ddeploy.monitorHost=https://javamonitor.example.com),
+		// so JavaMonitor's own port never needs opening to the build machine.
+		final String monitorBaseURL;
+
+		if( monitorHost.startsWith( "http://" ) || monitorHost.startsWith( "https://" ) ) {
+			monitorBaseURL = monitorHost.endsWith( "/" ) ? monitorHost.substring( 0, monitorHost.length() - 1 ) : monitorHost;
+		}
+		else {
+			monitorBaseURL = "http://" + (monitorHost.contains( ":" ) ? monitorHost : monitorHost + ":" + DEFAULT_MONITOR_PORT);
+		}
 
 		// FIXME: The password travels as a query parameter because that's what JavaMonitor's
 		// admin actions read — and query strings end up in access logs when the request passes
 		// a front end. Teach admin/deploy to accept it as a header, then prefer that here // Hugi 2026-08-31
-		String url = "http://%s/Apps/WebObjects/JavaMonitor.woa/admin/deploy?type=app&name=%s".formatted( hostAndPort, URLEncoder.encode( appName, StandardCharsets.UTF_8 ) );
+		String url = "%s/Apps/WebObjects/JavaMonitor.woa/admin/deploy?type=app&name=%s".formatted( monitorBaseURL, URLEncoder.encode( appName, StandardCharsets.UTF_8 ) );
 
 		if( password != null && !password.isBlank() ) {
 			url += "&pw=" + URLEncoder.encode( password, StandardCharsets.UTF_8 );
 		}
 
 		try {
-			getLog().info( "Deploying %s (%,d bytes) to %s".formatted( appName, Files.size( archive ), hostAndPort ) );
+			getLog().info( "Deploying %s (%,d bytes) to %s".formatted( appName, Files.size( archive ), monitorBaseURL ) );
 
 			final HttpRequest request = HttpRequest.newBuilder()
 					.uri( URI.create( url ) )
@@ -109,7 +122,7 @@ public class DeployMojo extends AbstractMojo {
 			}
 
 			if( response.statusCode() != 200 ) {
-				throw new MojoFailureException( "Deploying %s failed: HTTP %s from %s".formatted( appName, response.statusCode(), hostAndPort ) );
+				throw new MojoFailureException( "Deploying %s failed: HTTP %s from %s".formatted( appName, response.statusCode(), monitorBaseURL ) );
 			}
 
 			getLog().info( "Deployed " + appName );
