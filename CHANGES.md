@@ -1,5 +1,32 @@
 # Changes
 
+## 1.1.8
+
+### New (experimental) goal: `vermilingua:run`
+
+Runs the packaged application by executing the launch script inside the built `.woa` — the artifact runs exactly as it would when deployed (launch script, `config.txt`, `classpath.txt`, resources resolved from the bundle rather than from source folders). The goal forks the build lifecycle through `package` first, so running an application is a single command:
+
+```
+mvn vermilingua:run
+```
+
+The application's output streams to the Maven console and Ctrl-C stops both. Arguments are passed with `run.args` (split on whitespace) and reach the application — or the launch script's own `-launch.*` handling:
+
+```
+mvn vermilingua:run -Drun.args="-WOPort 1200"
+```
+
+Like `vermilingua:deploy`, this goal should be considered experimental for now.
+
+### Improvements to the (still experimental) `vermilingua:deploy` goal
+
+* `deploy.monitorHost` now also accepts a full `http(s)://` base URL, for deploying through a front end proxying JavaMonitor (e.g. `https://javamonitor.example.com`) — so JavaMonitor's own port never needs opening to the build machine.
+* In a reactor build, the goal now quietly skips modules that aren't `woapplication`s instead of failing.
+
+### Internal
+
+Dependency and build-plugin updates (slf4j, surefire/failsafe).
+
 ## 1.1.7
 
 ### New (experimental) goal: `vermilingua:deploy`
