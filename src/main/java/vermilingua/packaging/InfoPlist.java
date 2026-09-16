@@ -16,6 +16,10 @@ public class InfoPlist {
 	 *   (NSLegacyBundle.couldBeAFramework()), including it in frameworkBundles() and properties loading
 	 * - NSPrincipalClass: Loaded and initialized by NSBundle, the hook used for framework initialization
 	 * - Has_WOComponents: Marks the framework for inclusion in component definition search
+	 * - CFBundleExecutable: Read by classic Project Wonder's ERXApplication.Loader, which scans jars on the classpath
+	 *   and uses this key as the bundle's name in its "all frameworks loaded" bookkeeping. If missing, the Loader
+	 *   registers the bundle as null, which never gets checked off, and the app dies at startup with
+	 *   "ERXExtensions have not been initialized ... Remaining frameworks: [null]"
 	 * - CFBundleShortVersionString/CFBundleVersion: Only used for version reporting, but kept since they're nice to have
 	 */
 	public static String make( final SourceProject sourceProject ) {
@@ -25,6 +29,7 @@ public class InfoPlist {
 
 		final var infoPlist = new LinkedHashMap<>();
 		infoPlist.put( "NSExecutable", bundleName );
+		infoPlist.put( "CFBundleExecutable", bundleName );
 		infoPlist.put( "CFBundlePackageType", type.isApp() ? "APPL" : "FMWK" );
 		infoPlist.put( "CFBundleShortVersionString", version );
 		infoPlist.put( "CFBundleVersion", version );
