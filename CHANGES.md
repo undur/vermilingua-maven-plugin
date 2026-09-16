@@ -1,5 +1,23 @@
 # Changes
 
+## 1.1.9
+
+### Fixed: classic Project Wonder applications failed at startup with vermilingua-built frameworks
+
+`CFBundleExecutable` is again written to the generated `Info.plist`. The Info.plist minimization in 1.1.6 removed it, but classic Project Wonder's `ERXApplication.Loader` scans classpath jars and reads exactly this key as the bundle's name in its "all frameworks loaded" bookkeeping. With the key missing, every vermilingua-built framework on the classpath was registered as `null` — an entry that never gets checked off — and the application died at startup with:
+
+```
+ERXExtensions have not been initialized ... Remaining frameworks: [null]
+```
+
+This affected frameworks built with vermilingua 1.1.6 through 1.1.8 and running in classic Project Wonder applications. (wonder-slim is unaffected — it has no classpath-scanning loader.) The fix has been verified against a production Wonder application: frameworks rebuilt with 1.1.6+ reproduce the failure, the same frameworks rebuilt with 1.1.9 start cleanly.
+
+Project Wonder's source has now been scanned for further `Info.plist` key reads: `CFBundleExecutable` and `Has_WOComponents` (restored in 1.1.7) are the only keys classic Wonder reads of those removed in 1.1.6, so this should close the chapter on the minimization's fallout.
+
+### Internal
+
+maven-plugin-plugin / maven-plugin-annotations updated to 3.16.0.
+
 ## 1.1.8
 
 ### New (experimental) goal: `vermilingua:run`
