@@ -1,5 +1,21 @@
 # Changes
 
+## 1.1.10
+
+### Fixed: frameworks without resources failed to build
+
+A framework consisting of java code only (no `woresources`, `components` or `webserver-resources`) failed to package with `NoSuchFileException: /Resources`. The framework's `Info.plist` is written to `Resources/` inside the jar, and that folder only existed as a side effect of copying resources into it — so a framework with nothing to copy never got one.
+
+### Fixed: frameworks failed to build without `clean`
+
+Building a framework a second time without `clean` failed with `FileAlreadyExistsException` on the first resource written to the jar. `maven-jar-plugin` leaves an up-to-date jar in place, and resources already present in it from the previous build could not be overwritten. Frameworks now build fine over an existing jar, and changed resources are updated in it.
+
+Both were mistakes in how folders inside the jar were created. Builds with `clean` of frameworks that have resources were never affected, and produce byte-identical jars to 1.1.9. Application builds are unaffected.
+
+### Internal
+
+Failures writing into the framework jar now say what was being written and where. Added tests that package frameworks (previously only application packaging was tested).
+
 ## 1.1.9
 
 ### Fixed: classic Project Wonder applications failed at startup with vermilingua-built frameworks
