@@ -295,7 +295,7 @@ public class Util {
 						if( !Files.isDirectory( folderEntry ) ) {
 							final Path relativePath = sourcePath.relativize( folderEntry );
 							final Path pathInZipFile = zipfs.getPath( folderName + "/" + relativePath.toString() ); // FIXME: This is what I hate, all this string munging // Hugi 2021-07-10
-							Files.createDirectories( pathInZipFile );
+							Files.createDirectories( pathInZipFile.getParent() );
 							Files.copy( folderEntry, pathInZipFile, StandardCopyOption.REPLACE_EXISTING );
 						}
 					}
@@ -322,10 +322,19 @@ public class Util {
 
 		try( FileSystem zipfs = FileSystems.newFileSystem( uri, Collections.emptyMap() )) {
 			final Path pathInZipFile = zipfs.getPath( destinationFilePathInsideJar );
+
+			// The zip filesystem won't write a file whose parent directory entry is missing, and nothing guarantees
+			// the parent exists (a framework without resources or components never gets a Resources folder created in it's jar)
+			final Path parent = pathInZipFile.getParent();
+
+			if( parent != null ) {
+				Files.createDirectories( parent );
+			}
+
 			Files.writeString( pathInZipFile, string, StandardCharsets.UTF_8 );
 		}
 		catch( final IOException e ) {
-			throw new UncheckedIOException( e );
+			throw new UncheckedIOException( "Failed to write %s into %s".formatted( destinationFilePathInsideJar, destinationJarPath ), e );
 		}
 	}
 
