@@ -148,19 +148,52 @@ public class BuildProperties {
 		logger.warn( "Property '{}' in build.properties is deprecated. Use 'launch.{}' instead.", key, key );
 	}
 
+	/**
+	 * @return The application's main class (principalClass), written into config.txt for the launch script
+	 */
 	public String principalClass() {
 		return _baseProperties.getProperty( "principalClass" );
 	}
 
+	/**
+	 * @return The java executable the launch script runs (launch.jvm, or the deprecated jvm)
+	 */
 	public String jvm() {
 		return get( "jvm" );
 	}
 
+	/**
+	 * @return The arguments the launch script passes to the JVM (launch.jvmOptions, or the deprecated jvmOptions)
+	 */
 	public String jvmOptions() {
 		return get( "jvmOptions" );
 	}
 
+	/**
+	 * @return The project's name (project.name), which is also its bundle's name
+	 */
 	public String projectName() {
 		return _baseProperties.getProperty( "project.name" );
+	}
+
+	/**
+	 * @return The project-relative path to the components folder, if declared (dir.components)
+	 */
+	public String componentsDir() {
+		return _baseProperties.getProperty( "dir.components" );
+	}
+
+	/**
+	 * @return The project-relative path to the woresources folder, if declared (dir.woresources)
+	 */
+	public String woresourcesDir() {
+		return _baseProperties.getProperty( "dir.woresources" );
+	}
+
+	/**
+	 * @return The project-relative path to the webserver resources folder, if declared (dir.webserverResources)
+	 */
+	public String webserverResourcesDir() {
+		return _baseProperties.getProperty( "dir.webserverResources" );
 	}
 }

@@ -27,11 +27,11 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 ### Optional `<configuration>` parameters
 
 * **woresourcesPath**  
-  Project-relative path to the WebObjects bundle resources folder. Defaults to `src/main/woresources`.
+  Project-relative path to the WebObjects bundle resources folder. Defaults to `dir.woresources` in `build.properties`, then `src/main/woresources`.
 * **componentsPath**  
-  Project-relative path to the components folder. Defaults to `src/main/components`.
+  Project-relative path to the components folder. Defaults to `dir.components` in `build.properties`, then `src/main/components`.
 * **webserverResourcesPath**  
-  Project-relative path to the webserver resources folder. Defaults to `src/main/webserver-resources`.
+  Project-relative path to the webserver resources folder. Defaults to `dir.webserverResources` in `build.properties`, then `src/main/webserver-resources`.
 * **performSplit**  
   When set `true`, `vermilingua` will generate an additional "WebServerResources" bundle for "split deployments".
 * **createArchives**  
@@ -102,7 +102,24 @@ This is nice when:
 
 ## Building a "Fluffy Bunny" project
 
-While we prefer and encourage use of the standard maven project layout, `vermilingua` can build "Fluffy Bunny" layout projects with sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`. To do this, configure the plugin with the location of your resource directories and and set Maven's `<sourceDirectory>` to `Sources`:
+While we prefer and encourage use of the standard maven project layout, `vermilingua` can build "Fluffy Bunny" layout projects with sources in `Sources/`, `Resources/`, `Components/` and `WebServerResources/`. To do this, declare the location of your resource directories in `build.properties`:
+
+```properties
+dir.woresources=Resources
+dir.components=Components
+dir.webserverResources=WebServerResources
+```
+
+These are the same keys the application reads to find its resources when it runs from the project folder in development ([ERProjectLayout](https://github.com/undur/wonder-slim/tree/master/ERProjectLayout), part of wonder-slim), so declaring them once covers both. Then set Maven's `<sourceDirectory>` to `Sources`:
+
+```xml
+<build>
+  <sourceDirectory>Sources</sourceDirectory>
+  ...
+</build>
+```
+
+The folders can also be set in the plugin configuration, which takes precedence over `build.properties`:
 
 ```xml
 <build>
