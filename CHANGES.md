@@ -1,10 +1,16 @@
 # Changes
 
-## Unreleased
+## 1.1.11
 
 ### Folders can be declared in build.properties
 
 `dir.components`, `dir.woresources` and `dir.webserverResources` in `build.properties` set the folders packaged, when the plugin configuration doesn't set `componentsPath`, `woresourcesPath` or `webserverResourcesPath`. These are the keys an application reads in development through wonder-slim's ERProjectLayout, so development and the packaged application find resources in the same folders. A plugin configuration that disagrees with `build.properties` is used, with a warning.
+
+A blank folder setting (such as `dir.woresources=` with no value) fails the build, since it would otherwise mean the project folder itself.
+
+### Internal
+
+Dependency update (slf4j).
 
 ## 1.1.10
 
