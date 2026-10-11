@@ -41,13 +41,6 @@ public class PackageMojo extends AbstractMojo {
 	MavenProject mavenProject;
 
 	/**
-	 * Old method of declaring the  woresources folder name
-	 */
-	@Parameter(property = "woresourcesFolderName", required = false)
-	@Deprecated
-	String woresourcesFolderName;
-
-	/**
 	 * Project-relative path to woresources folder. Defaults to dir.woresources in build.properties, then src/main/woresources.
 	 */
 	@Parameter(property = "woresourcesPath", required = false)
@@ -115,11 +108,6 @@ public class PackageMojo extends AbstractMojo {
 	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-
-		// FIXME: Delete soon, probably not many people using this // Hugi 2026-04-24
-		if( woresourcesFolderName != null ) {
-			throw new MojoFailureException( "The 'woresourcesFolderName' maven plugin configuration property is deprecated. Use 'woresourcesPath' instead" );
-		}
 
 		// Environment used for loading additional environment specific build.properties files
 		final String environment = System.getProperty( "build.env" );
