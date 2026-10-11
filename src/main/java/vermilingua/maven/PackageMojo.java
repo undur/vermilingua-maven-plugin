@@ -66,34 +66,6 @@ public class PackageMojo extends AbstractMojo {
 	boolean performSplit;
 
 	/**
-	 * @return The folder path configured for the plugin, else the one declared in build.properties, else the default.
-	 *
-	 * The application reads its folders from build.properties when run from its project folder, so a plugin configuration
-	 * that disagrees with it packages something other than what runs in development. That gets a warning.
-	 */
-	String folderPath( final String parameterName, final String configured, final String buildPropertiesKey, final String declared, final String defaultPath ) throws MojoFailureException {
-
-		// A blank path resolves to the project folder itself, which would package the whole project (including the build output being written)
-		if( configured != null && configured.isBlank() ) {
-			throw new MojoFailureException( "'%s' is blank in the plugin configuration. Remove it, or set it to a folder".formatted( parameterName ) );
-		}
-
-		if( declared != null && declared.isBlank() ) {
-			throw new MojoFailureException( "'%s' is blank in build.properties. Remove it, or set it to a folder".formatted( buildPropertiesKey ) );
-		}
-
-		if( configured != null ) {
-			if( declared != null && !Path.of( configured ).normalize().equals( Path.of( declared ).normalize() ) ) {
-				getLog().warn( "'%s' is '%s' in the plugin configuration but '%s' is '%s' in build.properties. Packaging uses '%s'".formatted( parameterName, configured, buildPropertiesKey, declared, configured ) );
-			}
-
-			return configured;
-		}
-
-		return declared != null ? declared : defaultPath;
-	}
-
-	/**
 	 * Creates tar.gz archives of the build products and attaches them as Maven artifacts,
 	 * making them available to mvn install and mvn deploy.
 	 */
@@ -143,6 +115,34 @@ public class PackageMojo extends AbstractMojo {
 				new PackageWOFramework().execute( sourceProject );
 			}
 		}
+	}
+
+	/**
+	 * @return The folder path configured for the plugin, else the one declared in build.properties, else the default.
+	 *
+	 * The application reads its folders from build.properties when run from its project folder, so a plugin configuration
+	 * that disagrees with it packages something other than what runs in development. That gets a warning.
+	 */
+	String folderPath( final String parameterName, final String configured, final String buildPropertiesKey, final String declared, final String defaultPath ) throws MojoFailureException {
+
+		// A blank path resolves to the project folder itself, which would package the whole project (including the build output being written)
+		if( configured != null && configured.isBlank() ) {
+			throw new MojoFailureException( "'%s' is blank in the plugin configuration. Remove it, or set it to a folder".formatted( parameterName ) );
+		}
+
+		if( declared != null && declared.isBlank() ) {
+			throw new MojoFailureException( "'%s' is blank in build.properties. Remove it, or set it to a folder".formatted( buildPropertiesKey ) );
+		}
+
+		if( configured != null ) {
+			if( declared != null && !Path.of( configured ).normalize().equals( Path.of( declared ).normalize() ) ) {
+				getLog().warn( "'%s' is '%s' in the plugin configuration but '%s' is '%s' in build.properties. Packaging uses '%s'".formatted( parameterName, configured, buildPropertiesKey, declared, configured ) );
+			}
+
+			return configured;
+		}
+
+		return declared != null ? declared : defaultPath;
 	}
 
 	/**
