@@ -2,11 +2,13 @@ package vermilingua.packaging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -146,5 +148,106 @@ public class UtilTest {
 		Util.copyContentsOfFolderAtPathToFolderInJar( Files.createDirectories( directory.resolve( "empty" ) ), "Resources", jarPath );
 
 		assertEquals( namesBefore, TestJars.entryNames( jarPath ) );
+	}
+
+	private static void flatten( final Path source, final Path destination ) {
+		Util.copyContentsOfDirectoryToDirectoryFlatten( source, Util.folder( destination ), List.of( "wo" ), List.of( "lproj" ) );
+	}
+
+	@Test
+	public void flattenCopiesBundlesWholeAndFlattensLooseFiles( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		TestJars.file( source.resolve( "a/Foo.wo/Foo.html" ), "foo" );
+		TestJars.file( source.resolve( "b/c/Bar.api" ), "bar" );
+		TestJars.file( source.resolve( "d/en.lproj/e/Baz.wo/Baz.html" ), "baz" );
+
+		final Path destination = directory.resolve( "out" );
+		flatten( source, destination );
+
+		assertEquals( "foo", Files.readString( destination.resolve( "Foo.wo/Foo.html" ) ) );
+		assertEquals( "bar", Files.readString( destination.resolve( "Bar.api" ) ) );
+		assertEquals( "baz", Files.readString( destination.resolve( "en.lproj/Baz.wo/Baz.html" ) ) );
+	}
+
+	@Test
+	public void flattenFailsOnDuplicateBundles( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		TestJars.file( source.resolve( "a/Foo.wo/Foo.html" ), "first" );
+		TestJars.file( source.resolve( "b/Foo.wo/Foo.html" ), "second" );
+
+		final var e = assertThrows( IllegalStateException.class, () -> flatten( source, directory.resolve( "out" ) ) );
+		assertTrue( e.getMessage().contains( "Foo.wo" ), e.getMessage() );
+	}
+
+	@Test
+	public void flattenFailsOnDuplicateLooseFiles( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		TestJars.file( source.resolve( "Foo.api" ), "first" );
+		TestJars.file( source.resolve( "a/Foo.api" ), "second" );
+
+		assertThrows( IllegalStateException.class, () -> flatten( source, directory.resolve( "out" ) ) );
+	}
+
+	/**
+	 * Two `en.lproj` folders in different subfolders flatten into the same destination, so their contents can collide too
+	 */
+	@Test
+	public void flattenFailsOnDuplicatesInSeparateLocalizationFolders( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		TestJars.file( source.resolve( "a/en.lproj/Foo.wo/Foo.html" ), "first" );
+		TestJars.file( source.resolve( "b/en.lproj/Foo.wo/Foo.html" ), "second" );
+
+		assertThrows( IllegalStateException.class, () -> flatten( source, directory.resolve( "out" ) ) );
+	}
+
+	@Test
+	public void flattenMergesSeparateLocalizationFolders( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		TestJars.file( source.resolve( "a/en.lproj/Foo.wo/Foo.html" ), "foo" );
+		TestJars.file( source.resolve( "b/en.lproj/Bar.wo/Bar.html" ), "bar" );
+
+		final Path destination = directory.resolve( "out" );
+		flatten( source, destination );
+
+		assertEquals( "foo", Files.readString( destination.resolve( "en.lproj/Foo.wo/Foo.html" ) ) );
+		assertEquals( "bar", Files.readString( destination.resolve( "en.lproj/Bar.wo/Bar.html" ) ) );
+	}
+
+	@Test
+	public void flattenSkipsHiddenFilesAndFolders( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		TestJars.file( source.resolve( ".DS_Store" ), "junk" );
+		TestJars.file( source.resolve( "a/.DS_Store" ), "junk" );
+		TestJars.file( source.resolve( "a/.gitignore" ), "junk" );
+		TestJars.file( source.resolve( "a/.svn/entries" ), "junk" );
+		TestJars.file( source.resolve( "b/.svn/entries" ), "junk" );
+		TestJars.file( source.resolve( "a/Foo.wo/Foo.html" ), "foo" );
+
+		final Path destination = directory.resolve( "out" );
+		flatten( source, destination );
+
+		try( var files = Files.list( destination ) ) {
+			assertEquals( List.of( "Foo.wo" ), files.map( p -> p.getFileName().toString() ).toList() );
+		}
+	}
+
+	/**
+	 * Files left at the destination by a previous build aren't duplicates
+	 */
+	@Test
+	public void flattenOverwritesPreviousBuild( @TempDir final Path directory ) throws IOException {
+		final Path source = directory.resolve( "components" );
+		final Path destination = directory.resolve( "out" );
+
+		TestJars.file( source.resolve( "a/Foo.wo/Foo.html" ), "first" );
+		TestJars.file( source.resolve( "a/Foo.api" ), "first" );
+		flatten( source, destination );
+
+		TestJars.file( source.resolve( "a/Foo.wo/Foo.html" ), "second" );
+		TestJars.file( source.resolve( "a/Foo.api" ), "second" );
+		flatten( source, destination );
+
+		assertEquals( "second", Files.readString( destination.resolve( "Foo.wo/Foo.html" ) ) );
+		assertEquals( "second", Files.readString( destination.resolve( "Foo.api" ) ) );
 	}
 }

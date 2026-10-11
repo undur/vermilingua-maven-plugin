@@ -48,7 +48,7 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 
 ### Other differences
 
-* `flattenComponents` is not required. Any folder structure in `src/main/components` is flattened since WO can't locate components in subfolders when deployed.
+* `flattenComponents` is not required. Any folder structure in `src/main/components` is flattened since WO can't locate components in subfolders when deployed. Two components with the same name in different subfolders fail the build, and hidden files (`.DS_Store`, `.svn` etc.) in `src/main/components` are skipped.
 * The launch script no longer requires or reads the `NEXT_ROOT`
   environment variable and thus no longer passes the derived `-DWORootDirectory`
   or `-DWOLocalRootDirectory` parameters to the JVM. Since applications are now

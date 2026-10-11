@@ -22,6 +22,8 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -86,8 +88,20 @@ public class Util {
 	 * Directories with names ending with [directorySuffixesToNotFlatten] are considered "bundles", i.e. they're essentially treated like files and copied in their entirety.
 	 *
 	 * Directories with names ending with [directorySuffixesToFlattenInto] are preserved at the destination, but their contents are then flattened into them (using the same rules). This is used for localization folders (`.lproj`) where components need to live under a preserved parent folder but still have their internal structure flattened.
+	 *
+	 * Hidden files and folders (names starting with a period) are skipped. These are left in source folders by the OS and development tools (.DS_Store, .gitignore, .svn etc.)
+	 * and every folder can have one, so flattening them would make them collide. Bundles are copied as they are, including any hidden files in them.
+	 *
+	 * @throws IllegalStateException If two files or bundles in different folders would be flattened to the same name, since one would silently replace the other
 	 */
 	public static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory, final Collection<String> directorySuffixesToNotFlatten, final Collection<String> directorySuffixesToFlattenInto ) {
+		copyContentsOfDirectoryToDirectoryFlatten( sourceDirectory, destinationDirectory, directorySuffixesToNotFlatten, directorySuffixesToFlattenInto, new HashMap<>() );
+	}
+
+	/**
+	 * @param copiedFrom Destination paths written so far in this flattening pass, mapped to their source. Shared with nested passes, since two folders with the same flatten-into name (e.g. two `en.lproj` folders) flatten into the same destination.
+	 */
+	private static void copyContentsOfDirectoryToDirectoryFlatten( final Path sourceDirectory, final Path destinationDirectory, final Collection<String> directorySuffixesToNotFlatten, final Collection<String> directorySuffixesToFlattenInto, final Map<Path, Path> copiedFrom ) {
 		Objects.requireNonNull( sourceDirectory );
 		Objects.requireNonNull( destinationDirectory );
 		Objects.requireNonNull( directorySuffixesToNotFlatten );
@@ -106,16 +120,23 @@ public class Util {
 
 				final String dirName = dir.getFileName().toString();
 
+				// Hidden folders (.svn, .git etc.) aren't walked at all
+				if( dirName.startsWith( "." ) ) {
+					return FileVisitResult.SKIP_SUBTREE;
+				}
+
 				// If this is a bundle/folder we should not flatten, copy it in it's entirety (with all it's contents) and don't walk deeper into it
 				if( hasAnyOfSuffixes( dirName, directorySuffixesToNotFlatten ) ) {
-					copyContentsOfDirectoryToDirectory( dir, destinationDirectory.resolve( dirName ) );
+					final Path destination = destinationDirectory.resolve( dirName );
+					claim( destination, dir, copiedFrom );
+					copyContentsOfDirectoryToDirectory( dir, destination );
 					return FileVisitResult.SKIP_SUBTREE;
 				}
 
 				// If this is a folder that acts as a flatten target (e.g. `.lproj`), create it at the destination and recursively flatten its contents into it
 				if( hasAnyOfSuffixes( dirName, directorySuffixesToFlattenInto ) ) {
 					final Path nestedDestination = folder( destinationDirectory.resolve( dirName ) );
-					copyContentsOfDirectoryToDirectoryFlatten( dir, nestedDestination, directorySuffixesToNotFlatten, directorySuffixesToFlattenInto );
+					copyContentsOfDirectoryToDirectoryFlatten( dir, nestedDestination, directorySuffixesToNotFlatten, directorySuffixesToFlattenInto, copiedFrom );
 					return FileVisitResult.SKIP_SUBTREE;
 				}
 
@@ -125,8 +146,15 @@ public class Util {
 
 			@Override
 			public FileVisitResult visitFile( Path file, BasicFileAttributes arg1 ) throws IOException {
+				// Hidden files (.DS_Store, .gitignore etc.) are skipped
+				if( file.getFileName().toString().startsWith( "." ) ) {
+					return FileVisitResult.CONTINUE;
+				}
+
 				// Regular standalone files just get copied. preVisitDirectory() will already have excluded and copied files inside bundles
-				copyFile( file, destinationDirectory.resolve( file.getFileName() ), StandardCopyOption.REPLACE_EXISTING );
+				final Path destination = destinationDirectory.resolve( file.getFileName() );
+				claim( destination, file, copiedFrom );
+				copyFile( file, destination, StandardCopyOption.REPLACE_EXISTING );
 				return FileVisitResult.CONTINUE;
 			}
 		};
@@ -136,6 +164,19 @@ public class Util {
 		}
 		catch( IOException e ) {
 			throw new UncheckedIOException( e );
+		}
+	}
+
+	/**
+	 * Records that [source] is being flattened to [destination]
+	 *
+	 * @throws IllegalStateException If something else was already flattened to [destination] in this pass. Files left at the destination by a previous build are fine, they just get replaced.
+	 */
+	private static void claim( final Path destination, final Path source, final Map<Path, Path> copiedFrom ) {
+		final Path previousSource = copiedFrom.putIfAbsent( destination, source );
+
+		if( previousSource != null ) {
+			throw new IllegalStateException( "Both '%s' and '%s' would be copied to '%s', since subfolders are flattened when packaging. Rename or remove one of them".formatted( previousSource, source, destination.getFileName() ) );
 		}
 	}
 

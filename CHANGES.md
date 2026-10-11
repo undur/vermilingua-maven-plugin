@@ -1,5 +1,19 @@
 # Changes
 
+## 1.1.12
+
+### Duplicate components fail the build
+
+Subfolders of `components` are flattened when packaging, since WebObjects can't find components in subfolders. If two components (or other files) in different subfolders have the same name, one used to silently replace the other in the built bundle. This now fails the build, naming both.
+
+### Hidden files are no longer copied from `components`
+
+Files and folders whose names start with a period (`.DS_Store`, `.gitignore`, `.svn` etc.) are skipped when copying `components`. Since every folder can contain them, these would otherwise be reported as duplicates. Component bundles (`.wo`) are still copied as they are, and `woresources` and `webserver-resources` are copied as before, including hidden files.
+
+### Internal
+
+The `woresourcesFolderName` parameter, removed in 1.1.5, no longer gets a specific error message.
+
 ## 1.1.11
 
 ### Folders can be declared in build.properties
