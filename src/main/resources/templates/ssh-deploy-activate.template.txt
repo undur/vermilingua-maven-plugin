@@ -1,0 +1,91 @@
+#!/bin/bash
+
+#
+# Activates a release uploaded by vermilingua:ssh-deploy. Runs on the target machine, as the SSH user.
+#
+# Layout, relative to the SSH user's home folder:
+#
+#   vermilingua/java/${javaVersion}/                        The Java runtime the application runs on
+#   vermilingua/apps/${appName}/releases/<release>/         Uploaded releases (the newest few are kept)
+#   vermilingua/apps/${appName}/current                     Symlink to the running release
+#
+
+set -euo pipefail
+
+VERMILINGUA_DIR="$HOME/vermilingua"
+APP_DIR="$VERMILINGUA_DIR/apps/${appName}"
+JAVA_DIR="$VERMILINGUA_DIR/java/${javaVersion}"
+JAVA="$JAVA_DIR/bin/java"
+SERVICE="${serviceName}"
+PORT="${port}"
+
+#
+# Install the Java runtime, if missing. Eclipse Temurin, so we don't depend on what the OS package manager offers.
+#
+if [ ! -x "$JAVA" ]; then
+	case "$(uname -m)" in
+		x86_64)  ARCH=x64 ;;
+		aarch64) ARCH=aarch64 ;;
+		*)       echo "Unsupported architecture $(uname -m)" >&2; exit 1 ;;
+	esac
+
+	echo "Installing Java ${javaVersion} ($ARCH) to $JAVA_DIR"
+	rm -rf "$JAVA_DIR.partial"
+	mkdir -p "$JAVA_DIR.partial"
+	curl -fsSL "https://api.adoptium.net/v3/binary/latest/${javaVersion}/ga/linux/$ARCH/jre/hotspot/normal/eclipse" | tar -xz -C "$JAVA_DIR.partial" --strip-components=1
+	mv "$JAVA_DIR.partial" "$JAVA_DIR"
+fi
+
+#
+# Point 'current' at the new release, then (re)write the service and restart it
+#
+ln -sfn "releases/${release}" "$APP_DIR/current"
+
+sudo tee "/etc/systemd/system/$SERVICE.service" > /dev/null <<UNIT
+[Unit]
+Description=${appName} (deployed by vermilingua)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=$(id -un)
+ExecStart=$APP_DIR/current/${woaName}/${bundleName} -launch.jvm=$JAVA -WOPort $PORT ${appArgs}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+sudo systemctl daemon-reload
+sudo systemctl enable --quiet "$SERVICE"
+sudo systemctl restart "$SERVICE"
+
+#
+# Keep the five newest releases (the names sort chronologically)
+#
+ls -1 "$APP_DIR/releases" | sort | head -n -5 | while read -r old; do
+	rm -rf "$APP_DIR/releases/$old"
+done
+
+#
+# Wait for the application to answer on it's port
+#
+echo "Waiting for ${appName} to answer on port $PORT"
+
+for i in $(seq 1 90); do
+	if curl -s -o /dev/null --max-time 2 "http://127.0.0.1:$PORT/"; then
+		echo "${appName} is up"
+		exit 0
+	fi
+
+	if ! systemctl is-active --quiet "$SERVICE" && [ "$(systemctl show -p Result --value "$SERVICE")" != "success" ]; then
+		break
+	fi
+
+	sleep 1
+done
+
+echo "${appName} didn't start answering on port $PORT. The service's latest log:" >&2
+sudo journalctl -u "$SERVICE" -n 40 --no-pager >&2
+exit 1

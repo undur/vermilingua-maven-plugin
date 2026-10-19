@@ -2,6 +2,34 @@
 
 ## 1.1.12
 
+### New (experimental) goal: `vermilingua:ssh-deploy`
+
+Packages the application, uploads it to a Linux machine over SSH, and runs it there as a systemd service:
+
+```
+mvn vermilingua:ssh-deploy -Ddeploy.host=me@myserver
+```
+
+To deploy to an [exe.dev](https://exe.dev) VM, name the VM instead. It's created if it doesn't exist, and its HTTPS URL is pointed at the application:
+
+```
+mvn vermilingua:ssh-deploy -Ddeploy.exe.vm=myvm
+```
+
+- The upload uses rsync into a new release folder, so a redeploy only sends what changed. The five newest releases are kept on the machine, under `~/vermilingua/apps/<app>/`.
+- A Java runtime (Eclipse Temurin) is installed on the machine if missing. It's the version Maven runs on, unless `deploy.java` says otherwise.
+- The system's `ssh` and `rsync` are used, so your SSH keys, agent and `~/.ssh/config` apply. The SSH user must be able to `sudo` without a password, to manage the service.
+- Settings go in `build.properties`, or are passed with `-D`:
+  - `deploy.host`: the SSH destination
+  - `deploy.exe.vm`: an exe.dev VM name, used instead of `deploy.host`
+  - `deploy.exe.public=true`: makes the VM's URL public. It's private to your exe.dev account by default.
+  - `deploy.appName`: the service's name
+  - `deploy.port`: the application's port, 8080 by default
+  - `deploy.args`: more arguments for the application
+  - `deploy.java`: the Java version to run on
+
+In a multi-module build, run `mvn package vermilingua:ssh-deploy`. Otherwise the modules the application depends on aren't packaged in time (this applies to `vermilingua:run` too).
+
 ### Duplicate components fail the build
 
 Subfolders of `components` are flattened when packaging, since WebObjects can't find components in subfolders. If two components (or other files) in different subfolders have the same name, one used to silently replace the other in the built bundle. This now fails the build, naming both.
