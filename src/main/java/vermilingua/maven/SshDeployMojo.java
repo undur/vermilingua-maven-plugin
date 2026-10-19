@@ -280,7 +280,7 @@ public class SshDeployMojo extends AbstractMojo {
 			}
 		}
 		catch( final IOException e ) {
-			throw new MojoExecutionException( "%s failed. Are '%s' installed and on the PATH?".formatted( description, command.get( 0 ) ), e );
+			throw new MojoExecutionException( "%s failed. Is '%s' installed and on the PATH?".formatted( description, command.get( 0 ) ), e );
 		}
 		catch( final InterruptedException e ) {
 			Thread.currentThread().interrupt();
