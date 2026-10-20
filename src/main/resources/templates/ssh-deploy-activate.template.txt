@@ -20,20 +20,49 @@ SERVICE="${serviceName}"
 PORT="${port}"
 
 #
-# Install the Java runtime, if missing. Eclipse Temurin, so we don't depend on what the OS package manager offers.
+# Install the latest Java runtime of the requested version (Eclipse Temurin), if it isn't installed already.
+# Checked on every deploy, so the server gets Java updates with deployments. Each release is installed into
+# it's own folder, and java/${javaVersion} links to the newest one.
 #
-if [ ! -x "$JAVA" ]; then
-	case "$(uname -m)" in
-		x86_64)  ARCH=x64 ;;
-		aarch64) ARCH=aarch64 ;;
-		*)       echo "Unsupported architecture $(uname -m)" >&2; exit 1 ;;
-	esac
+case "$(uname -m)" in
+	x86_64)  ARCH=x64 ;;
+	aarch64) ARCH=aarch64 ;;
+	*)       echo "Unsupported architecture $(uname -m)" >&2; exit 1 ;;
+esac
 
-	echo "Installing Java ${javaVersion} ($ARCH) to $JAVA_DIR"
-	rm -rf "$JAVA_DIR.partial"
-	mkdir -p "$JAVA_DIR.partial"
-	curl -fsSL "https://api.adoptium.net/v3/binary/latest/${javaVersion}/ga/linux/$ARCH/jre/hotspot/normal/eclipse" | tar -xz -C "$JAVA_DIR.partial" --strip-components=1
-	mv "$JAVA_DIR.partial" "$JAVA_DIR"
+ASSET="$(curl -fsSL --max-time 20 "https://api.adoptium.net/v3/assets/latest/${javaVersion}/hotspot?architecture=$ARCH&image_type=jre&os=linux&vendor=eclipse" || true)"
+JAVA_RELEASE="$(echo "$ASSET" | grep -o '"release_name": *"[^"]*"' | head -1 | cut -d '"' -f 4)"
+JAVA_LINK="$(echo "$ASSET" | grep -o '"link": *"[^"]*"' | head -1 | cut -d '"' -f 4)"
+JAVA_CHECKSUM="$(echo "$ASSET" | grep -o '"checksum": *"[^"]*"' | head -1 | cut -d '"' -f 4)"
+
+if [ -z "$JAVA_RELEASE" ] || [ -z "$JAVA_LINK" ] || [ -z "$JAVA_CHECKSUM" ]; then
+	# Not being able to check for an update shouldn't stop a deployment, as long as there's a Java to run on
+	if [ ! -x "$JAVA" ]; then
+		echo "Couldn't find Java ${javaVersion} ($ARCH) to install from api.adoptium.net" >&2
+		exit 1
+	fi
+
+	echo "Couldn't check api.adoptium.net for Java updates, continuing with $("$JAVA" -version 2>&1 | head -1)"
+elif [ ! -x "$VERMILINGUA_DIR/java/$JAVA_RELEASE/bin/java" ]; then
+	echo "Installing Java $JAVA_RELEASE ($ARCH)"
+	TARGET="$VERMILINGUA_DIR/java/$JAVA_RELEASE"
+	ARCHIVE="$TARGET.tar.gz"
+	curl -fsSL "$JAVA_LINK" -o "$ARCHIVE"
+	echo "$JAVA_CHECKSUM  $ARCHIVE" | sha256sum --check --quiet
+	rm -rf "$TARGET.partial"
+	mkdir -p "$TARGET.partial"
+	tar -xzf "$ARCHIVE" -C "$TARGET.partial" --strip-components=1
+	rm "$ARCHIVE"
+	mv "$TARGET.partial" "$TARGET"
+fi
+
+if [ -n "$JAVA_RELEASE" ] && [ -x "$VERMILINGUA_DIR/java/$JAVA_RELEASE/bin/java" ]; then
+	# java/${javaVersion} was a folder before it became a link
+	if [ -d "$JAVA_DIR" ] && [ ! -L "$JAVA_DIR" ]; then
+		rm -rf "$JAVA_DIR"
+	fi
+
+	ln -sfn "$JAVA_RELEASE" "$JAVA_DIR"
 fi
 
 #
@@ -67,6 +96,21 @@ sudo systemctl restart "$SERVICE"
 ls -1 "$APP_DIR/releases" | sort | head -n -5 | while read -r old; do
 	rm -rf "$APP_DIR/releases/$old"
 done
+
+#
+# Remove releases of this Java version other than the newest, unless a running process uses them.
+# Other applications on the machine may still run on an older release until they're restarted, and a JVM loads parts of it's runtime lazily.
+#
+if [ -n "$JAVA_RELEASE" ]; then
+	IN_USE="$(readlink /proc/[0-9]*/exe 2>/dev/null || true)"
+
+	for old in "$VERMILINGUA_DIR"/java/jdk-${javaVersion}.* "$VERMILINGUA_DIR"/java/jdk-${javaVersion}+*; do
+		[ -d "$old" ] || continue
+		[ "$(basename "$old")" = "$JAVA_RELEASE" ] && continue
+		echo "$IN_USE" | grep -q "^$old/" && continue
+		rm -rf "$old"
+	done
+fi
 
 #
 # Wait for the application to answer on it's port

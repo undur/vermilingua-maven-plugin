@@ -17,7 +17,7 @@ mvn vermilingua:ssh-deploy -Ddeploy.exe.vm=myvm
 ```
 
 - The upload uses rsync into a new release folder, so a redeploy only sends what changed. The five newest releases are kept on the machine, under `~/vermilingua/apps/<app>/`.
-- A Java runtime (Eclipse Temurin) is installed on the machine if missing. It's the version Maven runs on, unless `deploy.java` says otherwise.
+- A Java runtime (Eclipse Temurin) is installed on the machine. It's the version Maven runs on, unless `deploy.java` says otherwise. Every deploy checks for a newer release of that version, so the machine gets Java updates with deployments. Downloads are checked against Adoptium's SHA-256 checksum, and old releases are removed once nothing runs on them.
 - The system's `ssh` and `rsync` are used, so your SSH keys, agent and `~/.ssh/config` apply. The SSH user must be able to `sudo` without a password, to manage the service.
 - Settings go in `build.properties`, or are passed with `-D`:
   - `deploy.host`: the SSH destination
