@@ -30,6 +30,10 @@ mvn vermilingua:ssh-deploy -Ddeploy.exe.vm=myvm
 
 In a multi-module build, run `mvn package vermilingua:ssh-deploy`. Otherwise the modules the application depends on aren't packaged in time (this applies to `vermilingua:run` too).
 
+### Apple WebObjects frameworks can be listed last on the classpath
+
+`allowWebObjectsPatching` (default `false`). When `true`, jars with group id `com.webobjects` are written at the end of `classpath.txt`. Project Wonder ships its own copies of classes from those frameworks (`com.webobjects.foundation.NSArray` in `ERFoundation`, and others). The JVM loads the first copy of a class it finds, so the Apple jars have to come last for the replacements to win. This is what `wolifecycle-maven-plugin` does. Other jars stay in Maven's resolve order, and the Apple jars keep their order relative to each other.
+
 ### Duplicate components fail the build
 
 Subfolders of `components` are flattened when packaging, since WebObjects can't find components in subfolders. If two components (or other files) in different subfolders have the same name, one used to silently replace the other in the built bundle. This now fails the build, naming both.

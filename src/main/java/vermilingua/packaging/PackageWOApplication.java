@@ -4,6 +4,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,15 +16,29 @@ public class PackageWOApplication {
 	private static final Logger logger = LoggerFactory.getLogger( PackageWOApplication.class );
 
 	/**
+	 * Group id of the Apple WebObjects frameworks (JavaFoundation, JavaWebObjects, and the rest).
+	 * wolifecycle treats this same group as the Apple frameworks and writes them last on the classpath.
+	 */
+	static final String APPLE_WEB_OBJECTS_GROUP_ID = "com.webobjects";
+
+	/**
+	 * Builds a WOA bundle. Dependencies are listed in classpath.txt in Maven's resolve order.
+	 */
+	public WOA execute( final SourceProject sourceProject, final String woaName, final Path targetPath ) {
+		return execute( sourceProject, woaName, targetPath, false );
+	}
+
+	/**
 	 * Builds a WOA bundle
 	 *
 	 * @param sourceProject The project we're building from
 	 * @param woaName Name of the WOA (not including the .woa suffix)
 	 * @param targetPath Directory where the WOA bundle will be placed
+	 * @param allowWebObjectsPatching When true, jars with group id {@value #APPLE_WEB_OBJECTS_GROUP_ID} are listed at the end of classpath.txt
 	 *
 	 * @return The assembled WOA bundle
 	 */
-	public WOA execute( final SourceProject sourceProject, final String woaName, final Path targetPath ) {
+	public WOA execute( final SourceProject sourceProject, final String woaName, final Path targetPath, final boolean allowWebObjectsPatching ) {
 		Objects.requireNonNull( sourceProject );
 		Objects.requireNonNull( woaName );
 		Objects.requireNonNull( targetPath );
@@ -43,8 +58,9 @@ public class PackageWOApplication {
 		classpath.add( "APPROOT/Resources/Java/" ); // We include the Java folder on the classpath because WOLifecycle does. Allows the user to drop class files in there, but I don't think anyone ever does. Remove?
 		classpath.add( "APPROOT/Resources/Java/" + appJarFilename );
 
-		// Copy the app's resolved dependencies (direct and transient) to the WOA
-		for( final Dependency dependency : sourceProject.dependencies() ) {
+		// Copy the app's resolved dependencies (direct and transitive) to the WOA.
+		// With patching enabled, the Apple frameworks are still copied here and listed after every other jar.
+		for( final Dependency dependency : classpathDependencies( sourceProject.dependencies(), allowWebObjectsPatching ) ) {
 			final Path artifactPathInMavenRepository = dependency.file().toPath();
 			final Path artifactFolderPathInWOA = Util.folder( woa.javaPath().resolve( dependency.groupId().replace( ".", "/" ) + "/" + dependency.artifactId() + "/" + dependency.version() ) );
 			final Path artifactPathInWOA = artifactFolderPathInWOA.resolve( dependency.file().getName() );
@@ -108,6 +124,35 @@ public class PackageWOApplication {
 		Util.makeExecutable( launchScriptPath );
 
 		return woa;
+	}
+
+	/**
+	 * @return Dependencies in the order classpath.txt should list them.
+	 *
+	 * Maven's resolve order otherwise. When patching is enabled, the Apple WebObjects frameworks move to the end
+	 * and keep their order relative to each other. Project Wonder ships its own copies of classes from those
+	 * frameworks (NSArray in ERFoundation, and others). The JVM loads the first copy of a class it finds, so the
+	 * Apple jars have to follow the jars that replace them.
+	 */
+	static Collection<Dependency> classpathDependencies( final Collection<Dependency> dependencies, final boolean allowWebObjectsPatching ) {
+		if( !allowWebObjectsPatching ) {
+			return dependencies;
+		}
+
+		final List<Dependency> earlier = new ArrayList<>();
+		final List<Dependency> appleFrameworks = new ArrayList<>();
+
+		for( final Dependency dependency : dependencies ) {
+			if( APPLE_WEB_OBJECTS_GROUP_ID.equals( dependency.groupId() ) ) {
+				appleFrameworks.add( dependency );
+			}
+			else {
+				earlier.add( dependency );
+			}
+		}
+
+		earlier.addAll( appleFrameworks );
+		return earlier;
 	}
 
 	/**
