@@ -22,13 +22,6 @@ public class PackageWOApplication {
 	static final String APPLE_WEB_OBJECTS_GROUP_ID = "com.webobjects";
 
 	/**
-	 * Builds a WOA bundle. Dependencies are listed in classpath.txt in Maven's resolve order.
-	 */
-	public WOA execute( final SourceProject sourceProject, final String woaName, final Path targetPath ) {
-		return execute( sourceProject, woaName, targetPath, false );
-	}
-
-	/**
 	 * Builds a WOA bundle
 	 *
 	 * @param sourceProject The project we're building from
@@ -127,12 +120,12 @@ public class PackageWOApplication {
 	}
 
 	/**
-	 * @return Dependencies in the order classpath.txt should list them.
-	 *
-	 * Maven's resolve order otherwise. When patching is enabled, the Apple WebObjects frameworks move to the end
+	 * Maven's resolve order, unless patching is enabled. Then the Apple WebObjects frameworks move to the end
 	 * and keep their order relative to each other. Project Wonder ships its own copies of classes from those
 	 * frameworks (NSArray in ERFoundation, and others). The JVM loads the first copy of a class it finds, so the
 	 * Apple jars have to follow the jars that replace them.
+	 *
+	 * @return Dependencies in the order classpath.txt should list them
 	 */
 	static Collection<Dependency> classpathDependencies( final Collection<Dependency> dependencies, final boolean allowWebObjectsPatching ) {
 		if( !allowWebObjectsPatching ) {
