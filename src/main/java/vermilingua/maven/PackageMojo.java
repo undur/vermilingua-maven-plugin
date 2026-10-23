@@ -72,6 +72,15 @@ public class PackageMojo extends AbstractMojo {
 	@Parameter(property = "createArchives", required = false)
 	boolean createArchives;
 
+	/**
+	 * Lists the Apple WebObjects frameworks (group id com.webobjects) at the end of classpath.txt.
+	 * Project Wonder replaces classes from those frameworks, and the JVM loads the first copy of a class it finds,
+	 * so the Apple jars have to come last for the replacements to win. This is what wolifecycle does.
+	 * Other dependencies stay in Maven's resolve order. Defaults to false.
+	 */
+	@Parameter(property = "allowWebObjectsPatching", required = false, defaultValue = "false")
+	boolean allowWebObjectsPatching;
+
 	@Inject
 	MavenProjectHelper projectHelper;
 
@@ -101,7 +110,7 @@ public class PackageMojo extends AbstractMojo {
 				final String finalName = mavenProject.getBuild().getFinalName();
 				final Path targetPath = Path.of( mavenProject.getBuild().getDirectory() ); // Maven's target directory
 
-				final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath );
+				final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath, allowWebObjectsPatching );
 
 				if( performSplit ) {
 					extractWebServerResources( woa );
