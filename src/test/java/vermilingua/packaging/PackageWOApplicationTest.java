@@ -38,20 +38,26 @@ public class PackageWOApplicationTest {
 			"APPROOT/Resources/Java/com/webobjects/JavaFoundation/5.4.3/JavaFoundation-5.4.3.jar",
 			"APPROOT/Resources/Java/com/webobjects/JavaWebObjects/5.4.3/JavaWebObjects-5.4.3.jar" );
 
+	/**
+	 * JavaFoundation and JavaWebObjects sit in the middle of Maven's order, ahead of a later Wonder jar.
+	 * By default, classpath.txt keeps Maven's order.
+	 */
 	@Test
 	public void appleFrameworksStayInMavenOrderByDefault( @TempDir final Path directory ) throws IOException {
 		assertEquals( MAVEN_ORDER, classpath( directory, false ) );
 	}
 
+	/**
+	 * With patching, JavaFoundation and JavaWebObjects move to the end and keep their order relative to each other.
+	 * A group id that only starts with com.webobjects stays where Maven put it.
+	 */
 	@Test
 	public void appleFrameworksMoveToTheEndWhenPatchingIsAllowed( @TempDir final Path directory ) throws IOException {
 		assertEquals( PATCHED_ORDER, classpath( directory, true ) );
 	}
 
 	/**
-	 * JavaFoundation and JavaWebObjects sit in the middle of Maven's order, ahead of a later Wonder jar.
-	 * With patching they move to the end and keep that order relative to each other. A group id that only
-	 * starts with com.webobjects stays where Maven put it.
+	 * @return The lines of classpath.txt in a WOA built from a test project
 	 */
 	private static List<String> classpath( final Path directory, final boolean allowWebObjectsPatching ) throws IOException {
 		Files.createDirectories( directory );
@@ -80,10 +86,7 @@ public class PackageWOApplicationTest {
 						dependency( directory, template, "com.webobjects.other", "NotAnAppleFramework", "1.0" ) ),
 				BuildProperties.of( directory ) );
 
-		final PackageWOApplication packager = new PackageWOApplication();
-		final PackageWOApplication.WOA woa = allowWebObjectsPatching
-				? packager.execute( project, "TestApp", directory.resolve( "target" ), true )
-				: packager.execute( project, "TestApp", directory.resolve( "target" ) );
+		final PackageWOApplication.WOA woa = new PackageWOApplication().execute( project, "TestApp", directory.resolve( "target" ), allowWebObjectsPatching );
 
 		return Files.readAllLines( woa.woaPath().resolve( "classpath.txt" ) );
 	}
