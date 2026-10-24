@@ -1,5 +1,20 @@
 # Changes
 
+## 1.1.13
+
+### The split webserver-resources archive is named and laid out as wolifecycle's
+
+With `performSplit` and `createArchives`, the webserver-resources archive now matches the one `wolifecycle-maven-plugin` builds, so deployment scripts written for wolifecycle's archives can find and unpack it:
+
+- It's attached with type `wowebserverresources.tar.gz` and no classifier, so it's installed and deployed as `{artifactId}-{version}.wowebserverresources.tar.gz`, beside `{artifactId}-{version}.woapplication.tar.gz`. It was attached with type `tar.gz` and classifier `wowebserverresources`, as `{artifactId}-{version}-wowebserverresources.tar.gz`.
+- It unpacks to `{finalName}.woa/Contents/WebServerResources/…` and `{finalName}.woa/Contents/Frameworks/…`, so it can be extracted straight into the web server's `WebObjects` folder. It unpacked to `{finalName}.woa.webserverresources/`, the folder in `target` it's made from. That folder keeps its name.
+
+A deployment script written for the old names needs updating.
+
+### Dependencies on the application archive resolve
+
+The `woapplication.tar.gz` type now declares its full name as its extension, as in wolifecycle. It declared `tar.gz`, so a dependency of that type, in a build using vermilingua as an extension, looked for `{artifactId}-{version}.tar.gz` instead of the `{artifactId}-{version}.woapplication.tar.gz` that's deployed.
+
 ## 1.1.12
 
 ### New (experimental) goal: `vermilingua:ssh-deploy`
