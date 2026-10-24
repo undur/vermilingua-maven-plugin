@@ -172,14 +172,15 @@ public class PackageMojo extends AbstractMojo {
 		artifact.setFile( woaArchive.toFile() );
 		mavenProject.setArtifact( artifact );
 
-		// If split was performed, archive the webserver resources too
+		// If split was performed, archive the webserver resources too. Named and laid out like wolifecycle's archive, for deployment scripts written for it:
+		// deployed as [artifactId]-[version].wowebserverresources.tar.gz (the extension declared for the type in components.xml), unpacking to [finalName].woa
 		if( performSplit ) {
 			final Path splitPath = woa.woaPath().getParent().resolve( woa.woaPath().getFileName() + ".webserverresources" );
 			if( splitPath.toFile().isDirectory() ) {
 				final Path wsrArchive = targetPath.resolve( finalName + ".wowebserverresources.tar.gz" );
 				getLog().info( "Creating " + wsrArchive.getFileName() );
-				Util.createTarGz( splitPath, wsrArchive );
-				projectHelper.attachArtifact( mavenProject, "tar.gz", "wowebserverresources", wsrArchive.toFile() );
+				Util.createTarGz( splitPath, woa.woaPath().getFileName().toString(), wsrArchive );
+				projectHelper.attachArtifact( mavenProject, "wowebserverresources.tar.gz", null, wsrArchive.toFile() );
 			}
 		}
 	}

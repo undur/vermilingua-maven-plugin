@@ -35,7 +35,7 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 * **performSplit**  
   When set `true`, `vermilingua` will generate an additional "WebServerResources" bundle for "split deployments".
 * **createArchives**  
-  When set `true`, `vermilingua` will generate compressed archives of the build products (application bundle, and "WebServerResources" bundle if created) using `tar` and `gzip`.
+  When set `true`, `vermilingua` will generate compressed archives of the build products (application bundle, and "WebServerResources" bundle if created) using `tar` and `gzip`, and attach them to the build for `mvn install` and `mvn deploy`. They're named and laid out as `wolifecycle`'s are: `{artifactId}-{version}.woapplication.tar.gz` and `{artifactId}-{version}.wowebserverresources.tar.gz`, each unpacking to `{finalName}.woa`.
 * **allowWebObjectsPatching**  
   When set `true`, jars with group id `com.webobjects` (the Apple WebObjects frameworks) are listed at the end of `classpath.txt`, so Project Wonder's replacements of their classes win. Defaults to `false`.
 

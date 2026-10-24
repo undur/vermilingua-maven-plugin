@@ -6,10 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -249,5 +254,65 @@ public class UtilTest {
 
 		assertEquals( "second", Files.readString( destination.resolve( "Foo.wo/Foo.html" ) ) );
 		assertEquals( "second", Files.readString( destination.resolve( "Foo.api" ) ) );
+	}
+
+	/**
+	 * The application archive: the WOA, under its own name
+	 */
+	@Test
+	public void createTarGzArchivesTheDirectoryUnderItsOwnName( @TempDir final Path directory ) throws IOException {
+		final Path woa = directory.resolve( "TestApp.woa" );
+		TestJars.file( woa.resolve( "Contents/Resources/Properties" ), "properties" );
+
+		final Path archive = directory.resolve( "TestApp.woapplication.tar.gz" );
+		Util.createTarGz( woa, archive );
+
+		assertEquals( List.of(
+				"TestApp.woa/",
+				"TestApp.woa/Contents/",
+				"TestApp.woa/Contents/Resources/",
+				"TestApp.woa/Contents/Resources/Properties" ), tarGzEntryNames( archive ) );
+	}
+
+	/**
+	 * The split webserver resources' archive: the folder beside the WOA, archived under the WOA's name.
+	 * That's wolifecycle's layout, which unpacks straight into the web server's document root
+	 */
+	@Test
+	public void createTarGzArchivesTheDirectoryUnderTheGivenName( @TempDir final Path directory ) throws IOException {
+		final Path split = directory.resolve( "TestApp.woa.webserverresources" );
+		TestJars.file( split.resolve( "Contents/WebServerResources/css/app.css" ), "app" );
+		TestJars.file( split.resolve( "Contents/Frameworks/ERExtensions.framework/WebServerResources/ajax.js" ), "ajax" );
+
+		final Path archive = directory.resolve( "TestApp.wowebserverresources.tar.gz" );
+		Util.createTarGz( split, "TestApp.woa", archive );
+
+		assertEquals( List.of(
+				"TestApp.woa/",
+				"TestApp.woa/Contents/",
+				"TestApp.woa/Contents/Frameworks/",
+				"TestApp.woa/Contents/Frameworks/ERExtensions.framework/",
+				"TestApp.woa/Contents/Frameworks/ERExtensions.framework/WebServerResources/",
+				"TestApp.woa/Contents/Frameworks/ERExtensions.framework/WebServerResources/ajax.js",
+				"TestApp.woa/Contents/WebServerResources/",
+				"TestApp.woa/Contents/WebServerResources/css/",
+				"TestApp.woa/Contents/WebServerResources/css/app.css" ), tarGzEntryNames( archive ) );
+	}
+
+	/**
+	 * @return Sorted names of every entry in the tar.gz archive at [archive], folders included (folder names end with a slash)
+	 */
+	private static List<String> tarGzEntryNames( final Path archive ) throws IOException {
+		final List<String> names = new ArrayList<>();
+
+		try( InputStream in = Files.newInputStream( archive ); TarArchiveInputStream tar = new TarArchiveInputStream( new GzipCompressorInputStream( in ) )) {
+			TarArchiveEntry entry;
+
+			while( (entry = tar.getNextEntry()) != null ) {
+				names.add( entry.getName() );
+			}
+		}
+
+		return names.stream().sorted().toList();
 	}
 }

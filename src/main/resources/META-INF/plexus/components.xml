@@ -103,7 +103,7 @@
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
 				<type>wowebserverresources.tar.gz</type>
-				<extension>tar.gz</extension>
+				<extension>wowebserverresources.tar.gz</extension>
 				<language>html</language>
 				<includesDependencies>true</includesDependencies>
 			</configuration>

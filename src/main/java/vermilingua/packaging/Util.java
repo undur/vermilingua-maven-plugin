@@ -439,6 +439,17 @@ public class Util {
 	 * @param targetFile The destination tar.gz file
 	 */
 	public static void createTarGz( final Path sourceDirectory, final Path targetFile ) {
+		createTarGz( sourceDirectory, sourceDirectory.getFileName().toString(), targetFile );
+	}
+
+	/**
+	 * Creates a tar.gz archive of the given directory, with the directory itself named [folderName] in the archive.
+	 *
+	 * @param sourceDirectory The directory to archive
+	 * @param folderName Name of the folder at the root of the archive, holding the directory's contents
+	 * @param targetFile The destination tar.gz file
+	 */
+	public static void createTarGz( final Path sourceDirectory, final String folderName, final Path targetFile ) {
 		try( final OutputStream fos = Files.newOutputStream( targetFile );
 			 final BufferedOutputStream bos = new BufferedOutputStream( fos );
 			 final GzipCompressorOutputStream gzos = new GzipCompressorOutputStream( bos );
@@ -446,12 +457,12 @@ public class Util {
 	
 			taos.setLongFileMode( TarArchiveOutputStream.LONGFILE_GNU );
 	
-			final Path parentDir = sourceDirectory.getParent();
+			final Path folder = Path.of( folderName );
 	
 			try( Stream<Path> paths = Files.walk( sourceDirectory ) ) {
 				paths.forEach( path -> {
 					try {
-						final String entryName = parentDir.relativize( path ).toString();
+						final String entryName = folder.resolve( sourceDirectory.relativize( path ) ).toString();
 						final TarArchiveEntry entry = new TarArchiveEntry( path, entryName );
 	
 						// Preserve executable permission
