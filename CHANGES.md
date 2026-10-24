@@ -11,6 +11,10 @@ With `performSplit` and `createArchives`, the webserver-resources archive now ma
 
 A deployment script written for the old names needs updating.
 
+### Dependencies on the application archive resolve
+
+The `woapplication.tar.gz` type now declares its full name as its extension, as in wolifecycle. It declared `tar.gz`, so a dependency of that type, in a build using vermilingua as an extension, looked for `{artifactId}-{version}.tar.gz` instead of the `{artifactId}-{version}.woapplication.tar.gz` that's deployed.
+
 ## 1.1.12
 
 ### New (experimental) goal: `vermilingua:ssh-deploy`
