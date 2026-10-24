@@ -92,7 +92,7 @@
 			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
 			<configuration>
 				<type>woapplication.tar.gz</type>
-				<extension>tar.gz</extension>
+				<extension>woapplication.tar.gz</extension>
 				<language>java</language>
 				<includesDependencies>true</includesDependencies>
 			</configuration>
