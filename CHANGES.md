@@ -4,7 +4,7 @@
 
 ### Archives are made by a new goal, after `package` (breaking)
 
-`vermilingua:package` now only builds the `.woa`. The split webserver-resources folder (`performSplit`) and the archives (`createArchives`) are made by a new goal, `vermilingua:archive`, bound to `pre-integration-test`, the first phase after `package` (#64).
+`vermilingua:package` now only builds the `.woa`. The split webserver-resources folder (`performSplit`) and the archives (`createArchives`) are made by a new goal, `vermilingua:archive`, bound to `pre-integration-test`, the first phase after `package` (#64). Thanks for the good idea @paulhoadley.
 
 - **`mvn package` no longer makes archives.** A deployment script that runs `mvn package` and then picks up `target/*.woapplication.tar.gz` or `target/*.woa.webserverresources` needs `mvn package vermilingua:archive` instead (or `mvn verify`, `mvn install`, `mvn deploy`).
 - `performSplit` and `createArchives` are set in the plugin's `<configuration>` as before. If you set them in the configuration of an `<execution>` of the `package` goal, move them to the plugin's `<configuration>`.
