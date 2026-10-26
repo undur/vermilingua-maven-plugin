@@ -60,6 +60,7 @@ public class ArchiveMojo extends AbstractMojo {
 		}
 
 		if( !performSplit && !createArchives ) {
+			getLog().info( "Nothing to do: performSplit and createArchives are both off" );
 			return;
 		}
 
