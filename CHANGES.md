@@ -1,6 +1,6 @@
 # Changes
 
-## 1.1.13
+## 1.2.0
 
 ### Archives are made by a new goal, after `package` (breaking)
 
