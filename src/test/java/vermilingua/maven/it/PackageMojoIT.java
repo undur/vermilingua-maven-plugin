@@ -34,7 +34,9 @@ public class PackageMojoIT {
 	/**
 	 * With {@code performSplit} and {@code createArchives}, both archives are
 	 * installed with the names wolifecycle gives them, and the webserver
-	 * resources' archive unpacks to {@code HelloWorld.woa}.
+	 * resources' archive unpacks to {@code HelloWorld.woa}. A file written into
+	 * the .woa by a plugin bound to {@code package} reaches the split folder and
+	 * both archives, since they're made later, by {@code vermilingua:archive}.
 	 */
 	@MavenTest
 	@MavenGoal("install")
@@ -49,6 +51,31 @@ public class PackageMojoIT {
 		assertThat(entryNames(installed.resolve("HelloWorld-1.0-SNAPSHOT.wowebserverresources.tar.gz")))
 				.contains("HelloWorld.woa/Contents/WebServerResources/readme.txt")
 				.allMatch(name -> name.startsWith("HelloWorld.woa/"));
+
+		Path target = result.getMavenProjectResult().getTargetProjectDirectory().resolve("target");
+		assertThat(target.resolve("HelloWorld.woa.webserverresources/Contents/WebServerResources/post-processed.txt")).isRegularFile();
+		assertThat(entryNames(installed.resolve("HelloWorld-1.0-SNAPSHOT.woapplication.tar.gz")))
+				.contains("HelloWorld.woa/Contents/WebServerResources/post-processed.txt");
+		assertThat(entryNames(installed.resolve("HelloWorld-1.0-SNAPSHOT.wowebserverresources.tar.gz")))
+				.contains("HelloWorld.woa/Contents/WebServerResources/post-processed.txt");
+		return;
+	}
+
+	/**
+	 * {@code mvn package} only builds the .woa. The split folder and the
+	 * archives are made by {@code vermilingua:archive}, at
+	 * {@code pre-integration-test}, even when the POM enables them.
+	 */
+	@MavenTest
+	@MavenGoal("package")
+	public void packageMakesNoArchives(MavenExecutionResult result) {
+		assertThat(result).isSuccessful();
+
+		Path target = result.getMavenProjectResult().getTargetProjectDirectory().resolve("target");
+		assertThat(target.resolve("HelloWorld.woa/HelloWorld")).isRegularFile();
+		assertThat(target.resolve("HelloWorld.woa.webserverresources")).doesNotExist();
+		assertThat(target.resolve("HelloWorld.woapplication.tar.gz")).doesNotExist();
+		assertThat(target.resolve("HelloWorld.wowebserverresources.tar.gz")).doesNotExist();
 		return;
 	}
 

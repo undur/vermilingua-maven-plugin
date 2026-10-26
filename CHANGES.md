@@ -2,6 +2,21 @@
 
 ## 1.1.13
 
+### Archives are made by a new goal, after `package` (breaking)
+
+`vermilingua:package` now only builds the `.woa`. The split webserver-resources folder (`performSplit`) and the archives (`createArchives`) are made by a new goal, `vermilingua:archive`, bound to `pre-integration-test`, the first phase after `package` (#64).
+
+- **`mvn package` no longer makes archives.** A deployment script that runs `mvn package` and then picks up `target/*.woapplication.tar.gz` or `target/*.woa.webserverresources` needs `mvn package vermilingua:archive` instead (or `mvn verify`, `mvn install`, `mvn deploy`).
+- `performSplit` and `createArchives` are set in the plugin's `<configuration>` as before. If you set them in the configuration of an `<execution>` of the `package` goal, move them to the plugin's `<configuration>`.
+- A plugin bound to `package` can now work on the `.woa` (minifying resources, for example) before it's split and archived, and the split folder and archives include its output.
+- `mvn package`, `vermilingua:run` and `vermilingua:ssh-deploy` no longer spend time making archives.
+
+### The `.woa` is built from scratch every time (breaking)
+
+`vermilingua:package` deletes the `.woa` before building it, so resources removed or renamed in the sources no longer linger in the bundle when building without `mvn clean` (#50). The split folder is likewise made from scratch.
+
+**Anything written into the `.woa` before the `package` phase is deleted.** A plugin that writes into the bundle must be bound to `package`, so it runs after the bundle is built and before it's archived.
+
 ### The split webserver-resources archive is named and laid out as wolifecycle's
 
 With `performSplit` and `createArchives`, the webserver-resources archive now matches the one `wolifecycle-maven-plugin` builds, so deployment scripts written for wolifecycle's archives can find and unpack it:

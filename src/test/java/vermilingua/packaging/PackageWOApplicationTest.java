@@ -1,6 +1,9 @@
 package vermilingua.packaging;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,9 +60,47 @@ public class PackageWOApplicationTest {
 	}
 
 	/**
+	 * A component removed from the sources since the last build doesn't stay in the bundle, even without mvn clean
+	 */
+	@Test
+	public void rebuildStartsFromAnEmptyBundle( @TempDir final Path directory ) throws IOException {
+		classpath( directory, false );
+
+		final Path woa = directory.resolve( "target/TestApp.woa" );
+		final Path stale = woa.resolve( "Contents/Resources/Removed.wo/Removed.html" );
+		TestJars.file( stale, "removed" );
+
+		classpath( directory, false );
+
+		assertFalse( Files.exists( stale.getParent() ) );
+		assertTrue( Files.isRegularFile( woa.resolve( "classpath.txt" ) ) );
+	}
+
+	/**
+	 * The bundle is deleted before every build, so a finalName that points it out of the target folder is refused
+	 */
+	@Test
+	public void bundleOutsideTheTargetFolderIsRefused( @TempDir final Path directory ) throws IOException {
+		final Path outside = directory.resolve( "Outside.woa" );
+		TestJars.file( outside.resolve( "keep.txt" ), "keep" );
+
+		final SourceProject project = project( directory );
+		assertThrows( IllegalArgumentException.class, () -> new PackageWOApplication().execute( project, "../Outside", directory.resolve( "target" ), false ) );
+		assertTrue( Files.isRegularFile( outside.resolve( "keep.txt" ) ) );
+	}
+
+	/**
 	 * @return The lines of classpath.txt in a WOA built from a test project
 	 */
 	private static List<String> classpath( final Path directory, final boolean allowWebObjectsPatching ) throws IOException {
+		final PackageWOApplication.WOA woa = new PackageWOApplication().execute( project( directory ), "TestApp", directory.resolve( "target" ), allowWebObjectsPatching );
+		return Files.readAllLines( woa.woaPath().resolve( "classpath.txt" ) );
+	}
+
+	/**
+	 * @return A test application project in [directory], with dependencies in the order the classpath tests expect from Maven
+	 */
+	private static SourceProject project( final Path directory ) throws IOException {
 		Files.createDirectories( directory );
 		TestJars.file( directory.resolve( "build.properties" ), "principalClass=test.Application\n" );
 
@@ -68,7 +109,7 @@ public class PackageWOApplicationTest {
 		final Path template = TestJars.jarWithClassesOnly( templateDir );
 		final Path appJar = copyJar( directory, template, "app" );
 
-		final SourceProject project = new SourceProject(
+		return new SourceProject(
 				Type.Application,
 				"TestApp",
 				"1.0",
@@ -85,10 +126,6 @@ public class PackageWOApplicationTest {
 						dependency( directory, template, "wonder.core", "ERWebObjects", "1.0" ),
 						dependency( directory, template, "com.webobjects.other", "NotAnAppleFramework", "1.0" ) ),
 				BuildProperties.of( directory ) );
-
-		final PackageWOApplication.WOA woa = new PackageWOApplication().execute( project, "TestApp", directory.resolve( "target" ), allowWebObjectsPatching );
-
-		return Files.readAllLines( woa.woaPath().resolve( "classpath.txt" ) );
 	}
 
 	private static Dependency dependency( final Path directory, final Path template, final String groupId, final String artifactId, final String version ) throws IOException {

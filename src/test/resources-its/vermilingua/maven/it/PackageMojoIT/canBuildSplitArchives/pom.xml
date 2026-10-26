@@ -25,6 +25,28 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<!-- Stands in for post-processing such as minification: writes into the .woa after vermilingua:package, before vermilingua:archive -->
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>post-process-woa</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}.woa/Contents/WebServerResources</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/post-process</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>

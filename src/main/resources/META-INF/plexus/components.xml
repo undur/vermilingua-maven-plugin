@@ -30,6 +30,9 @@
 					<package>
 						is.rebbi:vermilingua-maven-plugin:package
 					</package>
+					<pre-integration-test>
+						is.rebbi:vermilingua-maven-plugin:archive
+					</pre-integration-test>
 					<install>
 						org.apache.maven.plugins:maven-install-plugin:install
 					</install>

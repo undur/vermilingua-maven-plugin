@@ -36,7 +36,14 @@ public class PackageWOApplication {
 		Objects.requireNonNull( woaName );
 		Objects.requireNonNull( targetPath );
 
-		// The WOA bundle, the destination for our build.
+		// The WOA bundle, the destination for our build. It's built from scratch every time, so it doesn't keep resources that have since been removed or renamed in the sources
+		final Path woaPath = targetPath.resolve( woaName + ".woa" );
+
+		if( !woaPath.normalize().getParent().equals( targetPath.normalize() ) ) {
+			throw new IllegalArgumentException( "The application bundle '%s' must be directly inside '%s'. Check the build's finalName".formatted( woaPath, targetPath ) );
+		}
+
+		Util.deleteRecursively( woaPath );
 		final WOA woa = WOA.create( targetPath, woaName );
 
 		// The eventual name of the app's JAR file

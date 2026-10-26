@@ -3,10 +3,6 @@ package vermilingua.maven;
 import java.nio.file.Path;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
-import org.apache.maven.artifact.DefaultArtifact;
-import org.apache.maven.artifact.handler.DefaultArtifactHandler;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -15,15 +11,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
 
 import vermilingua.packaging.BuildProperties;
 import vermilingua.packaging.PackageWOApplication;
-import vermilingua.packaging.PackageWOApplication.WOA;
 import vermilingua.packaging.PackageWOFramework;
 import vermilingua.packaging.ProjectUtil;
 import vermilingua.packaging.SourceProject;
-import vermilingua.packaging.Util;
 
 @Mojo(name = "package", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, threadSafe = true)
 public class PackageMojo extends AbstractMojo {
@@ -59,20 +52,6 @@ public class PackageMojo extends AbstractMojo {
 	String webserverResourcesPath;
 
 	/**
-	 * Indicates that we want to extract webserver resources (for both the app and it's included frameworks)
-	 * to a separate folder alongside the WOA (for installation on a web server)
-	 */
-	@Parameter(property = "performSplit", required = false)
-	boolean performSplit;
-
-	/**
-	 * Creates tar.gz archives of the build products and attaches them as Maven artifacts,
-	 * making them available to mvn install and mvn deploy.
-	 */
-	@Parameter(property = "createArchives", required = false)
-	boolean createArchives;
-
-	/**
 	 * Lists the Apple WebObjects frameworks (group id com.webobjects) at the end of classpath.txt.
 	 * Project Wonder replaces classes from those frameworks, and the JVM loads the first copy of a class it finds,
 	 * so the Apple jars have to come last for the replacements to win. This is what wolifecycle does.
@@ -80,9 +59,6 @@ public class PackageMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "allowWebObjectsPatching", required = false, defaultValue = "false")
 	boolean allowWebObjectsPatching;
-
-	@Inject
-	MavenProjectHelper projectHelper;
 
 	/**
 	 * Entry point for the assembly process
@@ -110,15 +86,7 @@ public class PackageMojo extends AbstractMojo {
 				final String finalName = mavenProject.getBuild().getFinalName();
 				final Path targetPath = Path.of( mavenProject.getBuild().getDirectory() ); // Maven's target directory
 
-				final WOA woa = new PackageWOApplication().execute( sourceProject, finalName, targetPath, allowWebObjectsPatching );
-
-				if( performSplit ) {
-					extractWebServerResources( woa );
-				}
-
-				if( createArchives ) {
-					createAndAttachArchives( woa, finalName, targetPath );
-				}
+				new PackageWOApplication().execute( sourceProject, finalName, targetPath, allowWebObjectsPatching );
 			}
 			case Framework -> {
 				new PackageWOFramework().execute( sourceProject );
@@ -152,55 +120,5 @@ public class PackageMojo extends AbstractMojo {
 		}
 
 		return declared != null ? declared : defaultPath;
-	}
-
-	/**
-	 * Creates tar.gz archives of the WOA (and optionally the split webserver resources)
-	 * and attaches them as Maven artifacts.
-	 */
-	private void createAndAttachArchives( final WOA woa, final String finalName, final Path targetPath ) {
-		// Archive the .woa bundle
-		final Path woaArchive = targetPath.resolve( finalName + ".woapplication.tar.gz" );
-		getLog().info( "Creating " + woaArchive.getFileName() );
-		Util.createTarGz( woa.woaPath(), woaArchive );
-
-		// Set as primary artifact
-		final DefaultArtifactHandler handler = new DefaultArtifactHandler( "woapplication.tar.gz" );
-		final DefaultArtifact artifact = new DefaultArtifact(
-				mavenProject.getGroupId(), mavenProject.getArtifactId(), mavenProject.getVersion(),
-				null, "woapplication.tar.gz", null, handler );
-		artifact.setFile( woaArchive.toFile() );
-		mavenProject.setArtifact( artifact );
-
-		// If split was performed, archive the webserver resources too. Named and laid out like wolifecycle's archive, for deployment scripts written for it:
-		// deployed as [artifactId]-[version].wowebserverresources.tar.gz (the extension declared for the type in components.xml), unpacking to [finalName].woa
-		if( performSplit ) {
-			final Path splitPath = woa.woaPath().getParent().resolve( woa.woaPath().getFileName() + ".webserverresources" );
-			if( splitPath.toFile().isDirectory() ) {
-				final Path wsrArchive = targetPath.resolve( finalName + ".wowebserverresources.tar.gz" );
-				getLog().info( "Creating " + wsrArchive.getFileName() );
-				Util.createTarGz( splitPath, woa.woaPath().getFileName().toString(), wsrArchive );
-				projectHelper.attachArtifact( mavenProject, "wowebserverresources.tar.gz", null, wsrArchive.toFile() );
-			}
-		}
-	}
-
-	/**
-	 * Once the build is completed, copies the folders:
-	 *
-	 *  - App.woa/WebServerResources
-	 *  - App.woa/Contents/Frameworks
-	 *
-	 *  from the build product into a new directory created adjacent to the WOA
-	 *
-	 *  - App.woa.webserverresources
-	 */
-	private static void extractWebServerResources( final WOA woa ) {
-		final Path splitPath = Util.folder( woa.woaPath().getParent().resolve( woa.woaPath().getFileName() + ".webserverresources" ) );
-		final Path splitWebServerResourcesPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "WebServerResources" ) );
-		final Path splitFrameworksPath = Util.folder( splitPath.resolve( "Contents" ).resolve( "Frameworks" ) );
-
-		Util.copyContentsOfDirectoryToDirectory( woa.webserverResourcesPath(), splitWebServerResourcesPath );
-		Util.copyContentsOfDirectoryToDirectory( woa.frameworksPath(), splitFrameworksPath );
 	}
 }
