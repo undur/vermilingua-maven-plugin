@@ -19,7 +19,7 @@ Replace the `wolifecycle-maven-plugin` `<plugin>` element in your
 <plugin>
   <groupId>is.rebbi</groupId>
   <artifactId>vermilingua-maven-plugin</artifactId>
-  <version>1.1.12</version>
+  <version>1.2.0</version>
   <extensions>true</extensions>
 </plugin>
 ```
@@ -142,7 +142,7 @@ The folders can also be set in the plugin configuration, which takes precedence 
     <plugin>
       <groupId>is.rebbi</groupId>
       <artifactId>vermilingua-maven-plugin</artifactId>
-      <version>1.1.12</version>
+      <version>1.2.0</version>
       <extensions>true</extensions>
       <configuration>
         <woresourcesPath>Resources</woresourcesPath>
