@@ -4,6 +4,7 @@ import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -34,9 +35,10 @@ public class PackageMojoIT {
 	/**
 	 * With {@code performSplit} and {@code createArchives}, both archives are
 	 * installed with the names wolifecycle gives them, and the webserver
-	 * resources' archive unpacks to {@code HelloWorld.woa}. A file written into
-	 * the .woa by a plugin bound to {@code package} reaches the split folder and
-	 * both archives, since they're made later, by {@code vermilingua:archive}.
+	 * resources' archive unpacks to {@code HelloWorld.woa}. A plugin bound to
+	 * {@code package} adds a file to the .woa and replaces another, as a
+	 * minifier would. Both reach the split folder and both archives, since
+	 * they're made later, by {@code vermilingua:archive}.
 	 */
 	@MavenTest
 	@MavenGoal("install")
@@ -53,11 +55,22 @@ public class PackageMojoIT {
 				.allMatch(name -> name.startsWith("HelloWorld.woa/"));
 
 		Path target = result.getMavenProjectResult().getTargetProjectDirectory().resolve("target");
+		Path woaArchive = installed.resolve("HelloWorld-1.0-SNAPSHOT.woapplication.tar.gz");
+		Path wsrArchive = installed.resolve("HelloWorld-1.0-SNAPSHOT.wowebserverresources.tar.gz");
+		String added = "HelloWorld.woa/Contents/WebServerResources/post-processed.txt";
+		String replaced = "HelloWorld.woa/Contents/WebServerResources/app.css";
+		String minified = "body{margin:0}\n";
+
+		// The file the post-processing added
 		assertThat(target.resolve("HelloWorld.woa.webserverresources/Contents/WebServerResources/post-processed.txt")).isRegularFile();
-		assertThat(entryNames(installed.resolve("HelloWorld-1.0-SNAPSHOT.woapplication.tar.gz")))
-				.contains("HelloWorld.woa/Contents/WebServerResources/post-processed.txt");
-		assertThat(entryNames(installed.resolve("HelloWorld-1.0-SNAPSHOT.wowebserverresources.tar.gz")))
-				.contains("HelloWorld.woa/Contents/WebServerResources/post-processed.txt");
+		assertThat(entryNames(woaArchive)).contains(added);
+		assertThat(entryNames(wsrArchive)).contains(added);
+
+		// The file it replaced: the minified version everywhere, not the one from src/main/webserver-resources
+		assertThat(Files.readString(target.resolve(replaced))).isEqualTo(minified);
+		assertThat(Files.readString(target.resolve("HelloWorld.woa.webserverresources/Contents/WebServerResources/app.css"))).isEqualTo(minified);
+		assertThat(entryContent(woaArchive, replaced)).isEqualTo(minified);
+		assertThat(entryContent(wsrArchive, replaced)).isEqualTo(minified);
 		return;
 	}
 
@@ -77,6 +90,26 @@ public class PackageMojoIT {
 		assertThat(target.resolve("HelloWorld.woapplication.tar.gz")).doesNotExist();
 		assertThat(target.resolve("HelloWorld.wowebserverresources.tar.gz")).doesNotExist();
 		return;
+	}
+
+	/**
+	 * Returns the content of an entry in a tar.gz archive.
+	 *
+	 * @param archive tar.gz archive
+	 * @param name name of the entry
+	 * @return content of the entry named {@code name} in {@code archive}, as UTF-8
+	 */
+	private static String entryContent(Path archive, String name) throws IOException {
+		try (InputStream in = Files.newInputStream(archive);
+				TarArchiveInputStream tar = new TarArchiveInputStream(new GzipCompressorInputStream(in))) {
+			TarArchiveEntry entry;
+			while ((entry = tar.getNextEntry()) != null) {
+				if (entry.getName().equals(name)) {
+					return new String(tar.readAllBytes(), StandardCharsets.UTF_8);
+				}
+			}
+		}
+		throw new AssertionError("No entry named " + name + " in " + archive);
 	}
 
 	/**

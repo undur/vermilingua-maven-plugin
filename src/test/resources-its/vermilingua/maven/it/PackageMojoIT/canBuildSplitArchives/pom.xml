@@ -25,7 +25,7 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<!-- Stands in for post-processing such as minification: writes into the .woa after vermilingua:package, before vermilingua:archive -->
+				<!-- Stands in for post-processing such as minification: adds and replaces files in the .woa after vermilingua:package, before vermilingua:archive -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
@@ -37,6 +37,8 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/${project.build.finalName}.woa/Contents/WebServerResources</outputDirectory>
+							<!-- app.css replaces the one vermilingua:package copied from src/main/webserver-resources -->
+							<overwrite>true</overwrite>
 							<resources>
 								<resource>
 									<directory>src/post-process</directory>
