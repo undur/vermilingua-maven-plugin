@@ -1,5 +1,11 @@
 # Changes
 
+## 1.2.1
+
+### Faster archives
+
+Archives are compressed at gzip's fastest level instead of the default. A bundle is mostly jars, which are already compressed, so the archives come out about 1% larger, in about 17% less time. This applies to `createArchives` and to the archive `vermilingua:deploy` uploads (#65).
+
 ## 1.2.0
 
 ### Archives are made by a new goal, after `package` (breaking)

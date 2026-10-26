@@ -29,10 +29,12 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Stream;
+import java.util.zip.Deflater;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipParameters;
 
 public class Util {
 
@@ -443,6 +445,16 @@ public class Util {
 	}
 
 	/**
+	 * @return Parameters for compressing archives: the fastest level. A bundle is mostly jars, which are already compressed,
+	 * so higher levels cost time without making the archive noticeably smaller (#65)
+	 */
+	private static GzipParameters gzipParameters() {
+		final GzipParameters parameters = new GzipParameters();
+		parameters.setCompressionLevel( Deflater.BEST_SPEED );
+		return parameters;
+	}
+
+	/**
 	 * Creates a tar.gz archive of the given directory, with the directory itself named [folderName] in the archive.
 	 *
 	 * @param sourceDirectory The directory to archive
@@ -452,7 +464,7 @@ public class Util {
 	public static void createTarGz( final Path sourceDirectory, final String folderName, final Path targetFile ) {
 		try( final OutputStream fos = Files.newOutputStream( targetFile );
 			 final BufferedOutputStream bos = new BufferedOutputStream( fos );
-			 final GzipCompressorOutputStream gzos = new GzipCompressorOutputStream( bos );
+			 final GzipCompressorOutputStream gzos = new GzipCompressorOutputStream( bos, gzipParameters() );
 			 final TarArchiveOutputStream taos = new TarArchiveOutputStream( gzos ) ) {
 	
 			taos.setLongFileMode( TarArchiveOutputStream.LONGFILE_GNU );
